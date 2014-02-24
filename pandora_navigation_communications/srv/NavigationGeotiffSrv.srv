@@ -1,0 +1,7 @@
+---
+int32 xsize
+int32 ysize
+uint8[] map
+uint8[] coverage
+int32[] rposesx
+int32[] rposesy

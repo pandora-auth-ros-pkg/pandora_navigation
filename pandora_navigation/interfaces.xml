@@ -1,0 +1,32 @@
+<package>
+	
+	<node>
+		/move_base_node
+		
+			<publisher>/cmd_vel</publisher>
+			<publisher>/planner_path</publisher>
+			
+			<subscriber>/slam/laserScanMsg</subscriber>
+			<subscriber>/sensors/compass</subscriber>
+			<subscriber>/sensors/sonar</subscriber>
+			
+			<subscriber>/slam/robotPoseMsg</subscriber>
+			<subscriber>/slam/slamMapMsg</subscriber>
+			
+			<actionServer>/move_base</actionServer>
+			<actionServer>/initial_turn</actionServer>
+	</node>
+	
+	<node>
+		/target_selector_node
+		
+			<publisher>/data_fusion/selected_victim</publisher>
+		
+			<subscriber>/slam/robotPoseMsg</subscriber>
+			<subscriber>/slam/slamMapMsg</subscriber>
+			
+			<actionClient>/data_fusion/get_victims</actionClient>
+			<actionServer>/select_target</actionServer>
+	</node>
+  
+</package>

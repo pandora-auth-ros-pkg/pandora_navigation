@@ -1,0 +1,26 @@
+<launch>
+	
+<!--
+	<remap  from="/move_base" to="/move_base_simple" />
+-->
+	
+	<include file="$(find state_manager)/launch/stateManager.launch" />
+	
+	<include file="$(find slam)/launch/slam_with_wrappers.launch" /> 
+	
+	<include file="$(find controllers_and_sensors)/launch/u_controller_launch.launch" /> 
+	
+	<include file="$(find main_motor_control)/launch/main_motors_with_wrapper.launch" /> 
+				
+	<node name="move_base_node" 
+		type="move_base_node" pkg="pandora_navigation" output="screen" />
+		
+	<node name="target_selector_node" 
+		type="target_selector_node" pkg="pandora_navigation" output="screen" />
+		
+<!--
+	<node name="dummy_fsm" 
+		type="dummy_fsm" pkg="pandora_navigation"  />
+-->
+		
+</launch>

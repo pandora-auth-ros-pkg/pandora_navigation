@@ -1,0 +1,9 @@
+#goal definition
+uint8 targetType
+uint8 TYPE_EXPLORATION=1
+uint8 TYPE_VICTIM=2
+---
+#result definition
+geometry_msgs/PoseStamped target_pose
+---
+#feedback

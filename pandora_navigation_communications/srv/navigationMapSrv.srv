@@ -1,0 +1,46 @@
+---
+int32 xsize
+int32 ysize
+uint8[] map
+int32 xRobot
+int32 yRobot
+float32 angleRobot
+int32[] xRobotTrajectory
+int32[] yRobotTrajectory
+int32 trajectorySize
+uint8[] coverage
+uint8[] voronoi
+int32[] voronodesx
+int32[] voronodesy
+int32[] neighborsFirst
+int32[] neighborsLast
+int32[] goalsx
+int32[] goalsy
+int32[] coverageLimitsx
+int32[] coverageLimitsy
+int32[] decompx
+int32[] decompy
+int32[] decompNeighborsFirst
+int32[] decompNeighborsLast
+float32 voltageMotors
+float32 voltagePC
+int32[] victimsx
+int32[] victimsy
+int32[] victimsToGox
+int32[] victimsToGoy
+string[] sensorIDGo
+string[] sensorIDFound
+int32 victimAppPointx
+int32 victimAppPointy
+int32[] victimAppPointsx
+int32[] victimAppPointsy	
+uint8[] valid
+int32[] hazmatx
+int32[] hazmaty
+uint8[] pattern
+
+int32 prevxmin
+int32 prevymin
+int32 prevxmax
+int32 prevymax
+

@@ -1,0 +1,16 @@
+<launch>
+		
+	<include file="$(find main_motor_and_slam_simulation)/launch/motor_sim.launch" />
+					
+	<node name="move_base_node" 
+		type="move_base_node" pkg="pandora_navigation" output="screen" />
+		
+	<node name="target_selector_node" 
+		type="target_selector_node" pkg="pandora_navigation" output="screen" />
+		
+<!--
+	<node name="dummy_fsm" 
+		type="dummy_fsm" pkg="pandora_navigation"  />
+-->
+		
+</launch>

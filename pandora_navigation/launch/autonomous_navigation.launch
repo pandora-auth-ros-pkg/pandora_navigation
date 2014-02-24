@@ -1,0 +1,16 @@
+<launch>
+	
+	
+	
+<!--
+	<node name="rviz_move_base_wrapper" 
+		type="rviz_move_base_wrapper.py" pkg="pandora_navigation"  />
+-->
+	
+	<node name="move_base_node" 
+		type="move_base_node" pkg="pandora_navigation"/>
+		
+	<node name="target_selector_node" 
+		type="target_selector_node" pkg="pandora_navigation"/>
+		
+</launch>

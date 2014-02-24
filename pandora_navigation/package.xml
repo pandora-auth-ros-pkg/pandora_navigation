@@ -1,0 +1,43 @@
+<package>
+  <name>pandora_navigation</name>
+  <version>0.0.0</version>
+  <description>pandora_navigation</description>
+  <maintainer email="aris.thallas@gmail.com">arm</maintainer>
+
+  <license>BSD</license>
+
+  <url type="website">http://ros.org/wiki/navigation</url>
+  <!-- <url type="bugtracker"></url> -->
+
+  <author>pandora</author>
+
+	<buildtool_depend>catkin</buildtool_depend>
+
+   <build_depend>roscpp</build_depend> 
+   <build_depend>actionlib</build_depend> 
+   <build_depend>pandora_navigation_communications</build_depend> 
+   <build_depend>state_manager</build_depend> 
+   <build_depend>tf</build_depend> 
+   <build_depend>diagnostic_updater</build_depend> 
+   <build_depend>image_transport</build_depend> 
+   <build_depend>cv_bridge</build_depend> 
+   <build_depend>sensor_msgs</build_depend> 
+   <build_depend>std_srvs</build_depend> 
+   <build_depend>visualization_msgs</build_depend> 
+   
+   <run_depend>roscpp</run_depend> 
+   <run_depend>actionlib</run_depend> 
+   <run_depend>pandora_navigation_communications</run_depend> 
+   <run_depend>state_manager</run_depend> 
+   <run_depend>tf</run_depend> 
+   <run_depend>diagnostic_updater</run_depend> 
+   <run_depend>image_transport</run_depend> 
+   <run_depend>cv_bridge</run_depend> 
+   <run_depend>sensor_msgs</run_depend> 
+   <run_depend>std_srvs</run_depend> 
+   
+
+  <export>
+
+  </export>
+</package>
