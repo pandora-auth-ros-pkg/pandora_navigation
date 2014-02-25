@@ -1,8 +1,0 @@
-<launch>
-	
-	<remap  from="/move_base" to="/move_base_simple" />
-				
-	<node name="dummy_fsm" 
-		type="dummy_fsm" pkg="pandora_navigation"  />
-		
-</launch>

@@ -1,0 +1,45 @@
+<package>
+  <name>pandora_target_selector</name>
+  <version>0.0.0</version>
+  <description>Target selector package for autonomous navigation.</description>
+  
+  <maintainer email="zalidis@gmail.com">Chris Zalidis</maintainer>
+
+  <license>BSD</license>
+
+  <url type="bugtracker">https://github.com/pandora-auth-ros-pkg/pandora_navigation/issues</url>
+  <url type="repository">https://github.com/pandora-auth-ros-pkg/pandora_navigation</url>
+
+  <author>Aris Thallas</author>
+
+  <buildtool_depend>catkin</buildtool_depend>
+
+  <build_depend>roscpp</build_depend> 
+  <build_depend>target_selector_communications</build_depend> 
+  <build_depend>data_fusion_communications</build_depend> 
+  <build_depend>pandora_navigation_communications</build_depend> 
+  <build_depend>tf</build_depend> 
+  <build_depend>geometry_msgs</build_depend> 
+  <build_depend>std_msgs</build_depend> 
+  <build_depend>nav_msgs</build_depend> 
+  <build_depend>std_srvs</build_depend> 
+  <build_depend>actionlib</build_depend> 
+  <build_depend>pandora_navigation_common</build_depend> 
+  <build_depend>pandora_path_planner</build_depend> 
+  
+  <run_depend>roscpp</run_depend> 
+  <run_depend>target_selector_communications</run_depend> 
+  <run_depend>data_fusion_communications</run_depend> 
+  <run_depend>pandora_navigation_communications</run_depend> 
+  <run_depend>tf</run_depend> 
+  <run_depend>geometry_msgs</run_depend> 
+  <run_depend>std_msgs</run_depend> 
+  <run_depend>nav_msgs</run_depend> 
+  <run_depend>std_srvs</run_depend> 
+  <run_depend>actionlib</run_depend> 
+  <run_depend>pandora_navigation_common</run_depend> 
+  <run_depend>pandora_path_planner</run_depend> 
+  
+  <export>
+  </export>
+</package>

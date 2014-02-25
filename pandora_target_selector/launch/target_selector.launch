@@ -1,0 +1,5 @@
+<launch>
+  
+  <node name="target_selector_node" type="target_selector_node" pkg="pandora_target_selector"/>
+
+</launch>

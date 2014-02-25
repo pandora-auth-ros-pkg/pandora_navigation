@@ -1,0 +1,29 @@
+<package>
+  <name>pandora_navigation_common</name>
+  <version>0.0.0</version>
+  <description>Common libraries for pandora navigation</description>
+  
+  <maintainer email="zalidis@gmail.com">Chris Zalidis</maintainer>
+
+  <license>BSD</license>
+
+  <url type="bugtracker">https://github.com/pandora-auth-ros-pkg/pandora_navigation/issues</url>
+  <url type="repository">https://github.com/pandora-auth-ros-pkg/pandora_navigation</url>
+
+  <author>Aris Thallas</author>
+
+  <buildtool_depend>catkin</buildtool_depend>
+
+  <build_depend>roscpp</build_depend> 
+  <build_depend>pandora_navigation_communications</build_depend> 
+  <build_depend>cv_bridge</build_depend> 
+  <build_depend>image_transport</build_depend> 
+  
+  <run_depend>roscpp</run_depend> 
+  <run_depend>pandora_navigation_communications</run_depend> 
+  <run_depend>cv_bridge</run_depend> 
+  <run_depend>image_transport</run_depend> 
+  
+  <export>
+  </export>
+</package>

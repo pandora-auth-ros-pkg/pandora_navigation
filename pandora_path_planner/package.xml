@@ -1,0 +1,28 @@
+<package>
+  <name>pandora_path_planner</name>
+  <version>0.0.0</version>
+  <description>Contains path planning algorithms</description>
+  
+  <maintainer email="zalidis@gmail.com">Chris Zalidis</maintainer>
+
+  <license>BSD</license>
+
+  <url type="bugtracker">https://github.com/pandora-auth-ros-pkg/pandora_navigation/issues</url>
+  <url type="repository">https://github.com/pandora-auth-ros-pkg/pandora_navigation</url>
+
+  <author>Aris Thallas</author>
+
+  <buildtool_depend>catkin</buildtool_depend>
+
+   <build_depend>roscpp</build_depend> 
+   <build_depend>geometry_msgs</build_depend> 
+   <build_depend>pandora_navigation_common</build_depend> 
+   
+   <run_depend>roscpp</run_depend> 
+   <run_depend>geometry_msgs</run_depend> 
+   <run_depend>pandora_navigation_common</run_depend> 
+   
+  <export>
+
+  </export>
+</package>
