@@ -12,6 +12,7 @@ find_package(catkin REQUIRED COMPONENTS roscpp
 					cv_bridge 
 					sensor_msgs
 					std_srvs
+          move_base_msgs
 					)
 
 # Set the build type.  Options are:
