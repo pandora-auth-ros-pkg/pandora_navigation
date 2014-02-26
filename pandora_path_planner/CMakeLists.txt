@@ -79,7 +79,9 @@ target_link_libraries(tree_node ${catkin_LIBRARIES} )
 add_library(rrt_tree
 	src/path_generator/tree_path_generator/rrt_tree.cpp
 )
-target_link_libraries(rrt_tree ${catkin_LIBRARIES} )
+target_link_libraries(rrt_tree 
+		${catkin_LIBRARIES} 
+		tree_node)
 
 add_library(tree_path_generator
 	src/path_generator/tree_path_generator/tree_path_generator.cpp

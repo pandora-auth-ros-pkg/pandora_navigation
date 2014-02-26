@@ -55,7 +55,9 @@ target_link_libraries(voronoi_nodes ${catkin_LIBRARIES} )
 add_library(partition_graph_nodes
 	src/nodes/partition_graph_nodes.cpp
 )
-target_link_libraries(partition_graph_nodes ${catkin_LIBRARIES} )
+target_link_libraries(partition_graph_nodes 
+    ${catkin_LIBRARIES} 
+    node)
 ####################################################
 
 

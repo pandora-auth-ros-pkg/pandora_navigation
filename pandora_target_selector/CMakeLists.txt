@@ -55,7 +55,9 @@ target_link_libraries(target_selector ${catkin_LIBRARIES} )
 add_library(exploration_target_selector
 	src/exploration_target_selector.cpp
 )
-target_link_libraries(exploration_target_selector ${catkin_LIBRARIES} )
+target_link_libraries(exploration_target_selector 
+		${catkin_LIBRARIES} 
+		target_selector)
 
 add_library(closest_unexplored_target_selector
 	src/closest_unexplored_target_selector.cpp
