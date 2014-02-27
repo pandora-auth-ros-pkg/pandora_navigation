@@ -1,5 +1,5 @@
 <launch>
   
-  <node name="move_base_node" type="move_base_node" pkg="move_base"/>
+  <node name="move_base_node" type="move_base_node" pkg="pandora_move_base"/>
 
 </launch>
