@@ -27,7 +27,7 @@ TargetSelectorController::TargetSelectorController(void): selectTargetActionServ
 	_coverageCallbackTimer = nh_.createTimer(ros::Duration(1),&TargetSelectorController::coverageTimerCallback,this,false,false);
 	_coveragePatchingTimer = nh_.createTimer(ros::Duration(1),&TargetSelectorController::patchCoverage,this,false,false);
 	
-	_occupancyGridPublisher = nh_.advertise<nav_msgs::OccupancyGrid>("/navigation/occupancyGridCoverage",1000);
+	_occupancyGridPublisher = nh_.advertise<nav_msgs::OccupancyGrid>("/navigation/coverage",1000);
 	
 	while(!_mapUpdater.slamInitialized && ros::ok()){
 		ros::Duration(1).sleep();

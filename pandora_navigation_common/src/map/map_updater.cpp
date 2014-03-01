@@ -22,7 +22,7 @@ void MapUpdater::startSubscriber(){
 	}
 	else {
 		ROS_ERROR("[MapUpdater] : Parameter slamMapTopic not found. Using Default");
-		slamMapTopic = "/slam/occupancyGridMap" ;
+		slamMapTopic = "/slam/map" ;
 	}
 	
 	_mapSubscriber = _nh.subscribe(slamMapTopic,1,&MapUpdater::updateMapCallback,this);
