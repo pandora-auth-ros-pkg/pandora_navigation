@@ -1,0 +1,20 @@
+<package>
+  <name>pandora_move_base</name>
+  <version>0.0.0</version>
+  <description>Exploration and navigation controller for PANDORA UGV.</description>
+  
+  <maintainer email="zalidis@gmail.com">Chris Zalidis</maintainer>
+
+  <license>BSD</license>
+
+  <url type="bugtracker">https://github.com/pandora-auth-ros-pkg/pandora_navigation/issues</url>
+  <url type="repository">https://github.com/pandora-auth-ros-pkg/pandora_navigation</url>
+
+  <author>Chris Zalidis</author>
+
+  <buildtool_depend>catkin</buildtool_depend>
+
+  
+  <export>
+  </export>
+</package>

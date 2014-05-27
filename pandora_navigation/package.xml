@@ -1,0 +1,27 @@
+<?xml version="1.0"?>
+<package>
+  <name>pandora_navigation</name>
+  <version>0.1.0</version>
+  <description>Containts algorithms for autonomous navigation.</description>
+
+  <maintainer email="zalidis@gmail.com">Chris Zalidis</maintainer>
+
+  <license>BSD</license>
+
+  <url type="bugtracker">https://github.com/pandora-auth-ros-pkg/pandora_navigation/issues</url>
+  <url type="repository">https://github.com/pandora-auth-ros-pkg/pandora_navigation</url>
+
+  <author>Chris Zalidis</author>
+  
+  <buildtool_depend>catkin</buildtool_depend>
+  
+  
+  <run_depend>pandora_navigation_msgs</run_depend>
+  <run_depend>pandora_local_planner</run_depend>
+  <run_depend>pandora_move_base</run_depend>
+    
+
+  <export>
+    <metapackage/>
+  </export>  
+</package>
