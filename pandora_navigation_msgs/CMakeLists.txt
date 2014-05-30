@@ -4,6 +4,12 @@ find_package(catkin REQUIRED COMPONENTS
   message_generation
   std_msgs
   actionlib_msgs
+  geometry_msgs
+)
+
+add_message_files(
+  FILES
+  ArenaTypeMsg.msg
 )
 
 add_action_files(
@@ -15,6 +21,7 @@ generate_messages(
   DEPENDENCIES
     std_msgs
     actionlib_msgs
+    geometry_msgs
 )
 
 catkin_package(
@@ -22,4 +29,5 @@ catkin_package(
     message_runtime
     std_msgs
     actionlib_msgs
+    geometry_msgs
 )
