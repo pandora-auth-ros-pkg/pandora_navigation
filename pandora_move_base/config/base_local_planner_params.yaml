@@ -1,0 +1,40 @@
+controller_frequency: 10.0
+base_local_planner: base_local_planner/TrajectoryPlannerROS
+#~ base_local_planner: dwa_local_planner/DWAPlannerROS
+
+TrajectoryPlannerROS:
+  max_vel_x: 0.4
+  min_vel_x: 0.05
+  max_rotational_vel: 2.0
+  min_in_place_rotational_vel: 0.2
+  acc_lim_th: 1.0
+  acc_lim_x: 1.0
+  acc_lim_y: 0.0
+
+  escape_vel: -0.5
+  escape_reset_dist: 0.25
+
+  holonomic_robot: false
+  yaw_goal_tolerance: 0.5
+  xy_goal_tolerance: 0.2
+  
+  goal_distance_bias: 0.4
+  path_distance_bias: 1.0
+  occdist_scale: 0.1
+
+  sim_time: 1.5
+  heading_lookahead: 0.4
+  oscillation_reset_dist: 0.35
+
+  vx_samples: 8
+  vtheta_samples: 20
+  dwa: false
+
+  publish_cost_grid_pc: true
+  meter_scoring: true
+
+DWAPlannerROS:
+  publish_cost_grid_pc: true
+  publish_traj_pc: true
+  cheat_factor: 2
+  
