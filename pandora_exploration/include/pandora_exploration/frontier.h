@@ -1,0 +1,39 @@
+#ifndef FRONTIER_H_
+#define FRONTIER_H_
+
+#include <boost/shared_ptr.hpp>
+#include <geometry_msgs/Point.h>
+#include <nav_msgs/Path.h>
+#include <std_msgs/Header.h>
+
+namespace pandora_exploration {
+
+  class Frontier
+  {
+   public:
+    Frontier() :
+      size(0),
+      min_distance(0.0),
+      cost(0.0)
+    { }
+
+    std_msgs::Header header;
+    
+    uint32_t size;
+    //min distance using bfs
+    float min_distance;
+    float cost;
+    
+    geometry_msgs::Point initial;
+    geometry_msgs::Point centroid;
+    geometry_msgs::Point middle;
+
+    nav_msgs::Path path;
+  };
+
+  typedef std::list<Frontier> FrontierList;
+  typedef boost::shared_ptr<FrontierList> FrontierListPtr;
+  
+} // namespace pandora_exploration
+
+#endif
