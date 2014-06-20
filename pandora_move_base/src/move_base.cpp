@@ -195,13 +195,13 @@ namespace move_base {
     //we're all set up now so we can start the action server
     as_->start();
 
-    dsrv_ = new dynamic_reconfigure::Server<move_base::MoveBaseConfig>(ros::NodeHandle("~"));
-    dynamic_reconfigure::Server<move_base::MoveBaseConfig>::CallbackType cb = boost::bind(&MoveBase::reconfigureCB, this, _1, _2);
+    dsrv_ = new dynamic_reconfigure::Server<pandora_move_base::MoveBaseConfig>(ros::NodeHandle("~"));
+    dynamic_reconfigure::Server<pandora_move_base::MoveBaseConfig>::CallbackType cb = boost::bind(&MoveBase::reconfigureCB, this, _1, _2);
     dsrv_->setCallback(cb);
 
   }
 
-  void MoveBase::reconfigureCB(move_base::MoveBaseConfig &config, uint32_t level){
+  void MoveBase::reconfigureCB(pandora_move_base::MoveBaseConfig &config, uint32_t level){
     boost::recursive_mutex::scoped_lock l(configuration_mutex_);
 
     //The first time we're called, we just want to make sure we have the
@@ -907,7 +907,6 @@ namespace move_base {
                            cmd_vel.linear.x, cmd_vel.linear.y, cmd_vel.angular.z );
           last_valid_control_ = ros::Time::now();
           //make sure that we send the velocity command to the base
-          cmd_vel.angular.z *= 2.0;
           vel_pub_.publish(cmd_vel);
           if(recovery_trigger_ == CONTROLLING_R)
             recovery_index_ = 0;

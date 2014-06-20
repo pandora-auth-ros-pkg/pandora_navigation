@@ -57,7 +57,7 @@
 #include <std_srvs/Empty.h>
 
 #include <dynamic_reconfigure/server.h>
-#include "move_base/MoveBaseConfig.h"
+#include "pandora_move_base/MoveBaseConfig.h"
 
 namespace move_base {
   //typedefs to help us out with the action server so that we don't hace to type so much
@@ -214,12 +214,12 @@ namespace move_base {
 
 
       boost::recursive_mutex configuration_mutex_;
-      dynamic_reconfigure::Server<move_base::MoveBaseConfig> *dsrv_;
+      dynamic_reconfigure::Server<pandora_move_base::MoveBaseConfig> *dsrv_;
       
-      void reconfigureCB(move_base::MoveBaseConfig &config, uint32_t level);
+      void reconfigureCB(pandora_move_base::MoveBaseConfig &config, uint32_t level);
 
-      move_base::MoveBaseConfig last_config_;
-      move_base::MoveBaseConfig default_config_;
+      pandora_move_base::MoveBaseConfig last_config_;
+      pandora_move_base::MoveBaseConfig default_config_;
       bool setup_, p_freq_change_, c_freq_change_;
       bool new_global_plan_;
 
