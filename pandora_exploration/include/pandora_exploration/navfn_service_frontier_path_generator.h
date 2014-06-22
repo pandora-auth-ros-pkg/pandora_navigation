@@ -35,59 +35,43 @@
 * Author: Chris Zalidis <zalidis@gmail.com>
 *********************************************************************/
 
-#ifndef PANDORA_EXPLORATION_FRONTIER_GOAL_SELECTOR_H
-#define PANDORA_EXPLORATION_FRONTIER_GOAL_SELECTOR_H
+#ifndef PANDORA_EXPLORATION_NAVFN_SERVICE_FRONTIER_PATH_GENERATOR_H
+#define PANDORA_EXPLORATION_NAVFN_SERVICE_FRONTIER_PATH_GENERATOR_H
 
-#include <costmap_2d/costmap_2d_ros.h>
-#include <costmap_2d/costmap_2d.h>
-#include <tf/transform_listener.h>
-#include <visualization_msgs/MarkerArray.h>
+#include <ros/ros.h>
+#include <nav_msgs/GetPlan.h>
+#include <boost/foreach.hpp>
 
-#include "pandora_exploration/goal_selector.h"
-#include "pandora_exploration/frontier.h"
-#include "pandora_exploration/map_frontier_search.h"
-#include "pandora_exploration/navfn_frontier_path_generator.h"
-#include "pandora_exploration/navfn_service_frontier_path_generator.h"
-#include "pandora_exploration/distance_cost_function.h"
-#include "pandora_exploration/size_cost_function.h"
+#include "pandora_exploration/frontier_path_generator.h"
 
 namespace pandora_exploration {
 
-  class FrontierGoalSelector : public GoalSelector
+  class NavfnServiceFrontierPathGenerator : public FrontierPathGenerator
   {
    public:
 
-    FrontierGoalSelector();
+    NavfnServiceFrontierPathGenerator(std::string frontier_representation,
+                        ros::Duration max_duration = ros::Duration(5.0));
 
-    virtual bool findNextGoal(geometry_msgs::PoseStamped* goal);
+    virtual bool findPaths(const geometry_msgs::PoseStamped& start, const FrontierListPtr& frontier_list);
 
-    ~FrontierGoalSelector() {}
+    inline void setExpiration(const ros::Duration& max_duration)
+    {
+      max_duration_ = max_duration;
+    }
+
+    ~NavfnServiceFrontierPathGenerator() {}
 
    private:
 
-    bool findBestFrontier(Frontier* selected);
-    void visualizeFrontiers();
+    ros::NodeHandle nh_;
+    ros::NodeHandle pnh_;
 
-   private:
-
-    ros::Publisher frontier_marker_pub_;
-    boost::shared_ptr<costmap_2d::Costmap2DROS> explore_costmap_ros_;
-    FrontierListPtr frontier_list_;
-
-    tf::TransformListener tf_listener_;
+    ros::Duration max_duration_;
     
-    std::vector<FrontierSearchPtr> frontier_search_vec_;
-    std::vector<FrontierCostFunctionPtr> frontier_cost_function_vec_;
-    FrontierPathGeneratorPtr frontier_path_generator_;
-
-    std::string frontier_representation_;
-    bool visualize_paths_;
-
-    Frontier current_frontier_;
-
+    ros::ServiceClient path_client_;
   };
-
 
 } // namespace pandora_exploration
 
-#endif // PANDORA_EXPLORATION_FRONTIER_GOAL_SELECTOR_H
+#endif // PANDORA_EXPLORATION_NAVFN_SERVICE_FRONTIER_PATH_GENERATOR_H

@@ -20,15 +20,15 @@ std::list<Frontier> MapFrontierSearch::searchFrom(geometry_msgs::Point position)
 
     std::list<Frontier> frontier_list;
 
+    //make sure map is consistent and locked for duration of search
+    boost::unique_lock < boost::shared_mutex > lock(*(costmap_->getLock()));
+
     //Sanity check that robot is inside costmap bounds before searching
     unsigned int mx,my;
     if (!costmap_->worldToMap(position.x,position.y,mx,my)){
         ROS_ERROR("Robot out of costmap bounds, cannot search for frontiers");
         return frontier_list;
     }
-
-    //make sure map is consistent and locked for duration of search
-    boost::unique_lock < boost::shared_mutex > lock(*(costmap_->getLock()));
 
     unsigned char* map = costmap_->getCharMap();
     unsigned int size_x = costmap_->getSizeInCellsX();

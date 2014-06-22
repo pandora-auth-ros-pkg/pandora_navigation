@@ -35,59 +35,68 @@
 * Author: Chris Zalidis <zalidis@gmail.com>
 *********************************************************************/
 
-#ifndef PANDORA_EXPLORATION_FRONTIER_GOAL_SELECTOR_H
-#define PANDORA_EXPLORATION_FRONTIER_GOAL_SELECTOR_H
-
-#include <costmap_2d/costmap_2d_ros.h>
-#include <costmap_2d/costmap_2d.h>
-#include <tf/transform_listener.h>
-#include <visualization_msgs/MarkerArray.h>
-
-#include "pandora_exploration/goal_selector.h"
-#include "pandora_exploration/frontier.h"
-#include "pandora_exploration/map_frontier_search.h"
-#include "pandora_exploration/navfn_frontier_path_generator.h"
 #include "pandora_exploration/navfn_service_frontier_path_generator.h"
-#include "pandora_exploration/distance_cost_function.h"
-#include "pandora_exploration/size_cost_function.h"
 
 namespace pandora_exploration {
 
-  class FrontierGoalSelector : public GoalSelector
+NavfnServiceFrontierPathGenerator::NavfnServiceFrontierPathGenerator(std::string frontier_representation,
+                                                                        ros::Duration max_duration)
+  : pnh_("~"),
+    FrontierPathGenerator(frontier_representation),
+    max_duration_(max_duration)
+{
+  std::string service_name;
+  pnh_.param<std::string>("plan_service_name", service_name, "move_base/make_plan");
+  path_client_ = nh_.serviceClient<nav_msgs::GetPlan>(service_name);
+}
+
+bool NavfnServiceFrontierPathGenerator::findPaths(const geometry_msgs::PoseStamped& start,
+                                                            const FrontierListPtr& frontier_list)
+{
+  //find service
+  if (!path_client_.waitForExistence()) {
+    ROS_ERROR("[%s] Could not connect to make_plan service!", ros::this_node::getName().c_str());
+    return false;
+  }
+
+  //track start
+  ros::Time start_time = ros::Time::now();
+
+  //calculate path for each frontier
+  BOOST_FOREACH(Frontier& frontier, *frontier_list)
   {
-   public:
+    nav_msgs::GetPlan srv;
+    srv.request.start = start;
 
-    FrontierGoalSelector();
-
-    virtual bool findNextGoal(geometry_msgs::PoseStamped* goal);
-
-    ~FrontierGoalSelector() {}
-
-   private:
-
-    bool findBestFrontier(Frontier* selected);
-    void visualizeFrontiers();
-
-   private:
-
-    ros::Publisher frontier_marker_pub_;
-    boost::shared_ptr<costmap_2d::Costmap2DROS> explore_costmap_ros_;
-    FrontierListPtr frontier_list_;
-
-    tf::TransformListener tf_listener_;
+    srv.request.goal.header = frontier.header;
+    //check to what point we want to plan
+    if (frontier_representation_ == "centroid") {
+      srv.request.goal.pose.position = frontier.centroid;
+    }
+    else if (frontier_representation_ == "middle") {
+      srv.request.goal.pose.position = frontier.middle;
+    }
+    else {
+      srv.request.goal.pose.position = frontier.initial;
+    }
     
-    std::vector<FrontierSearchPtr> frontier_search_vec_;
-    std::vector<FrontierCostFunctionPtr> frontier_cost_function_vec_;
-    FrontierPathGeneratorPtr frontier_path_generator_;
+    srv.request.goal.pose.orientation.w = 1.0;
 
-    std::string frontier_representation_;
-    bool visualize_paths_;
+    if (!path_client_.call(srv)) {
+      ROS_ERROR("[%s] make_plan did not respond!", ros::this_node::getName().c_str());
+      return false;
+    }
 
-    Frontier current_frontier_;
+    frontier.path = srv.response.plan;
 
-  };
+    if (ros::Time::now() - start_time > max_duration_)
+    {
+      ROS_WARN("[%s] Time expired!", ros::this_node::getName().c_str());
+      break;
+    }
+  }
 
+  return true;
+}
 
 } // namespace pandora_exploration
-
-#endif // PANDORA_EXPLORATION_FRONTIER_GOAL_SELECTOR_H

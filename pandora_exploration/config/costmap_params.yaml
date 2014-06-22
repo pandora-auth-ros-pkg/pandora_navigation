@@ -1,4 +1,4 @@
-footprint: [[-0.28, -0.25], [-0.28, 0.25], [0.28, 0.25], [0.28, -0.25]]
+footprint: [[-0.29, -0.21], [-0.29, 0.21], [0.29, 0.21], [0.29, -0.21]]
 footprint_padding: 0.01
 
 transform_tolerance: 0.5
@@ -23,4 +23,4 @@ static:
   unknown_cost_value: 51
 
 inflation:
-  inflation_radius: 0.28
+  inflation_radius: 0.22

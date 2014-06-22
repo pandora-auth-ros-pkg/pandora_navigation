@@ -11,6 +11,8 @@ find_package(catkin REQUIRED
       move_base_msgs
       costmap_2d
       nav_msgs
+      pluginlib
+      nav_core
 )
 
 
@@ -25,6 +27,8 @@ catkin_package(
     move_base_msgs
     costmap_2d
     nav_msgs
+    pluginlib
+    nav_core
   INCLUDE_DIRS
     include
 #  LIBRARIES
@@ -39,7 +43,10 @@ include_directories(
 add_library(frontier_searchers src/map_frontier_search.cpp)
 target_link_libraries(frontier_searchers ${catkin_LIBRARIES})
 
-add_library(frontier_path_generators src/navfn_frontier_path_generator.cpp)
+add_library(frontier_path_generators
+    src/navfn_frontier_path_generator.cpp
+    src/navfn_service_frontier_path_generator.cpp
+)
 target_link_libraries(frontier_path_generators ${catkin_LIBRARIES})
 
 add_library(frontier_cost_functions

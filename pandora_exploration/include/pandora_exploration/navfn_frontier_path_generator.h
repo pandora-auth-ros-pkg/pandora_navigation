@@ -42,6 +42,10 @@
 #include <nav_msgs/GetPlan.h>
 #include <boost/foreach.hpp>
 
+#include <costmap_2d/costmap_2d_ros.h>
+#include <nav_core/base_global_planner.h>
+#include <pluginlib/class_loader.h>
+
 #include "pandora_exploration/frontier_path_generator.h"
 
 namespace pandora_exploration {
@@ -50,7 +54,8 @@ namespace pandora_exploration {
   {
    public:
 
-    NavfnFrontierPathGenerator(std::string frontier_representation);
+    NavfnFrontierPathGenerator(std::string frontier_representation,
+      const boost::shared_ptr<costmap_2d::Costmap2DROS>& costmap_ros);
 
     virtual bool findPaths(const geometry_msgs::PoseStamped& start, const FrontierListPtr& frontier_list);
 
@@ -58,10 +63,12 @@ namespace pandora_exploration {
 
    private:
 
-    ros::NodeHandle nh_;
     ros::NodeHandle pnh_;
-    
-    ros::ServiceClient path_client_;
+
+    boost::shared_ptr<nav_core::BaseGlobalPlanner> planner_;
+    pluginlib::ClassLoader<nav_core::BaseGlobalPlanner> planner_loader_;
+
+    boost::shared_ptr<costmap_2d::Costmap2DROS> costmap_ros_;
   };
 
 } // namespace pandora_exploration

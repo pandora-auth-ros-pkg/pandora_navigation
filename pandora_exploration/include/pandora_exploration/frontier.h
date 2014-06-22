@@ -17,6 +17,13 @@ namespace pandora_exploration {
       cost(0.0)
     { }
 
+    bool operator< (const Frontier& other)
+    {
+      return (this->min_distance < other.min_distance);
+    }
+    
+   public:
+   
     std_msgs::Header header;
     
     uint32_t size;

@@ -59,6 +59,11 @@ FrontierGoalSelector::FrontierGoalSelector() :
 
   //visualize paths to all frontiers
   private_nh.param<bool>("visualize_paths", visualize_paths_, false);
+
+  //planner timeout duration;
+  double duration;
+  private_nh.param<double>("timeout_duration", duration, 1.0);
+  ros::Duration expiration(duration);
   
   //set-up map frontier search
   FrontierSearchPtr map_frontier_search(
@@ -67,7 +72,8 @@ FrontierGoalSelector::FrontierGoalSelector() :
   frontier_search_vec_.push_back(map_frontier_search);
 
   //set-up navfn path generator
-  frontier_path_generator_.reset( new NavfnFrontierPathGenerator(frontier_representation_) );
+//~   frontier_path_generator_.reset( new NavfnFrontierPathGenerator(frontier_representation_, explore_costmap_ros_) );
+  frontier_path_generator_.reset( new NavfnServiceFrontierPathGenerator(frontier_representation_, expiration) );
 
   //set-up cost functions
   FrontierCostFunctionPtr size_cost_function( new SizeCostFunction(size_scale) );
@@ -104,6 +110,9 @@ bool FrontierGoalSelector::findNextGoal(geometry_msgs::PoseStamped* goal)
     ROS_ERROR("No frontiers found, exploration complete");
     return false;
   }
+
+  //sort frontier list so closer frontier are first
+  frontier_list_->sort();
 
   //find paths to all frontiers
   if (!frontier_path_generator_->findPaths(current_pose, frontier_list_)) {

@@ -39,49 +39,61 @@
 
 namespace pandora_exploration {
 
-NavfnFrontierPathGenerator::NavfnFrontierPathGenerator(std::string frontier_representation)
-  : pnh_("~"), FrontierPathGenerator(frontier_representation)
+NavfnFrontierPathGenerator::NavfnFrontierPathGenerator(std::string frontier_representation,
+          const boost::shared_ptr<costmap_2d::Costmap2DROS>& costmap_ros)
+  : pnh_("~"),
+    costmap_ros_(costmap_ros),
+    FrontierPathGenerator(frontier_representation),
+    planner_loader_("nav_core", "nav_core::BaseGlobalPlanner")
 {
-  std::string service_name;
-  pnh_.param<std::string>("plan_service_name", service_name, "move_base/make_plan");
-  path_client_ = nh_.serviceClient<nav_msgs::GetPlan>(service_name);
+  //get planner's name 
+  std::string planner_name;
+  pnh_.param<std::string>("global_planner", planner_name, "navfn/NavfnROS");
+
+  //check if planner plugin exists
+  if(!planner_loader_.isClassAvailable(planner_name)) {
+    ROS_FATAL("[%s] Could not find planner plugin %s", ros::this_node::getName().c_str(), planner_name.c_str());
+    ROS_BREAK();
+  }
+
+  //create planner
+  try {
+    planner_ = planner_loader_.createInstance(planner_name);
+    planner_->initialize(planner_loader_.getName(planner_name), costmap_ros_.get());
+  }
+  catch (const pluginlib::PluginlibException& ex) {
+    ROS_FATAL("[%s] %s", ros::this_node::getName().c_str(), ex.what());
+    ROS_BREAK();
+  }
 }
 
 bool NavfnFrontierPathGenerator::findPaths(const geometry_msgs::PoseStamped& start,
                                                             const FrontierListPtr& frontier_list)
 {
-  //find service
-  if (!path_client_.waitForExistence()) {
-    ROS_ERROR("[%s] Could not connect to make_plan service!", ros::this_node::getName().c_str());
-    return false;
-  }
-
   //calculate path for each frontier
   BOOST_FOREACH(Frontier& frontier, *frontier_list)
   {
-    nav_msgs::GetPlan srv;
-    srv.request.start = start;
+    nav_msgs::Path plan;
+    geometry_msgs::PoseStamped goal;
 
-    srv.request.goal.header = frontier.header;
+    goal.header = frontier.header;
+
     //check to what point we want to plan
     if (frontier_representation_ == "centroid") {
-      srv.request.goal.pose.position = frontier.centroid;
+      goal.pose.position = frontier.centroid;
     }
     else if (frontier_representation_ == "middle") {
-      srv.request.goal.pose.position = frontier.middle;
+      goal.pose.position = frontier.middle;
     }
     else {
-      srv.request.goal.pose.position = frontier.initial;
+      goal.pose.position = frontier.initial;
     }
-    
-    srv.request.goal.pose.orientation.w = 1.0;
+    goal.pose.orientation.w = 1.0;
 
-    if (!path_client_.call(srv)) {
-      ROS_ERROR("[%s] make_plan did not respond!", ros::this_node::getName().c_str());
-      return false;
-    }
+    planner_->makePlan(start, goal, plan.poses);
 
-    frontier.path = srv.response.plan;
+    plan.header = frontier.header;
+    frontier.path = plan;
   }
 
   return true;
