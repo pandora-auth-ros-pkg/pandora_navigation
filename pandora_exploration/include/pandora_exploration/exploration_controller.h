@@ -48,6 +48,7 @@
 #include <pandora_navigation_msgs/DoExplorationAction.h>
 #include <move_base_msgs/MoveBaseAction.h>
 
+#include "pandora_exploration/goal_selector.h"
 #include "pandora_exploration/frontier_goal_selector.h"
 
 namespace pandora_exploration {
@@ -64,8 +65,15 @@ namespace pandora_exploration {
     void feedbackMovingCb(const move_base_msgs::MoveBaseFeedbackConstPtr& feedback);
     void doneMovingCb(const actionlib::SimpleClientGoalState& state,
                               const move_base_msgs::MoveBaseResultConstPtr& result);
+    void preemptCb();
 
+   private:
 
+    bool isGoalReached();
+    bool isTimeReached();
+    void computationThread();
+    void cleanComputationThread();
+    
    private:
   
     ros::NodeHandle nh_;
@@ -74,7 +82,28 @@ namespace pandora_exploration {
     DoExplorationServer do_exploration_server_;
     MoveBaseClient move_base_client_;
 
-    std::vector<GoalSelectorPtr> goal_selectors_; 
+    GoalSelectorPtr goal_selector_;
+
+    ros::Duration goal_timeout_;
+    
+    //count how many times robot couldn't move
+    int abort_count_;
+    int max_abortions_;
+    bool aborted_;
+    
+    //count how many times we couldn't find a goal
+    int goal_searches_count_;
+    int max_goal_searches_;
+
+    //distance for goal reached
+    double goal_reached_dist_;
+
+    //current goal holder
+    geometry_msgs::PoseStamped current_goal_;
+
+    pandora_navigation_msgs::DoExplorationFeedback feedback_;
+    
+    boost::shared_ptr<boost::thread> computation_thread_;
   };
 
 } // namespace pandora_exploration

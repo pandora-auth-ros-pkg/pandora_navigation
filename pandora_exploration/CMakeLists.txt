@@ -63,9 +63,13 @@ target_link_libraries(frontier_goal_selector
     frontier_cost_functions
 )
 
-#~ add_library(pandora_frontier_exploration
-    #~ src/frontier_search.cpp src/frontier_visualizer.cpp)
-#~ target_link_libraries(pandora_frontier_exploration ${catkin_LIBRARIES})
+add_executable(exploration_controller src/exploration_controller.cpp src/exploration_controller_node.cpp)
+add_dependencies(exploration_controller pandora_navigation_msgs_gencpp)
+target_link_libraries(exploration_controller
+    ${catkin_LIBRARIES}
+    frontier_goal_selector
+)
+
 
 if(CATKIN_ENABLE_TESTING)
   add_subdirectory(test)

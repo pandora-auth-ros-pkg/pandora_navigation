@@ -62,7 +62,7 @@ FrontierGoalSelector::FrontierGoalSelector() :
 
   //planner timeout duration;
   double duration;
-  private_nh.param<double>("timeout_duration", duration, 1.0);
+  private_nh.param<double>("planner_timeout_duration", duration, 1.0);
   ros::Duration expiration(duration);
   
   //set-up map frontier search
@@ -112,6 +112,7 @@ bool FrontierGoalSelector::findNextGoal(geometry_msgs::PoseStamped* goal)
   }
 
   //sort frontier list so closer frontier are first
+  //sorting in respect with min_distance
   frontier_list_->sort();
 
   //find paths to all frontiers

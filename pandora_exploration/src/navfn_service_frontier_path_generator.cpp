@@ -79,9 +79,11 @@ bool NavfnServiceFrontierPathGenerator::findPaths(const geometry_msgs::PoseStamp
     else {
       srv.request.goal.pose.position = frontier.initial;
     }
-    
+
+    //send a valid pose
     srv.request.goal.pose.orientation.w = 1.0;
 
+    //call service
     if (!path_client_.call(srv)) {
       ROS_ERROR("[%s] make_plan did not respond!", ros::this_node::getName().c_str());
       return false;
@@ -89,9 +91,10 @@ bool NavfnServiceFrontierPathGenerator::findPaths(const geometry_msgs::PoseStamp
 
     frontier.path = srv.response.plan;
 
+    //if max time alloted return
     if (ros::Time::now() - start_time > max_duration_)
     {
-      ROS_WARN("[%s] Time expired!", ros::this_node::getName().c_str());
+      ROS_DEBUG("[%s] Time expired!", ros::this_node::getName().c_str());
       break;
     }
   }
