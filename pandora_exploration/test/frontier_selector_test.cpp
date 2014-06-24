@@ -6,9 +6,10 @@
 void update_thread(pandora_exploration::FrontierGoalSelector* frontier_selector)
 {
   ros::Rate rate(1.0);
-
+  static unsigned int counter = 0;
   while (ros::ok()) {
-    ROS_INFO("Updating frontiers");
+    ROS_INFO("Updating frontiers - %d", counter);
+    counter += 1;
 
     geometry_msgs::PoseStamped goal;
     frontier_selector->findNextGoal(&goal);

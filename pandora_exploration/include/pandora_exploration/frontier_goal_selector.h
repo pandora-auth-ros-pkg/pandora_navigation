@@ -67,6 +67,7 @@ namespace pandora_exploration {
 
     bool findBestFrontier(Frontier* selected);
     void visualizeFrontiers();
+    void groupFrontiers(void);
 
    private:
 
@@ -85,6 +86,7 @@ namespace pandora_exploration {
 
     Frontier current_frontier_;
 
+    double mergable_frontiers_deviation_;
   };
 
 

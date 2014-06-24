@@ -11,6 +11,9 @@ planner_timeout_duration: 1.0
 frontier_representation: initial
 visualize_paths: true 
 
+# deviation of to-be-merged frontiers in meters
+mergable_frontiers_deviation: 0.5
+
 cost_functions:
   dist_scale: 0.6
   size_scale: 2.0

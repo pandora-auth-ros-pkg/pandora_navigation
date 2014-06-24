@@ -59,7 +59,10 @@ FrontierGoalSelector::FrontierGoalSelector() :
 
   //visualize paths to all frontiers
   private_nh.param<bool>("visualize_paths", visualize_paths_, false);
-
+  
+  //load mergable frontier's deviation
+  private_nh.param<double>("mergable_frontiers_deviation", mergable_frontiers_deviation_, 0.5);
+  
   //planner timeout duration;
   double duration;
   private_nh.param<double>("planner_timeout_duration", duration, 1.0);
@@ -110,7 +113,10 @@ bool FrontierGoalSelector::findNextGoal(geometry_msgs::PoseStamped* goal)
     ROS_ERROR("No frontiers found, exploration complete");
     return false;
   }
-
+  
+  //groups the frontier points according to proximity
+  groupFrontiers();
+  
   //sort frontier list so closer frontier are first
   //sorting in respect with min_distance
   frontier_list_->sort();
@@ -162,6 +168,46 @@ bool FrontierGoalSelector::findBestFrontier(Frontier* selected)
     return false;
   
   return true;
+}
+
+void FrontierGoalSelector::groupFrontiers(void)
+{
+  bool change_occured = true;
+  while(change_occured)
+  {
+    change_occured = false;
+    for(FrontierListIt frontier = frontier_list_->begin(); 
+      frontier != frontier_list_->end(); frontier++)
+    {
+      for(FrontierListIt frontier_inner = frontier_list_->begin(); 
+        frontier_inner != frontier_list_->end(); frontier_inner++)
+      {
+        
+        if(frontier == frontier_inner) continue;
+        
+        if( frontier->proximity(*frontier_inner, frontier_representation_, 
+          mergable_frontiers_deviation_) 
+          > 0.5 )
+        {
+          // must join frontiers
+          if(frontier->size > frontier_inner->size)
+          {
+            frontier_list_->erase(frontier_inner);
+          }
+          else
+          {
+            frontier_list_->erase(frontier);
+          }
+          change_occured = true;
+          break;
+        }
+      }
+      if(change_occured)
+      {
+        break;
+      }
+    }
+  }
 }
 
 void FrontierGoalSelector::visualizeFrontiers()
