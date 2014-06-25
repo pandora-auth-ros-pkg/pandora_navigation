@@ -19,6 +19,7 @@
   <run_depend>pandora_navigation_msgs</run_depend>
   <run_depend>pandora_local_planner</run_depend>
   <run_depend>pandora_move_base</run_depend>
+  <run_depend>pandora_costmap</run_depend>
     
 
   <export>
