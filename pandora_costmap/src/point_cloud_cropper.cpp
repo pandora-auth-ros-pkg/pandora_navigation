@@ -121,23 +121,9 @@ namespace pandora_costmap {
     outlier.setMinNeighborsInRadius(5);
     outlier.filter(*pointCloudFinal);
 
-
-     //try {
-     //  pointCloudOut->header = pointCloudMin->header;
-     //  pcl_ros::transformPointCloud("map", *pointCloudOut, *pointCloudMsgOut, listener_);
-     //}
-     //catch(tf::TransformException ex){ ROS_ERROR("%s", ex.what());}
-
-    //std_msgs::Header header;
-    //header.frame_id = minFrame_;
-    //header.stamp = ros::Time::now();
-
-    //pointCloudFinal->header = pcl_conversions::toPCL(header);
-    pointCloudFinal->header = cloudMsg->header;
-
-    //pointCloudMsgOut->width = cloudMsg->width;
-    //pointCloudMsgOut->height = cloudMsg->height;
-    
+    // publish final cloud 
+    pointCloudFinal->header.stamp = cloudMsg->header.stamp;
+    pointCloudFinal->header.frame_id = minFrame_;
 
     cloudOutPublisher_.publish(pointCloudFinal);
   }
