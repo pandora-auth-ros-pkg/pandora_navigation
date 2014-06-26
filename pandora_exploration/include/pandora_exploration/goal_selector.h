@@ -49,11 +49,20 @@ namespace pandora_exploration {
 
     virtual bool findNextGoal(geometry_msgs::PoseStamped* goal) = 0;
 
+    virtual void setSelectedGoal(const geometry_msgs::PoseStamped& selected_goal)
+    {
+      selected_goals_.push_back(selected_goal);
+    }
+
     virtual ~GoalSelector() {}
 
    protected:
 
     GoalSelector() {}
+
+   protected:
+
+    std::vector<geometry_msgs::PoseStamped> selected_goals_;
   };
 
   typedef boost::shared_ptr<GoalSelector> GoalSelectorPtr;

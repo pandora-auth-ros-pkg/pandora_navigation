@@ -14,5 +14,7 @@ visualize_paths: true
 cost_functions:
   dist_scale: 0.8
   size_scale: 2.0
+  alignment_scale: 1.0
+  visited_scale: 2.0
 
 

@@ -14,3 +14,5 @@ if __name__ == '__main__':
   client.send_goal(goal)
   client.wait_for_result()
   rospy.logwarn(client.get_goal_status_text())
+  #if client.get_state() == actionlib.GoalStatus.ACTIVE:
+  client.cancel_all_goals()

@@ -71,8 +71,6 @@ namespace pandora_exploration {
 
     bool isGoalReached();
     bool isTimeReached();
-    void computationThread();
-    void cleanComputationThread();
     
    private:
   

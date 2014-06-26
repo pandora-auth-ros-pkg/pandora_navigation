@@ -13,6 +13,8 @@ find_package(catkin REQUIRED
       nav_msgs
       pluginlib
       nav_core
+      angles
+      tf
 )
 
 
@@ -29,6 +31,8 @@ catkin_package(
     nav_msgs
     pluginlib
     nav_core
+    angles
+    tf
   INCLUDE_DIRS
     include
 #  LIBRARIES
@@ -52,6 +56,8 @@ target_link_libraries(frontier_path_generators ${catkin_LIBRARIES})
 add_library(frontier_cost_functions
     src/distance_cost_function.cpp
     src/size_cost_function.cpp
+    src/alignment_cost_function.cpp
+    src/visited_cost_function.cpp
     )
 target_link_libraries(frontier_cost_functions ${catkin_LIBRARIES})
 

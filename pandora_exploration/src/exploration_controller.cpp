@@ -112,35 +112,21 @@ void ExplorationController::executeCb(const pandora_navigation_msgs::DoExplorati
       move_base_msgs::MoveBaseGoal move_base_goal;
       move_base_goal.target_pose = current_goal_;
       
-      //sent new goal to move_base
+      //send new goal to move_base
       //cancel goals before?
       move_base_client_.sendGoal(move_base_goal,
                                   boost::bind(&ExplorationController::doneMovingCb, this, _1, _2),
                                   NULL,
                                   boost::bind(&ExplorationController::feedbackMovingCb, this, _1));
+
+      //set selected goal to all goal selectors (currently only one)
+      goal_selector_->setSelectedGoal(current_goal_);
     }
 
     while(ros::ok() && do_exploration_server_.isActive() && !isGoalReached() &&  !isTimeReached() && !aborted_)
       ros::Duration(0.1).sleep();
     
   }//end of outer while  
-
-
-///  //startup computation thread
-///  computation_thread_.reset( new boost::thread(boost::bind(&ExplorationController::computationThread, this)) );
-///  
-///
-///  ros::Rate rate(10.0);
-///  while (ros::ok() && do_exploration_server_.isActive())
-///  {
-///    rate.sleep();
-///  }
-///
-///  ROS_INFO("We have seen enough, no more exploration!");
-///  do_exploration_server_.setSucceeded();
-///  
-///  //clean-up computation thread
-///  cleanComputationThread();
 
   //goal should never be active at this point
   ROS_ASSERT(!do_exploration_server_.isActive());
@@ -194,28 +180,6 @@ bool ExplorationController::isTimeReached()
 
   ROS_DEBUG("[%s] Time for goal expired!", ros::this_node::getName().c_str());
   return true;
-}
-
-void ExplorationController::computationThread()
-{
-  ros::Rate rate(1.0);
-
-  while (ros::ok()) {
-    ROS_INFO("Updating frontiers");
-
-    geometry_msgs::PoseStamped goal;
-    goal_selector_->findNextGoal(&goal);
-    
-    rate.sleep();
-  }
-}
-
-void ExplorationController::cleanComputationThread()
-{
-  computation_thread_->interrupt();
-  computation_thread_->join();
-
-  computation_thread_.reset();
 }
 
 } // namespace pandora_exploration
