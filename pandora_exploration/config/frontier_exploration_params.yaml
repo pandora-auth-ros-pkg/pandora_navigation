@@ -12,7 +12,7 @@ frontier_representation: initial
 visualize_paths: true 
 
 cost_functions:
-  dist_scale: 0.6
+  dist_scale: 0.8
   size_scale: 2.0
 
 

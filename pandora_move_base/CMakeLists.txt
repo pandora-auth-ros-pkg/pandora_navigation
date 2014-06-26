@@ -45,9 +45,9 @@ add_library(pandora_move_base src/move_base.cpp)
 target_link_libraries(pandora_move_base ${catkin_LIBRARIES})
 add_dependencies(pandora_move_base ${PROJECT_NAME}_gencfg)
 
-add_executable(move_base_node
+add_executable(pandora_move_base_node
   src/move_base_node.cpp
 )
-target_link_libraries(move_base_node pandora_move_base)
+target_link_libraries(pandora_move_base_node pandora_move_base)
 
 
