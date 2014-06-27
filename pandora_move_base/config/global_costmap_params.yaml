@@ -16,6 +16,7 @@ global_costmap:
   static_layer:
     map_topic: /slam/map
     unknown_cost_value: 51
+    lethal_cost_threshold: 61
 
   inflation_layer:
     inflation_radius: 0.5

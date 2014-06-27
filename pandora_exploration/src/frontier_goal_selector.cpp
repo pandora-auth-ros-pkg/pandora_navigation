@@ -89,9 +89,9 @@ FrontierGoalSelector::FrontierGoalSelector() :
   FrontierCostFunctionPtr distance_cost_function( new DistanceCostFunction(dist_scale) );
   frontier_cost_function_vec_.push_back(distance_cost_function);
   FrontierCostFunctionPtr alignment_cost_function( new AlignmentCostFunction(alignment_scale, current_robot_pose_) );
-  frontier_cost_function_vec_.push_back(alignment_cost_function);
+///  frontier_cost_function_vec_.push_back(alignment_cost_function);
   FrontierCostFunctionPtr visited_cost_function( new VisitedCostFunction(visited_scale, selected_goals_) );
-  frontier_cost_function_vec_.push_back(visited_cost_function);
+///  frontier_cost_function_vec_.push_back(visited_cost_function);
 
   //set-up frontier list
   frontier_list_.reset( new FrontierList );
@@ -147,6 +147,9 @@ bool FrontierGoalSelector::findNextGoal(geometry_msgs::PoseStamped* goal)
   if (!findBestFrontier(&selected))
     return false;
 
+  //correct final target orientation
+  calculateFinalGoalOrientation(&selected);
+  
   //keep track of selected frontier
   current_frontier_ = selected;
 
@@ -173,6 +176,21 @@ bool FrontierGoalSelector::findBestFrontier(Frontier* selected)
     return false;
   
   return true;
+}
+
+void FrontierGoalSelector::calculateFinalGoalOrientation(Frontier* frontier)
+{
+  //path at least of 10 points, otherwise unstable orientations calculated
+  if (frontier->path.poses.size() < 10)
+    return;
+
+  //find orientation of last 2 points
+  geometry_msgs::Point final_point = frontier->path.poses.back().pose.position;
+  geometry_msgs::Point semifinal_point = frontier->path.poses.at(frontier->path.poses.size()-11).pose.position;
+  double angle = atan2(final_point.y - semifinal_point.y, final_point.x - semifinal_point.x);
+
+  //assign orientation to last point in path
+  frontier->path.poses.back().pose.orientation = tf::createQuaternionMsgFromYaw(angle);
 }
 
 void FrontierGoalSelector::visualizeFrontiers()

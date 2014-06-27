@@ -168,6 +168,8 @@ namespace move_base {
 
       geometry_msgs::PoseStamped goalToGlobalFrame(const geometry_msgs::PoseStamped& goal_pose_msg);
 
+      void findValidGoalApproximate(geometry_msgs::PoseStamped* goal);
+
       tf::TransformListener& tf_;
 
       MoveBaseActionServer* as_;

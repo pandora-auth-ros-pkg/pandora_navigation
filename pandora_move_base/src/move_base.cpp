@@ -651,6 +651,9 @@ namespace move_base {
 
     geometry_msgs::PoseStamped goal = goalToGlobalFrame(move_base_goal->target_pose);
 
+    //we will try our best to find a valid plan, by moving the given goal 
+    findValidGoalApproximate(&goal);
+    
     //we have a goal so start the planner
     boost::unique_lock<boost::mutex> lock(planner_mutex_);
     planner_goal_ = goal;
@@ -1130,6 +1133,47 @@ namespace move_base {
       planner_costmap_ros_->stop();
       controller_costmap_ros_->stop();
     }
+  }
+
+  void MoveBase::findValidGoalApproximate(geometry_msgs::PoseStamped* goal)
+  {
+    boost::unique_lock< boost::shared_mutex > lock(*(planner_costmap_ros_->getCostmap()->getLock()));
+    
+    costmap_2d::Costmap2D* costmap = planner_costmap_ros_->getCostmap();
+    
+    unsigned int mx, my;
+    if (!costmap->worldToMap(goal->pose.position.x, goal->pose.position.y, mx, my)){
+        ROS_WARN("Robot out of costmap bounds, could not proceed");
+        return;
+    }
+
+    //if cell is free, nothing to do
+    if (costmap->getCost(mx, my) == costmap_2d::FREE_SPACE)
+      return;
+
+    double yaw = tf::getYaw(goal->pose.orientation);
+    double direction[2] = {cos(yaw), sin(yaw)};
+
+    geometry_msgs::Point previous_point = goal->pose.position;
+    
+    //try to find a valid cell, we will accept NO_INFORMATION cells also 
+    while (costmap->getCost(mx, my) > 50)  //costmap_2d::CIRCUMSCRIBED_INFLATED_OBSTACLE
+    {
+      geometry_msgs::Point new_point;
+      new_point.x =  previous_point.x - 0.01 * direction[0];
+      new_point.y =  previous_point.y - 0.01 * direction[1];
+
+      previous_point = new_point;
+      if (!costmap->worldToMap(new_point.x, new_point.y, mx, my)){
+        ROS_WARN("Robot out of costmap bounds, could not proceed");
+        return;
+      }
+    }
+
+    //update goal
+    goal->pose.position.x = previous_point.x;
+    goal->pose.position.y = previous_point.y;
+    
   }
 
 };

@@ -68,6 +68,7 @@ namespace pandora_exploration {
    private:
 
     bool findBestFrontier(Frontier* selected);
+    void calculateFinalGoalOrientation(Frontier* frontier);
     void visualizeFrontiers();
 
    private:

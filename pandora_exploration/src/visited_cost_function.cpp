@@ -65,8 +65,8 @@ void VisitedCostFunction::scoreFrontiers(const FrontierListPtr& frontier_list)
       double dx = selected_goal.pose.position.x - frontier.initial.x;
       double dy = selected_goal.pose.position.y - frontier.initial.y;
 
-      if (::hypot(dx, dy) > 0.3) {
-        double time_since = (selected_goal.header.stamp - frontier.header.stamp).toSec();
+      if (::hypot(dx, dy) < 0.3) {
+        double time_since = (frontier.header.stamp - selected_goal.header.stamp).toSec();
         weight += 1/time_since;
       }
       
