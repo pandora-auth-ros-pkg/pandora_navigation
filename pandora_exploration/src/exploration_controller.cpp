@@ -45,7 +45,8 @@ ExplorationController::ExplorationController() :
   abort_count_(0),
   aborted_(false),
   do_exploration_server_(nh_, "do_exploration", boost::bind(&ExplorationController::executeCb, this, _1), false),
-  move_base_client_("move_base", true)
+  move_base_client_("move_base", true),
+  first_time_(true)
 {
   goal_selector_.reset( new  FrontierGoalSelector() );
   do_exploration_server_.registerPreemptCallback(boost::bind(&ExplorationController::preemptCb, this));
@@ -53,7 +54,7 @@ ExplorationController::ExplorationController() :
   private_nh_.param<int>("max_goal_searches", max_goal_searches_, 5);
   private_nh_.param<int>("max_abortions", max_abortions_, 5);
 
-  //proporsional to number of frontiers
+  //proporsional to number of frontiers?
   private_nh_.param<double>("goal_reached_dist", goal_reached_dist_, 1.0);
 
   //robot has that many seconds to reach a goal
@@ -163,8 +164,15 @@ bool ExplorationController::isGoalReached()
   double dx = current_goal_.pose.position.x - feedback_.base_position.pose.position.x;
   double dy = current_goal_.pose.position.y - feedback_.base_position.pose.position.y;
 
-  if (::hypot(dx, dy) < goal_reached_dist_) {
+  double dist = goal_reached_dist_;
+
+  if (first_time_) {
+    dist = 0.2;
+  }
+  
+  if (::hypot(dx, dy) < dist) {
     abort_count_ = 0;
+    first_time_ = false;
     return true;
   }
   

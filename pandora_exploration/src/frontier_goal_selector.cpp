@@ -186,7 +186,7 @@ void FrontierGoalSelector::calculateFinalGoalOrientation(Frontier* frontier)
 
   //find orientation of last 2 points
   geometry_msgs::Point final_point = frontier->path.poses.back().pose.position;
-  geometry_msgs::Point semifinal_point = frontier->path.poses.at(frontier->path.poses.size()-11).pose.position;
+  geometry_msgs::Point semifinal_point = frontier->path.poses.at(frontier->path.poses.size()-10).pose.position;
   double angle = atan2(final_point.y - semifinal_point.y, final_point.x - semifinal_point.x);
 
   //assign orientation to last point in path

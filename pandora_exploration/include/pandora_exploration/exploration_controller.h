@@ -102,6 +102,8 @@ namespace pandora_exploration {
     pandora_navigation_msgs::DoExplorationFeedback feedback_;
     
     boost::shared_ptr<boost::thread> computation_thread_;
+
+    bool first_time_;
   };
 
 } // namespace pandora_exploration
