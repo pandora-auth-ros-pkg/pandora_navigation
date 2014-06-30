@@ -24,4 +24,4 @@ static:
   lethal_cost_threshold: 61
 
 inflation:
-  inflation_radius: 0.22
+  inflation_radius: 0.25

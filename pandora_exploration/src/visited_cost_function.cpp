@@ -35,64 +35,49 @@
 * Author: Chris Zalidis <zalidis@gmail.com>
 *********************************************************************/
 
-#ifndef PANDORA_EXPLORATION_FRONTIER_GOAL_SELECTOR_H
-#define PANDORA_EXPLORATION_FRONTIER_GOAL_SELECTOR_H
-
-#include <costmap_2d/costmap_2d_ros.h>
-#include <costmap_2d/costmap_2d.h>
-#include <tf/transform_listener.h>
-#include <visualization_msgs/MarkerArray.h>
-
-#include "pandora_exploration/goal_selector.h"
-#include "pandora_exploration/frontier.h"
-#include "pandora_exploration/map_frontier_search.h"
-#include "pandora_exploration/navfn_frontier_path_generator.h"
-#include "pandora_exploration/navfn_service_frontier_path_generator.h"
-#include "pandora_exploration/distance_cost_function.h"
-#include "pandora_exploration/size_cost_function.h"
-#include "pandora_exploration/alignment_cost_function.h"
 #include "pandora_exploration/visited_cost_function.h"
 
 namespace pandora_exploration {
 
-  class FrontierGoalSelector : public GoalSelector
+VisitedCostFunction::VisitedCostFunction(double scale, const std::vector<geometry_msgs::PoseStamped>& selected_goals)
+  : FrontierCostFunction(scale), selected_goals_(selected_goals)
+{
+}
+
+void VisitedCostFunction::scoreFrontiers(const FrontierListPtr& frontier_list)
+{
+  //iterate over all frontiers 
+  BOOST_FOREACH(Frontier& frontier, *frontier_list)
   {
-   public:
+    //if frontier has a already negative cost no point to run this cost function
+    if (frontier.cost < 0) {
+      continue;
+    }
 
-    FrontierGoalSelector();
-
-    virtual bool findNextGoal(geometry_msgs::PoseStamped* goal);
-
-    ~FrontierGoalSelector() {}
-
-   private:
-
-    bool findBestFrontier(Frontier* selected);
-    void calculateFinalGoalOrientation(Frontier* frontier);
-    void visualizeFrontiers();
-
-   private:
-
-    ros::Publisher frontier_marker_pub_;
-    boost::shared_ptr<costmap_2d::Costmap2DROS> explore_costmap_ros_;
-    FrontierListPtr frontier_list_;
-
-    tf::TransformListener tf_listener_;
-
-    geometry_msgs::PoseStamped current_robot_pose_;
+    //how many times we have send a similar goal
+    int weight = 0;
     
-    std::vector<FrontierSearchPtr> frontier_search_vec_;
-    std::vector<FrontierCostFunctionPtr> frontier_cost_function_vec_;
-    FrontierPathGeneratorPtr frontier_path_generator_;
+    //iterate over all previous goals
+    BOOST_FOREACH(const geometry_msgs::PoseStamped& selected_goal, selected_goals_)
+    {
+      //find distance between selected_goal and frontier
+      //using initial point, maybe get from param later
+      double dx = selected_goal.pose.position.x - frontier.initial.x;
+      double dy = selected_goal.pose.position.y - frontier.initial.y;
 
-    std::string frontier_representation_;
-    bool visualize_paths_;
+      if (::hypot(dx, dy) < 0.3) {
+        double time_since = (frontier.header.stamp - selected_goal.header.stamp).toSec();
+        weight += 1/time_since;
+      }
+      
+    }
 
-    Frontier current_frontier_;
-
-  };
-
+    //if this is the first time, nothing to do
+    if (weight == 0)
+      continue;
+    
+    frontier.cost /= scale_ * weight;
+  }
+}
 
 } // namespace pandora_exploration
-
-#endif // PANDORA_EXPLORATION_FRONTIER_GOAL_SELECTOR_H

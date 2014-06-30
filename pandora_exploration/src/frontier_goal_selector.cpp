@@ -52,7 +52,15 @@ FrontierGoalSelector::FrontierGoalSelector() :
 
   //frontier size scale
   double size_scale;
-  private_nh.param<double>("cost_functions/size_scale", size_scale, 1);
+  private_nh.param<double>("cost_functions/size_scale", size_scale, 1.0);
+
+  //frontier alignment scale
+  double alignment_scale;
+  private_nh.param<double>("cost_functions/alignment_scale", alignment_scale, 1.0);
+
+  //frontier alignment scale
+  double visited_scale;
+  private_nh.param<double>("cost_functions/visited_scale", alignment_scale, 1.0);
 
   //valid types: initial, middle, centroid
   private_nh.param<std::string>("frontier_representation", frontier_representation_, "initial");
@@ -80,6 +88,10 @@ FrontierGoalSelector::FrontierGoalSelector() :
   frontier_cost_function_vec_.push_back(size_cost_function);
   FrontierCostFunctionPtr distance_cost_function( new DistanceCostFunction(dist_scale) );
   frontier_cost_function_vec_.push_back(distance_cost_function);
+  FrontierCostFunctionPtr alignment_cost_function( new AlignmentCostFunction(alignment_scale, current_robot_pose_) );
+///  frontier_cost_function_vec_.push_back(alignment_cost_function);
+  FrontierCostFunctionPtr visited_cost_function( new VisitedCostFunction(visited_scale, selected_goals_) );
+///  frontier_cost_function_vec_.push_back(visited_cost_function);
 
   //set-up frontier list
   frontier_list_.reset( new FrontierList );
@@ -93,13 +105,12 @@ bool FrontierGoalSelector::findNextGoal(geometry_msgs::PoseStamped* goal)
   //get robot pose
   tf::Stamped<tf::Pose> global_pose;
   explore_costmap_ros_->getRobotPose(global_pose);
-  geometry_msgs::PoseStamped current_pose;
-  tf::poseStampedTFToMsg(global_pose, current_pose);
+  tf::poseStampedTFToMsg(global_pose, current_robot_pose_);
 
   //iterate over all frontier searches and find new frontiers
   BOOST_FOREACH(const FrontierSearchPtr& frontier_search, frontier_search_vec_)
   {
-    FrontierList temp_list = frontier_search->searchFrom(current_pose.pose.position);
+    FrontierList temp_list = frontier_search->searchFrom(current_robot_pose_.pose.position);
 
     //insert new frontiers to global list
     frontier_list_->insert(frontier_list_->end(), temp_list.begin(), temp_list.end());
@@ -116,7 +127,7 @@ bool FrontierGoalSelector::findNextGoal(geometry_msgs::PoseStamped* goal)
   frontier_list_->sort();
 
   //find paths to all frontiers
-  if (!frontier_path_generator_->findPaths(current_pose, frontier_list_)) {
+  if (!frontier_path_generator_->findPaths(current_robot_pose_, frontier_list_)) {
     ROS_ERROR("[%s] Could not find paths to frontiers", ros::this_node::getName().c_str());
     return false;
   }
@@ -136,6 +147,9 @@ bool FrontierGoalSelector::findNextGoal(geometry_msgs::PoseStamped* goal)
   if (!findBestFrontier(&selected))
     return false;
 
+  //correct final target orientation
+  calculateFinalGoalOrientation(&selected);
+  
   //keep track of selected frontier
   current_frontier_ = selected;
 
@@ -162,6 +176,21 @@ bool FrontierGoalSelector::findBestFrontier(Frontier* selected)
     return false;
   
   return true;
+}
+
+void FrontierGoalSelector::calculateFinalGoalOrientation(Frontier* frontier)
+{
+  //path at least of 10 points, otherwise unstable orientations calculated
+  if (frontier->path.poses.size() < 10)
+    return;
+
+  //find orientation of last 2 points
+  geometry_msgs::Point final_point = frontier->path.poses.back().pose.position;
+  geometry_msgs::Point semifinal_point = frontier->path.poses.at(frontier->path.poses.size()-10).pose.position;
+  double angle = atan2(final_point.y - semifinal_point.y, final_point.x - semifinal_point.x);
+
+  //assign orientation to last point in path
+  frontier->path.poses.back().pose.orientation = tf::createQuaternionMsgFromYaw(angle);
 }
 
 void FrontierGoalSelector::visualizeFrontiers()

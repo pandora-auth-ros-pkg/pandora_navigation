@@ -35,64 +35,48 @@
 * Author: Chris Zalidis <zalidis@gmail.com>
 *********************************************************************/
 
-#ifndef PANDORA_EXPLORATION_FRONTIER_GOAL_SELECTOR_H
-#define PANDORA_EXPLORATION_FRONTIER_GOAL_SELECTOR_H
-
-#include <costmap_2d/costmap_2d_ros.h>
-#include <costmap_2d/costmap_2d.h>
-#include <tf/transform_listener.h>
-#include <visualization_msgs/MarkerArray.h>
-
-#include "pandora_exploration/goal_selector.h"
-#include "pandora_exploration/frontier.h"
-#include "pandora_exploration/map_frontier_search.h"
-#include "pandora_exploration/navfn_frontier_path_generator.h"
-#include "pandora_exploration/navfn_service_frontier_path_generator.h"
-#include "pandora_exploration/distance_cost_function.h"
-#include "pandora_exploration/size_cost_function.h"
 #include "pandora_exploration/alignment_cost_function.h"
-#include "pandora_exploration/visited_cost_function.h"
 
 namespace pandora_exploration {
 
-  class FrontierGoalSelector : public GoalSelector
+AlignmentCostFunction::AlignmentCostFunction(double scale, const geometry_msgs::PoseStamped& robot_pose)
+  : FrontierCostFunction(scale), robot_pose_(robot_pose)
+{
+}
+
+void AlignmentCostFunction::scoreFrontiers(const FrontierListPtr& frontier_list)
+{
+  //iterate over all frontiers 
+  BOOST_FOREACH(Frontier& frontier, *frontier_list)
   {
-   public:
+    //if frontier has a already negative cost no point to run this cost function
+    if (frontier.cost < 0) {
+      continue;
+    }
 
-    FrontierGoalSelector();
+    //select a point in path to find angle to
+    //if no valid plan to frontier, cost should already be negative
+    //and this function will never run
+    geometry_msgs::PoseStamped goal_pose;
+    if (frontier.path.poses.size() < 10) {
+      goal_pose = frontier.path.poses.back();
+    }
+    else {
+      goal_pose = frontier.path.poses[9];
+    }
 
-    virtual bool findNextGoal(geometry_msgs::PoseStamped* goal);
+    //find angle from robot to goal
+    double angle_to_goal = atan2(goal_pose.pose.position.y - robot_pose_.pose.position.y,
+                                      goal_pose.pose.position.x - robot_pose_.pose.position.x);
 
-    ~FrontierGoalSelector() {}
+    //find shortest angle, result from -pi to pi
+    double final_angle = angles::shortest_angular_distance(angle_to_goal, tf::getYaw(robot_pose_.pose.orientation));
 
-   private:
-
-    bool findBestFrontier(Frontier* selected);
-    void calculateFinalGoalOrientation(Frontier* frontier);
-    void visualizeFrontiers();
-
-   private:
-
-    ros::Publisher frontier_marker_pub_;
-    boost::shared_ptr<costmap_2d::Costmap2DROS> explore_costmap_ros_;
-    FrontierListPtr frontier_list_;
-
-    tf::TransformListener tf_listener_;
-
-    geometry_msgs::PoseStamped current_robot_pose_;
     
-    std::vector<FrontierSearchPtr> frontier_search_vec_;
-    std::vector<FrontierCostFunctionPtr> frontier_cost_function_vec_;
-    FrontierPathGeneratorPtr frontier_path_generator_;
-
-    std::string frontier_representation_;
-    bool visualize_paths_;
-
-    Frontier current_frontier_;
-
-  };
-
+    //update frontier's cost
+///    frontier.cost += scale_ *  (M_PI - fabs(final_angle));
+    frontier.cost /= scale_ * fabs(final_angle);
+  }
+}
 
 } // namespace pandora_exploration
-
-#endif // PANDORA_EXPLORATION_FRONTIER_GOAL_SELECTOR_H

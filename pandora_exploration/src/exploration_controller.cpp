@@ -45,7 +45,8 @@ ExplorationController::ExplorationController() :
   abort_count_(0),
   aborted_(false),
   do_exploration_server_(nh_, "do_exploration", boost::bind(&ExplorationController::executeCb, this, _1), false),
-  move_base_client_("move_base", true)
+  move_base_client_("move_base", true),
+  first_time_(true)
 {
   goal_selector_.reset( new  FrontierGoalSelector() );
   do_exploration_server_.registerPreemptCallback(boost::bind(&ExplorationController::preemptCb, this));
@@ -53,7 +54,7 @@ ExplorationController::ExplorationController() :
   private_nh_.param<int>("max_goal_searches", max_goal_searches_, 5);
   private_nh_.param<int>("max_abortions", max_abortions_, 5);
 
-  //proporsional to number of frontiers
+  //proporsional to number of frontiers?
   private_nh_.param<double>("goal_reached_dist", goal_reached_dist_, 1.0);
 
   //robot has that many seconds to reach a goal
@@ -112,35 +113,21 @@ void ExplorationController::executeCb(const pandora_navigation_msgs::DoExplorati
       move_base_msgs::MoveBaseGoal move_base_goal;
       move_base_goal.target_pose = current_goal_;
       
-      //sent new goal to move_base
+      //send new goal to move_base
       //cancel goals before?
       move_base_client_.sendGoal(move_base_goal,
                                   boost::bind(&ExplorationController::doneMovingCb, this, _1, _2),
                                   NULL,
                                   boost::bind(&ExplorationController::feedbackMovingCb, this, _1));
+
+      //set selected goal to all goal selectors (currently only one)
+      goal_selector_->setSelectedGoal(current_goal_);
     }
 
     while(ros::ok() && do_exploration_server_.isActive() && !isGoalReached() &&  !isTimeReached() && !aborted_)
       ros::Duration(0.1).sleep();
     
   }//end of outer while  
-
-
-///  //startup computation thread
-///  computation_thread_.reset( new boost::thread(boost::bind(&ExplorationController::computationThread, this)) );
-///  
-///
-///  ros::Rate rate(10.0);
-///  while (ros::ok() && do_exploration_server_.isActive())
-///  {
-///    rate.sleep();
-///  }
-///
-///  ROS_INFO("We have seen enough, no more exploration!");
-///  do_exploration_server_.setSucceeded();
-///  
-///  //clean-up computation thread
-///  cleanComputationThread();
 
   //goal should never be active at this point
   ROS_ASSERT(!do_exploration_server_.isActive());
@@ -177,8 +164,15 @@ bool ExplorationController::isGoalReached()
   double dx = current_goal_.pose.position.x - feedback_.base_position.pose.position.x;
   double dy = current_goal_.pose.position.y - feedback_.base_position.pose.position.y;
 
-  if (::hypot(dx, dy) < goal_reached_dist_) {
+  double dist = goal_reached_dist_;
+
+  if (first_time_) {
+    dist = 0.2;
+  }
+  
+  if (::hypot(dx, dy) < dist) {
     abort_count_ = 0;
+    first_time_ = false;
     return true;
   }
   
@@ -194,28 +188,6 @@ bool ExplorationController::isTimeReached()
 
   ROS_DEBUG("[%s] Time for goal expired!", ros::this_node::getName().c_str());
   return true;
-}
-
-void ExplorationController::computationThread()
-{
-  ros::Rate rate(1.0);
-
-  while (ros::ok()) {
-    ROS_INFO("Updating frontiers");
-
-    geometry_msgs::PoseStamped goal;
-    goal_selector_->findNextGoal(&goal);
-    
-    rate.sleep();
-  }
-}
-
-void ExplorationController::cleanComputationThread()
-{
-  computation_thread_->interrupt();
-  computation_thread_->join();
-
-  computation_thread_.reset();
 }
 
 } // namespace pandora_exploration
