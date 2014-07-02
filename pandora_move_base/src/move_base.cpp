@@ -698,6 +698,9 @@ namespace move_base {
 
           goal = goalToGlobalFrame(new_goal.target_pose);
 
+          //we will try our best to find a valid plan, by moving the given goal 
+          findValidGoalApproximate(&goal);
+
           //we'll make sure that we reset our state for the next execution cycle
           recovery_index_ = 0;
           state_ = PLANNING;
@@ -1157,7 +1160,7 @@ namespace move_base {
     geometry_msgs::Point previous_point = goal->pose.position;
     
     //try to find a valid cell, we will accept NO_INFORMATION cells also 
-    while (costmap->getCost(mx, my) > 40)  //costmap_2d::CIRCUMSCRIBED_INFLATED_OBSTACLE
+    while (costmap->getCost(mx, my) > 50)  //costmap_2d::CIRCUMSCRIBED_INFLATED_OBSTACLE
     {
       geometry_msgs::Point new_point;
       new_point.x =  previous_point.x - 0.01 * direction[0];
