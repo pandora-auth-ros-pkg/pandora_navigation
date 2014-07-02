@@ -5,8 +5,8 @@ base_local_planner: dwa_local_planner/DWAPlannerROS
 TrajectoryPlannerROS:
   max_vel_x: 0.4
   min_vel_x: 0.0
-  max_rotational_vel: 1.2
-  min_in_place_rotational_vel: 0.2
+  max_rotational_vel: 0.25
+  min_in_place_rotational_vel: 0.02
   acc_lim_th: 0.8
   acc_lim_x: 0.63
   acc_lim_y: 0.0

@@ -54,6 +54,9 @@ namespace pandora_costmap {
 
     cloudOutPublisher_ =
         nh_.advertise<PointCloud>(outTopic, 1);
+
+    //stop pcl from spamming
+    pcl::console::setVerbosityLevel(pcl::console::L_ALWAYS);
   }
 
   void PointCloudCropper::pointCloudCallback(const PointCloud::ConstPtr& cloudMsg)

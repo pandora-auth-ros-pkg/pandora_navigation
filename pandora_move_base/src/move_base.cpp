@@ -182,9 +182,9 @@ namespace move_base {
     }
 
     //load any user specified recovery behaviors, and if that fails load the defaults
-    if(!loadRecoveryBehaviors(private_nh)){
-      loadDefaultRecoveryBehaviors();
-    }
+//~    if(!loadRecoveryBehaviors(private_nh)){
+//~      loadDefaultRecoveryBehaviors();
+//~    }
 
     //initially, we'll need to make a plan
     state_ = PLANNING;
@@ -1157,7 +1157,7 @@ namespace move_base {
     geometry_msgs::Point previous_point = goal->pose.position;
     
     //try to find a valid cell, we will accept NO_INFORMATION cells also 
-    while (costmap->getCost(mx, my) > 50)  //costmap_2d::CIRCUMSCRIBED_INFLATED_OBSTACLE
+    while (costmap->getCost(mx, my) > 40)  //costmap_2d::CIRCUMSCRIBED_INFLATED_OBSTACLE
     {
       geometry_msgs::Point new_point;
       new_point.x =  previous_point.x - 0.01 * direction[0];
