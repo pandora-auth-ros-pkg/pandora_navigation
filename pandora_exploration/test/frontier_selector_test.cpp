@@ -22,7 +22,7 @@ int main(int argc, char* argv[])
 {
   ros::init(argc, argv, "frontier_node", ros::init_options::NoSigintHandler);
 
-  pandora_exploration::FrontierGoalSelector* frontier_selector = new pandora_exploration::FrontierGoalSelector();
+  pandora_exploration::FrontierGoalSelector* frontier_selector = new pandora_exploration::FrontierGoalSelector("explore");
 
   boost::thread* frontier_update_thread;
 

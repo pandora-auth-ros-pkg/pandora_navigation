@@ -39,16 +39,17 @@
 
 namespace pandora_exploration {
 
-NavfnFrontierPathGenerator::NavfnFrontierPathGenerator(std::string frontier_representation,
+NavfnFrontierPathGenerator::NavfnFrontierPathGenerator(const std::string& name,
+          const std::string& frontier_representation,
           const boost::shared_ptr<costmap_2d::Costmap2DROS>& costmap_ros)
   : pnh_("~"),
     costmap_ros_(costmap_ros),
-    FrontierPathGenerator(frontier_representation),
+    FrontierPathGenerator(name, frontier_representation),
     planner_loader_("nav_core", "nav_core::BaseGlobalPlanner")
 {
   //get planner's name 
   std::string planner_name;
-  pnh_.param<std::string>("global_planner", planner_name, "navfn/NavfnROS");
+  pnh_.param<std::string>(name_ + "/global_planner", planner_name, "navfn/NavfnROS");
 
   //check if planner plugin exists
   if(!planner_loader_.isClassAvailable(planner_name)) {

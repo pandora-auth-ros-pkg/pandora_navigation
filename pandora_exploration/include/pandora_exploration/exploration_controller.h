@@ -80,7 +80,8 @@ namespace pandora_exploration {
     DoExplorationServer do_exploration_server_;
     MoveBaseClient move_base_client_;
 
-    GoalSelectorPtr goal_selector_;
+    GoalSelectorPtr explore_goal_selector_;
+    GoalSelectorPtr coverage_goal_selector_;
 
     ros::Duration goal_timeout_;
     

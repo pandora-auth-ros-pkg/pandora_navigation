@@ -48,7 +48,14 @@ ExplorationController::ExplorationController() :
   move_base_client_("move_base", true),
   first_time_(true)
 {
-  goal_selector_.reset( new  FrontierGoalSelector() );
+  explore_goal_selector_.reset( new  FrontierGoalSelector("explore") );
+
+  bool use_coverage;
+  private_nh_.param<bool>("use_coverage", use_coverage, false);
+
+  if (use_coverage)
+    coverage_goal_selector_.reset( new  FrontierGoalSelector("coverage") );
+  
   do_exploration_server_.registerPreemptCallback(boost::bind(&ExplorationController::preemptCb, this));
 
   private_nh_.param<int>("max_goal_searches", max_goal_searches_, 5);
@@ -97,7 +104,19 @@ void ExplorationController::executeCb(const pandora_navigation_msgs::DoExplorati
       return;
     }
     
-    if (!goal_selector_->findNextGoal(&current_goal_)) {
+    bool success = false;
+
+    if (goal->exploration_type == pandora_navigation_msgs::DoExplorationGoal::TYPE_DEEP
+          && coverage_goal_selector_)
+    {
+      success = coverage_goal_selector_->findNextGoal(&current_goal_);
+    }
+    else
+    {
+      success = explore_goal_selector_->findNextGoal(&current_goal_);
+    }
+    
+    if (!success) {
       goal_searches_count_++;
       //wait a little
       ros::Duration(0.2).sleep();
@@ -120,8 +139,10 @@ void ExplorationController::executeCb(const pandora_navigation_msgs::DoExplorati
                                   NULL,
                                   boost::bind(&ExplorationController::feedbackMovingCb, this, _1));
 
-      //set selected goal to all goal selectors (currently only one)
-      goal_selector_->setSelectedGoal(current_goal_);
+      //set selected goal to all goal selectors
+      explore_goal_selector_->setSelectedGoal(current_goal_);
+      if (coverage_goal_selector_)
+        coverage_goal_selector_->setSelectedGoal(current_goal_);
     }
 
     while(ros::ok() && do_exploration_server_.isActive() && !isGoalReached() &&  !isTimeReached() && !aborted_)
@@ -167,7 +188,7 @@ bool ExplorationController::isGoalReached()
   double dist = goal_reached_dist_;
 
   if (first_time_) {
-    dist = 0.2;
+    dist = 0.1;
   }
   
   if (::hypot(dx, dy) < dist) {

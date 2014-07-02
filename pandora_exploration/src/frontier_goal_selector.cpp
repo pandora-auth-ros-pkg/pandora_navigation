@@ -39,38 +39,39 @@
 
 namespace pandora_exploration {
 
-FrontierGoalSelector::FrontierGoalSelector() :
+FrontierGoalSelector::FrontierGoalSelector(const std::string& name) :
+  GoalSelector(name),
   tf_listener_(ros::Duration(10.0))
 {
   ros::NodeHandle private_nh("~");
-  explore_costmap_ros_.reset( new costmap_2d::Costmap2DROS("explore_costmap", tf_listener_) );
-  frontier_marker_pub_ = private_nh.advertise<visualization_msgs::MarkerArray>("frontier_markers", 10);
+  explore_costmap_ros_.reset( new costmap_2d::Costmap2DROS(name_ + "_costmap", tf_listener_) );
+  frontier_marker_pub_ = private_nh.advertise<visualization_msgs::MarkerArray>(name_ + "_frontier_markers", 10);
 
   //path distance scale and straight scale
   double dist_scale;
-  private_nh.param<double>("cost_functions/dist_scale", dist_scale, 1.0);
+  private_nh.param<double>(name_ + "/cost_functions/dist_scale", dist_scale, 1.0);
 
   //frontier size scale
   double size_scale;
-  private_nh.param<double>("cost_functions/size_scale", size_scale, 1.0);
+  private_nh.param<double>(name_ + "/cost_functions/size_scale", size_scale, 1.0);
 
   //frontier alignment scale
   double alignment_scale;
-  private_nh.param<double>("cost_functions/alignment_scale", alignment_scale, 1.0);
+  private_nh.param<double>(name_ + "/cost_functions/alignment_scale", alignment_scale, 1.0);
 
   //frontier alignment scale
   double visited_scale;
-  private_nh.param<double>("cost_functions/visited_scale", alignment_scale, 1.0);
+  private_nh.param<double>(name_ + "/cost_functions/visited_scale", alignment_scale, 1.0);
 
   //valid types: initial, middle, centroid
-  private_nh.param<std::string>("frontier_representation", frontier_representation_, "initial");
+  private_nh.param<std::string>(name_ + "/frontier_representation", frontier_representation_, "initial");
 
   //visualize paths to all frontiers
-  private_nh.param<bool>("visualize_paths", visualize_paths_, false);
+  private_nh.param<bool>(name_ + "/visualize_paths", visualize_paths_, false);
 
   //planner timeout duration;
   double duration;
-  private_nh.param<double>("planner_timeout_duration", duration, 1.0);
+  private_nh.param<double>(name_ + "/planner_timeout_duration", duration, 1.0);
   ros::Duration expiration(duration);
   
   //set-up map frontier search
@@ -81,7 +82,7 @@ FrontierGoalSelector::FrontierGoalSelector() :
 
   //set-up navfn path generator
 //~   frontier_path_generator_.reset( new NavfnFrontierPathGenerator(frontier_representation_, explore_costmap_ros_) );
-  frontier_path_generator_.reset( new NavfnServiceFrontierPathGenerator(frontier_representation_, expiration) );
+  frontier_path_generator_.reset( new NavfnServiceFrontierPathGenerator(name_, frontier_representation_, expiration) );
 
   //set-up cost functions
   FrontierCostFunctionPtr size_cost_function( new SizeCostFunction(size_scale) );
@@ -89,9 +90,9 @@ FrontierGoalSelector::FrontierGoalSelector() :
   FrontierCostFunctionPtr distance_cost_function( new DistanceCostFunction(dist_scale) );
   frontier_cost_function_vec_.push_back(distance_cost_function);
   FrontierCostFunctionPtr alignment_cost_function( new AlignmentCostFunction(alignment_scale, current_robot_pose_) );
-///  frontier_cost_function_vec_.push_back(alignment_cost_function);
+  frontier_cost_function_vec_.push_back(alignment_cost_function);
   FrontierCostFunctionPtr visited_cost_function( new VisitedCostFunction(visited_scale, selected_goals_) );
-///  frontier_cost_function_vec_.push_back(visited_cost_function);
+  frontier_cost_function_vec_.push_back(visited_cost_function);
 
   //set-up frontier list
   frontier_list_.reset( new FrontierList );

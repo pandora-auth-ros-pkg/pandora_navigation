@@ -54,7 +54,7 @@ namespace pandora_exploration {
   {
    public:
 
-    NavfnFrontierPathGenerator(std::string frontier_representation,
+    NavfnFrontierPathGenerator(const std::string& name, const std::string& frontier_representation,
       const boost::shared_ptr<costmap_2d::Costmap2DROS>& costmap_ros);
 
     virtual bool findPaths(const geometry_msgs::PoseStamped& start, const FrontierListPtr& frontier_list);

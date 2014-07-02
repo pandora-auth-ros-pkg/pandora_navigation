@@ -74,8 +74,7 @@ void AlignmentCostFunction::scoreFrontiers(const FrontierListPtr& frontier_list)
 
     
     //update frontier's cost
-///    frontier.cost += scale_ *  (M_PI - fabs(final_angle));
-    frontier.cost /= scale_ * fabs(final_angle);
+    frontier.cost += scale_ * cos(final_angle/2.0);
   }
 }
 

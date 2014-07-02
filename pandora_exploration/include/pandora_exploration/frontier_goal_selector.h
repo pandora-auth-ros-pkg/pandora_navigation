@@ -59,7 +59,7 @@ namespace pandora_exploration {
   {
    public:
 
-    FrontierGoalSelector();
+    FrontierGoalSelector(const std::string& name);
 
     virtual bool findNextGoal(geometry_msgs::PoseStamped* goal);
 

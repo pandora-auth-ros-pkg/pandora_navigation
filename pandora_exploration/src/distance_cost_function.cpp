@@ -46,6 +46,15 @@ DistanceCostFunction::DistanceCostFunction(double scale)
 
 void DistanceCostFunction::scoreFrontiers(const FrontierListPtr& frontier_list)
 {
+  int max_path = 0;
+  //iterate over all frontiers and find max distance
+  BOOST_FOREACH(const Frontier& frontier, *frontier_list)
+  {
+    if (frontier.path.poses.size() > max_path) {
+      max_path = frontier.path.poses.size();
+    }
+  }
+  
   //iterate over all frontiers 
   BOOST_FOREACH(Frontier & frontier, *frontier_list)
   {
@@ -64,9 +73,10 @@ void DistanceCostFunction::scoreFrontiers(const FrontierListPtr& frontier_list)
     }
 
     //size of path shows "straightness" and lenght of the path, this has to be reviewed
-    double path_dist = static_cast<double>(frontier.path.poses.size());
+    double path_dist = static_cast<double>(frontier.path.poses.size()) / static_cast<double>(max_path);
+
     //update frontier's cost
-    frontier.cost /= scale_ * path_dist; //consider normalizing over all frontiers
+    frontier.cost += scale_ * exp(-path_dist * M_E); 
   }
 }
 

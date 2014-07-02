@@ -45,6 +45,15 @@ SizeCostFunction::SizeCostFunction(double scale) : FrontierCostFunction(scale)
 
 void SizeCostFunction::scoreFrontiers(const FrontierListPtr& frontier_list)
 {
+  int max_size = 0;
+  //iterate over all frontiers and find max distance
+  BOOST_FOREACH(const Frontier& frontier, *frontier_list)
+  {
+    if (frontier.size > max_size) {
+      max_size = frontier.size;
+    }
+  }
+  
   //iterate over all frontiers 
   BOOST_FOREACH(Frontier & frontier, *frontier_list)
   {
@@ -52,9 +61,8 @@ void SizeCostFunction::scoreFrontiers(const FrontierListPtr& frontier_list)
     if (frontier.cost < 0) {
       continue;
     }
-    
     //update frontier's cost
-    frontier.cost += scale_ *  frontier.size; //consider normalizing over all frontiers
+    frontier.cost += scale_ *  ( 1.0 - exp(-static_cast<double>(frontier.size) / static_cast<double>(max_size) * M_E) ); 
   }
 }
 

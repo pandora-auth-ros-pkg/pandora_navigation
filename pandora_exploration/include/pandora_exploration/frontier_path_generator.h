@@ -54,10 +54,12 @@ namespace pandora_exploration {
 
    protected:
 
-    FrontierPathGenerator(std::string frontier_representation) : frontier_representation_(frontier_representation){}
+    FrontierPathGenerator(const std::string& name, const std::string& frontier_representation)
+      : name_(name), frontier_representation_(frontier_representation){}
 
    protected:
-   
+
+    std::string name_;
     std::string frontier_representation_;
   };
 

@@ -58,9 +58,11 @@ namespace pandora_exploration {
 
    protected:
 
-    GoalSelector() {}
+    GoalSelector(const std::string& name) : name_(name) {}
 
    protected:
+
+    std::string name_;
 
     std::vector<geometry_msgs::PoseStamped> selected_goals_;
   };

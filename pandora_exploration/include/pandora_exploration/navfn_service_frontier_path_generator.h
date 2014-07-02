@@ -50,7 +50,7 @@ namespace pandora_exploration {
   {
    public:
 
-    NavfnServiceFrontierPathGenerator(std::string frontier_representation,
+    NavfnServiceFrontierPathGenerator(const std::string& name, const std::string& frontier_representation,
                         ros::Duration max_duration = ros::Duration(5.0));
 
     virtual bool findPaths(const geometry_msgs::PoseStamped& start, const FrontierListPtr& frontier_list);
