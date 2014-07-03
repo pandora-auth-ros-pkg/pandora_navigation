@@ -182,9 +182,9 @@ namespace move_base {
     }
 
     //load any user specified recovery behaviors, and if that fails load the defaults
-//~    if(!loadRecoveryBehaviors(private_nh)){
-//~      loadDefaultRecoveryBehaviors();
-//~    }
+    if(!loadRecoveryBehaviors(private_nh)){
+      loadDefaultRecoveryBehaviors();
+    }
 
     //initially, we'll need to make a plan
     state_ = PLANNING;
