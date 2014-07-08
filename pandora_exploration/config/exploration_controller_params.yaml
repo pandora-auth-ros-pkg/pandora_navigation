@@ -6,4 +6,6 @@ goal_timeout: 20.0
 
 # how far from a goal the robot has to be
 # to considered visited (in meters) 
-goal_reached_dist: 1.2
+goal_reached_dist: 0.8
+
+use_coverage: false
