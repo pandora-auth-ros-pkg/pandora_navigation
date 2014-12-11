@@ -7,6 +7,8 @@ find_package(catkin REQUIRED COMPONENTS
   geometry_msgs
 )
 
+catkin_python_setup()
+
 add_message_files(
   FILES
   ArenaTypeMsg.msg
