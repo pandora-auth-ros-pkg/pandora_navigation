@@ -35,27 +35,32 @@
 * Author: Chris Zalidis <zalidis@gmail.com>
 *********************************************************************/
 
-#ifndef PANDORA_EXPLORATION_DISTANCE_COST_FUNCTION_H
-#define PANDORA_EXPLORATION_DISTANCE_COST_FUNCTION_H
+#ifndef PANDORA_EXPLORATION_COST_FUNCTIONS_FRONTIER_COST_FUNCTION_H
+#define PANDORA_EXPLORATION_COST_FUNCTIONS_FRONTIER_COST_FUNCTION_H
 
-#include <boost/foreach.hpp>
-
-#include "pandora_exploration/frontier_cost_function.h"
+#include "pandora_exploration/frontier.h"
 
 namespace pandora_exploration {
 
-  class DistanceCostFunction : public FrontierCostFunction
+  class FrontierCostFunction
   {
    public:
 
-    DistanceCostFunction(double scale);
+    virtual void scoreFrontiers(const FrontierListPtr& frontier_list) = 0;
 
-    virtual void scoreFrontiers(const FrontierListPtr& frontier_list);
+    virtual ~FrontierCostFunction() {}
 
-    ~DistanceCostFunction() {}
+   protected:
 
+    explicit FrontierCostFunction(double scale = 1.0) : scale_(scale) {}
+
+   protected:
+
+    double scale_;
   };
+
+  typedef boost::shared_ptr<FrontierCostFunction> FrontierCostFunctionPtr;
 
 } // namespace pandora_exploration
 
-#endif // PANDORA_EXPLORATION_DISTANCE_COST_FUNCTION_H
+#endif  // PANDORA_EXPLORATION_COST_FUNCTIONS_FRONTIER_COST_FUNCTION_H

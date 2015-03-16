@@ -35,33 +35,26 @@
 * Author: Chris Zalidis <zalidis@gmail.com>
 *********************************************************************/
 
-#ifndef PANDORA_EXPLORATION_VISITED_COST_FUNCTION_H
-#define PANDORA_EXPLORATION_VISITED_COST_FUNCTION_H
+#ifndef PANDORA_EXPLORATION_COST_FUNCTIONS_DISTANCE_COST_FUNCTION_H
+#define PANDORA_EXPLORATION_COST_FUNCTIONS_DISTANCE_COST_FUNCTION_H
 
 #include <boost/foreach.hpp>
-#include <tf/tf.h>
-#include <angles/angles.h>
 
-#include "pandora_exploration/frontier_cost_function.h"
+#include "pandora_exploration/cost_functions/frontier_cost_function.h"
 
 namespace pandora_exploration {
 
-  class VisitedCostFunction : public FrontierCostFunction
+  class DistanceCostFunction : public FrontierCostFunction
   {
    public:
 
-    VisitedCostFunction(double scale, const std::vector<geometry_msgs::PoseStamped>& selected_goals);
+    explicit DistanceCostFunction(double scale);
 
     virtual void scoreFrontiers(const FrontierListPtr& frontier_list);
 
-    ~VisitedCostFunction() {}
-
-   private:
-
-    const std::vector<geometry_msgs::PoseStamped>& selected_goals_;
-
+    ~DistanceCostFunction() {}
   };
 
 } // namespace pandora_exploration
 
-#endif // PANDORA_EXPLORATION_VISITED_COST_FUNCTION_H
+#endif  // PANDORA_EXPLORATION_COST_FUNCTIONS_DISTANCE_COST_FUNCTION_H

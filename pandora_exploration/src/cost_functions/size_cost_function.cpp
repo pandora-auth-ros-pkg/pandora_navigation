@@ -35,33 +35,37 @@
 * Author: Chris Zalidis <zalidis@gmail.com>
 *********************************************************************/
 
-#ifndef PANDORA_EXPLORATION_ALIGNMENT_COST_FUNCTION_H
-#define PANDORA_EXPLORATION_ALIGNMENT_COST_FUNCTION_H
-
-#include <boost/foreach.hpp>
-#include <tf/tf.h>
-#include <angles/angles.h>
-
-#include "pandora_exploration/frontier_cost_function.h"
+#include "pandora_exploration/cost_functions/size_cost_function.h"
 
 namespace pandora_exploration {
 
-  class AlignmentCostFunction : public FrontierCostFunction
+SizeCostFunction::SizeCostFunction(double scale) : FrontierCostFunction(scale)
+{
+}
+
+void SizeCostFunction::scoreFrontiers(const FrontierListPtr& frontier_list)
+{
+  int max_size = 0;
+  // iterate over all frontiers and find max distance
+  BOOST_FOREACH(const Frontier & frontier, *frontier_list)
   {
-   public:
+    if (frontier.size > max_size) {
+      max_size = frontier.size;
+    }
+  }
 
-    AlignmentCostFunction(double scale, const geometry_msgs::PoseStamped& robot_pose);
+  // iterate over all frontiers
+  BOOST_FOREACH(Frontier & frontier, *frontier_list)
+  {
+    // if frontier has a already negative cost no point to run this cost function
+    if (frontier.cost < 0) {
+      continue;
+    }
+    // update frontier's cost
+    frontier.cost +=
+        scale_ *
+        (1.0 - exp(-static_cast<double>(frontier.size) / static_cast<double>(max_size) * M_E));
+  }
+}
 
-    virtual void scoreFrontiers(const FrontierListPtr& frontier_list);
-
-    ~AlignmentCostFunction() {}
-
-   private:
-
-    const geometry_msgs::PoseStamped& robot_pose_;
-
-  };
-
-} // namespace pandora_exploration
-
-#endif // PANDORA_EXPLORATION_ALIGNMENT_COST_FUNCTION_H
+}  // namespace pandora_exploration

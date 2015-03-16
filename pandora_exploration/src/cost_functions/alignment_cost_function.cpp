@@ -35,35 +35,47 @@
 * Author: Chris Zalidis <zalidis@gmail.com>
 *********************************************************************/
 
-#include "pandora_exploration/size_cost_function.h"
+#include "pandora_exploration/cost_functions/alignment_cost_function.h"
 
 namespace pandora_exploration {
 
-SizeCostFunction::SizeCostFunction(double scale) : FrontierCostFunction(scale) 
+AlignmentCostFunction::AlignmentCostFunction(double scale,
+                                             const geometry_msgs::PoseStamped& robot_pose)
+  : FrontierCostFunction(scale), robot_pose_(robot_pose)
 {
 }
 
-void SizeCostFunction::scoreFrontiers(const FrontierListPtr& frontier_list)
+void AlignmentCostFunction::scoreFrontiers(const FrontierListPtr& frontier_list)
 {
-  int max_size = 0;
-  //iterate over all frontiers and find max distance
-  BOOST_FOREACH(const Frontier& frontier, *frontier_list)
-  {
-    if (frontier.size > max_size) {
-      max_size = frontier.size;
-    }
-  }
-  
-  //iterate over all frontiers 
+  // iterate over all frontiers
   BOOST_FOREACH(Frontier & frontier, *frontier_list)
   {
-    //if frontier has a already negative cost no point to run this cost function
+    // if frontier has a already negative cost no point to run this cost function
     if (frontier.cost < 0) {
       continue;
     }
-    //update frontier's cost
-    frontier.cost += scale_ *  ( 1.0 - exp(-static_cast<double>(frontier.size) / static_cast<double>(max_size) * M_E) ); 
+
+    // select a point in path to find angle to
+    // if no valid plan to frontier, cost should already be negative
+    // and this function will never run
+    geometry_msgs::PoseStamped goal_pose;
+    if (frontier.path.poses.size() < 10) {
+      goal_pose = frontier.path.poses.back();
+    } else {
+      goal_pose = frontier.path.poses[9];
+    }
+
+    // find angle from robot to goal
+    double angle_to_goal = atan2(goal_pose.pose.position.y - robot_pose_.pose.position.y,
+                                 goal_pose.pose.position.x - robot_pose_.pose.position.x);
+
+    // find shortest angle, result from -pi to pi
+    double final_angle =
+        angles::shortest_angular_distance(angle_to_goal, tf::getYaw(robot_pose_.pose.orientation));
+
+    // update frontier's cost
+    frontier.cost += scale_ * cos(final_angle / 2.0);
   }
 }
 
-} // namespace pandora_exploration
+}  // namespace pandora_exploration

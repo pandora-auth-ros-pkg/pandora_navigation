@@ -1,8 +1,8 @@
-<package>
+<package format="2">
   <name>pandora_exploration</name>
   <version>0.0.0</version>
   <description>Exploration controller for PANDORA UGV</description>
-  
+
   <maintainer email="zalidis@gmail.com">Chris Zalidis</maintainer>
 
   <license>BSD</license>
@@ -14,35 +14,21 @@
 
   <buildtool_depend>catkin</buildtool_depend>
 
-  <build_depend>roscpp</build_depend>
-  <build_depend>visualization_msgs</build_depend>
-  <build_depend>pandora_navigation_msgs</build_depend>
-  <build_depend>actionlib</build_depend>
-  <build_depend>geometry_msgs</build_depend>
-  <build_depend>costmap_2d</build_depend>
-  <build_depend>move_base_msgs</build_depend>
-  <build_depend>tf</build_depend>
-  <build_depend>nav_msgs</build_depend>
-  <build_depend>pluginlib</build_depend>
-  <build_depend>nav_core</build_depend>
-  <build_depend>angles</build_depend>
-  <build_depend>tf</build_depend>
-  
-  <run_depend>roscpp</run_depend>
-  <run_depend>visualization_msgs</run_depend>
-  <run_depend>pandora_navigation_msgs</run_depend>
-  <run_depend>actionlib</run_depend>
-  <run_depend>geometry_msgs</run_depend>
-  <run_depend>costmap_2d</run_depend>
-  <run_depend>move_base_msgs</run_depend>
-  <run_depend>tf</run_depend>
-  <run_depend>nav_msgs</run_depend>
-  <run_depend>pluginlib</run_depend>
-  <run_depend>nav_core</run_depend>
-  <run_depend>angles</run_depend>
-  <run_depend>tf</run_depend>
+  <build_depend>roslint</build_depend>
 
-  
+  <depend>roscpp</depend>
+  <depend>visualization_msgs</depend>
+  <depend>pandora_navigation_msgs</depend>
+  <depend>actionlib</depend>
+  <depend>geometry_msgs</depend>
+  <depend>costmap_2d</depend>
+  <depend>move_base_msgs</depend>
+  <depend>tf</depend>
+  <depend>nav_msgs</depend>
+  <depend>pluginlib</depend>
+  <depend>nav_core</depend>
+  <depend>angles</depend>
+
   <export>
   </export>
 </package>

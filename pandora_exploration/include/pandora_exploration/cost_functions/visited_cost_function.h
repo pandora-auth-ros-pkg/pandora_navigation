@@ -35,47 +35,33 @@
 * Author: Chris Zalidis <zalidis@gmail.com>
 *********************************************************************/
 
-#include "pandora_exploration/alignment_cost_function.h"
+#ifndef PANDORA_EXPLORATION_COST_FUNCTIONS_VISITED_COST_FUNCTION_H
+#define PANDORA_EXPLORATION_COST_FUNCTIONS_VISITED_COST_FUNCTION_H
+
+#include <vector>
+#include <boost/foreach.hpp>
+#include <tf/tf.h>
+#include <angles/angles.h>
+
+#include "pandora_exploration/cost_functions/frontier_cost_function.h"
 
 namespace pandora_exploration {
 
-AlignmentCostFunction::AlignmentCostFunction(double scale, const geometry_msgs::PoseStamped& robot_pose)
-  : FrontierCostFunction(scale), robot_pose_(robot_pose)
-{
-}
-
-void AlignmentCostFunction::scoreFrontiers(const FrontierListPtr& frontier_list)
-{
-  //iterate over all frontiers 
-  BOOST_FOREACH(Frontier& frontier, *frontier_list)
+  class VisitedCostFunction : public FrontierCostFunction
   {
-    //if frontier has a already negative cost no point to run this cost function
-    if (frontier.cost < 0) {
-      continue;
-    }
+   public:
 
-    //select a point in path to find angle to
-    //if no valid plan to frontier, cost should already be negative
-    //and this function will never run
-    geometry_msgs::PoseStamped goal_pose;
-    if (frontier.path.poses.size() < 10) {
-      goal_pose = frontier.path.poses.back();
-    }
-    else {
-      goal_pose = frontier.path.poses[9];
-    }
+    VisitedCostFunction(double scale, const std::vector<geometry_msgs::PoseStamped>& selected_goals);
 
-    //find angle from robot to goal
-    double angle_to_goal = atan2(goal_pose.pose.position.y - robot_pose_.pose.position.y,
-                                      goal_pose.pose.position.x - robot_pose_.pose.position.x);
+    virtual void scoreFrontiers(const FrontierListPtr& frontier_list);
 
-    //find shortest angle, result from -pi to pi
-    double final_angle = angles::shortest_angular_distance(angle_to_goal, tf::getYaw(robot_pose_.pose.orientation));
+    ~VisitedCostFunction() {}
 
-    
-    //update frontier's cost
-    frontier.cost += scale_ * cos(final_angle/2.0);
-  }
-}
+   private:
+
+    const std::vector<geometry_msgs::PoseStamped>& selected_goals_;
+  };
 
 } // namespace pandora_exploration
+
+#endif  // PANDORA_EXPLORATION_COST_FUNCTIONS_VISITED_COST_FUNCTION_H

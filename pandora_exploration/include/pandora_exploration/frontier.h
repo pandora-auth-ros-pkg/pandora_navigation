@@ -1,5 +1,5 @@
-#ifndef FRONTIER_H_
-#define FRONTIER_H_
+#ifndef PANDORA_EXPLORATION_FRONTIER_H
+#define PANDORA_EXPLORATION_FRONTIER_H
 
 #include <boost/shared_ptr.hpp>
 #include <geometry_msgs/Point.h>
@@ -21,16 +21,16 @@ namespace pandora_exploration {
     {
       return (this->min_distance < other.min_distance);
     }
-    
+
    public:
-   
+
     std_msgs::Header header;
-    
+
     uint32_t size;
     //min distance using bfs
     float min_distance;
     float cost;
-    
+
     geometry_msgs::Point initial;
     geometry_msgs::Point centroid;
     geometry_msgs::Point middle;
@@ -40,7 +40,7 @@ namespace pandora_exploration {
 
   typedef std::list<Frontier> FrontierList;
   typedef boost::shared_ptr<FrontierList> FrontierListPtr;
-  
+
 } // namespace pandora_exploration
 
-#endif
+#endif  // PANDORA_EXPLORATION_FRONTIER_H

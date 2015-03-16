@@ -35,32 +35,32 @@
 * Author: Chris Zalidis <zalidis@gmail.com>
 *********************************************************************/
 
-#ifndef PANDORA_EXPLORATION_FRONTIER_COST_FUNCTION_H
-#define PANDORA_EXPLORATION_FRONTIER_COST_FUNCTION_H
+#ifndef PANDORA_EXPLORATION_COST_FUNCTIONS_ALIGNMENT_COST_FUNCTION_H
+#define PANDORA_EXPLORATION_COST_FUNCTIONS_ALIGNMENT_COST_FUNCTION_H
 
-#include "pandora_exploration/frontier.h"
+#include <boost/foreach.hpp>
+#include <tf/tf.h>
+#include <angles/angles.h>
+
+#include "pandora_exploration/cost_functions/frontier_cost_function.h"
 
 namespace pandora_exploration {
 
-  class FrontierCostFunction
+  class AlignmentCostFunction : public FrontierCostFunction
   {
    public:
 
-    virtual void scoreFrontiers(const FrontierListPtr& frontier_list) = 0;
+    AlignmentCostFunction(double scale, const geometry_msgs::PoseStamped& robot_pose);
 
-    virtual ~FrontierCostFunction() {}
+    virtual void scoreFrontiers(const FrontierListPtr& frontier_list);
 
-   protected:
+    ~AlignmentCostFunction() {}
 
-    FrontierCostFunction(double scale=1.0) : scale_(scale) {}
+   private:
 
-   protected:
-
-    double scale_;
+    const geometry_msgs::PoseStamped& robot_pose_;
   };
 
-  typedef boost::shared_ptr<FrontierCostFunction> FrontierCostFunctionPtr;
-  
 } // namespace pandora_exploration
 
-#endif // PANDORA_EXPLORATION_FRONTIER_COST_FUNCTION_H
+#endif  // PANDORA_EXPLORATION_COST_FUNCTIONS_ALIGNMENT_COST_FUNCTION_H

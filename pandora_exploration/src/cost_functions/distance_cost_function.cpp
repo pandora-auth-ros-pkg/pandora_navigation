@@ -35,51 +35,49 @@
 * Author: Chris Zalidis <zalidis@gmail.com>
 *********************************************************************/
 
-#include "pandora_exploration/visited_cost_function.h"
+#include "pandora_exploration/cost_functions/distance_cost_function.h"
 
 namespace pandora_exploration {
 
-VisitedCostFunction::VisitedCostFunction(double scale, const std::vector<geometry_msgs::PoseStamped>& selected_goals)
-  : FrontierCostFunction(scale), selected_goals_(selected_goals)
+DistanceCostFunction::DistanceCostFunction(double scale) : FrontierCostFunction(scale)
 {
 }
 
-void VisitedCostFunction::scoreFrontiers(const FrontierListPtr& frontier_list)
+void DistanceCostFunction::scoreFrontiers(const FrontierListPtr& frontier_list)
 {
-  //iterate over all frontiers 
-  BOOST_FOREACH(Frontier& frontier, *frontier_list)
+  int max_path = 0;
+  // iterate over all frontiers and find max distance
+  BOOST_FOREACH(const Frontier & frontier, *frontier_list)
   {
-    //if frontier has a already negative cost no point to run this cost function
+    if (frontier.path.poses.size() > max_path) {
+      max_path = frontier.path.poses.size();
+    }
+  }
+
+  // iterate over all frontiers
+  BOOST_FOREACH(Frontier & frontier, *frontier_list)
+  {
+    // if frontier has a already negative cost no point to run this cost function
     if (frontier.cost < 0) {
       continue;
     }
 
-    //how many times we have send a similar goal
-    int times_seen = 0;
-    double time = 0;
-    
-    //iterate over all previous goals
-    BOOST_FOREACH(const geometry_msgs::PoseStamped& selected_goal, selected_goals_)
-    {
-      //find distance between selected_goal and frontier
-      //using initial point, maybe get from param later
-      double dx = selected_goal.pose.position.x - frontier.initial.x;
-      double dy = selected_goal.pose.position.y - frontier.initial.y;
+    // find path distance based on path
+    // frontier.path
 
-      if (::hypot(dx, dy) < 0.2) {
-        time += (frontier.header.stamp - selected_goal.header.stamp).toSec();
-        times_seen++;
-      }
-      
+    // if no path found penalize frontier
+    if (frontier.path.poses.empty()) {
+      frontier.cost = -1.0;
+      continue;
     }
 
-//~    std::cout << (1.0 - pow((1.0/freq), 1.0/5.0)) << std::endl;
-//~    std::cout << exp(-static_cast<double>(times_seen)) << std::endl;
-    
-    //update cost
-//~    frontier.cost += scale_ * (1.0 - pow((1.0/freq), 1.0/5.0));
-    frontier.cost += scale_ * exp(-static_cast<double>(times_seen));
+    // size of path shows "straightness" and lenght of the path, this has to be reviewed
+    double path_dist =
+        static_cast<double>(frontier.path.poses.size()) / static_cast<double>(max_path);
+
+    // update frontier's cost
+    frontier.cost += scale_ * exp(-path_dist * M_E);
   }
 }
 
-} // namespace pandora_exploration
+}  // namespace pandora_exploration
