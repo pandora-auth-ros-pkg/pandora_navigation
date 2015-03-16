@@ -1,8 +1,8 @@
-<package>
+<package format="2">
   <name>pandora_local_planner</name>
   <version>0.0.0</version>
   <description>Local path planning algorithms using dwa.</description>
-  
+
   <maintainer email="zalidis@gmail.com">Chris Zalidis</maintainer>
 
   <license>BSD</license>
@@ -14,8 +14,6 @@
 
   <buildtool_depend>catkin</buildtool_depend>
 
-   
   <export>
-
   </export>
 </package>
