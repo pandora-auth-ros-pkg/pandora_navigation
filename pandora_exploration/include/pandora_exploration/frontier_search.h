@@ -38,6 +38,8 @@
 #ifndef PANDORA_EXPLORATION_FRONTIER_SEARCH_H
 #define PANDORA_EXPLORATION_FRONTIER_SEARCH_H
 
+#include <string>
+#include <list>
 #include <boost/shared_ptr.hpp>
 
 #include <geometry_msgs/Point.h>
@@ -47,27 +49,27 @@
 
 namespace pandora_exploration {
 
-  class FrontierSearch
+class FrontierSearch {
+ public:
+  virtual std::list<Frontier> searchFrom(geometry_msgs::Point position) = 0;
+
+  virtual ~FrontierSearch()
   {
-   public:
+  }
 
-    virtual std::list<Frontier> searchFrom(geometry_msgs::Point position) = 0;
+ protected:
+  FrontierSearch(const boost::shared_ptr<costmap_2d::Costmap2D>& costmap, std::string costmap_frame)
+    : costmap_(costmap), costmap_frame_(costmap_frame)
+  {
+  }
 
-    virtual ~FrontierSearch() {}
+ protected:
+  boost::shared_ptr<costmap_2d::Costmap2D> costmap_;
+  std::string costmap_frame_;
+};
 
-   protected:
+typedef boost::shared_ptr<FrontierSearch> FrontierSearchPtr;
 
-    FrontierSearch(const boost::shared_ptr<costmap_2d::Costmap2D>& costmap, std::string costmap_frame)
-      : costmap_(costmap), costmap_frame_(costmap_frame) {}
+}  // namespace pandora_exploration
 
-   protected:
-
-    boost::shared_ptr<costmap_2d::Costmap2D> costmap_;
-    std::string costmap_frame_;
-  };
-
-  typedef boost::shared_ptr<FrontierSearch> FrontierSearchPtr;
-  
-} // namespace pandora_exploration
-
-#endif // PANDORA_EXPLORATION_FRONTIER_SEARCH_H
+#endif  // PANDORA_EXPLORATION_FRONTIER_SEARCH_H

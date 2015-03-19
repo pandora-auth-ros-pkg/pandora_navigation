@@ -11,6 +11,7 @@ if __name__ == '__main__':
   client = actionlib.SimpleActionClient('do_exploration', DoExplorationAction)
   client.wait_for_server()
   goal = DoExplorationGoal()
+  goal.exploration_type = int(sys.argv[1])
   client.send_goal(goal)
   client.wait_for_result()
   rospy.logwarn(client.get_goal_status_text())

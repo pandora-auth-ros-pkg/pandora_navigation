@@ -38,6 +38,8 @@
 #ifndef PANDORA_EXPLORATION_FRONTIER_GOAL_SELECTOR_H
 #define PANDORA_EXPLORATION_FRONTIER_GOAL_SELECTOR_H
 
+#include <string>
+#include <vector>
 #include <costmap_2d/costmap_2d_ros.h>
 #include <costmap_2d/costmap_2d.h>
 #include <tf/transform_listener.h>
@@ -48,51 +50,48 @@
 #include "pandora_exploration/map_frontier_search.h"
 #include "pandora_exploration/navfn_frontier_path_generator.h"
 #include "pandora_exploration/navfn_service_frontier_path_generator.h"
-#include "pandora_exploration/distance_cost_function.h"
-#include "pandora_exploration/size_cost_function.h"
-#include "pandora_exploration/alignment_cost_function.h"
-#include "pandora_exploration/visited_cost_function.h"
+
+#include "pandora_exploration/cost_functions/distance_cost_function.h"
+#include "pandora_exploration/cost_functions/size_cost_function.h"
+#include "pandora_exploration/cost_functions/alignment_cost_function.h"
+#include "pandora_exploration/cost_functions/visited_cost_function.h"
 
 namespace pandora_exploration {
 
-  class FrontierGoalSelector : public GoalSelector
+class FrontierGoalSelector : public GoalSelector {
+ public:
+  explicit FrontierGoalSelector(const std::string& name);
+
+  virtual bool findNextGoal(geometry_msgs::PoseStamped* goal);
+
+  ~FrontierGoalSelector()
   {
-   public:
+  }
 
-    FrontierGoalSelector();
+ private:
+  bool findBestFrontier(Frontier* selected);
+  void calculateFinalGoalOrientation(Frontier* frontier);
+  void visualizeFrontiers();
 
-    virtual bool findNextGoal(geometry_msgs::PoseStamped* goal);
+ private:
+  ros::Publisher frontier_marker_pub_;
+  boost::shared_ptr<costmap_2d::Costmap2DROS> explore_costmap_ros_;
+  FrontierListPtr frontier_list_;
 
-    ~FrontierGoalSelector() {}
+  tf::TransformListener tf_listener_;
 
-   private:
+  geometry_msgs::PoseStamped current_robot_pose_;
 
-    bool findBestFrontier(Frontier* selected);
-    void calculateFinalGoalOrientation(Frontier* frontier);
-    void visualizeFrontiers();
+  std::vector<FrontierSearchPtr> frontier_search_vec_;
+  std::vector<FrontierCostFunctionPtr> frontier_cost_function_vec_;
+  FrontierPathGeneratorPtr frontier_path_generator_;
 
-   private:
+  std::string frontier_representation_;
+  bool visualize_paths_;
 
-    ros::Publisher frontier_marker_pub_;
-    boost::shared_ptr<costmap_2d::Costmap2DROS> explore_costmap_ros_;
-    FrontierListPtr frontier_list_;
+  Frontier current_frontier_;
+};
 
-    tf::TransformListener tf_listener_;
+}  // namespace pandora_exploration
 
-    geometry_msgs::PoseStamped current_robot_pose_;
-    
-    std::vector<FrontierSearchPtr> frontier_search_vec_;
-    std::vector<FrontierCostFunctionPtr> frontier_cost_function_vec_;
-    FrontierPathGeneratorPtr frontier_path_generator_;
-
-    std::string frontier_representation_;
-    bool visualize_paths_;
-
-    Frontier current_frontier_;
-
-  };
-
-
-} // namespace pandora_exploration
-
-#endif // PANDORA_EXPLORATION_FRONTIER_GOAL_SELECTOR_H
+#endif  // PANDORA_EXPLORATION_FRONTIER_GOAL_SELECTOR_H

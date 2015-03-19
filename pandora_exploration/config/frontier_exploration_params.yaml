@@ -1,20 +1,41 @@
-# call move base service
-plan_service_name: move_base/NavfnROS/make_plan
+explore:
+  # call move base service
+  plan_service_name: move_base/NavfnROS/make_plan
 
-# used if a standalone planner is instantiated
-global_planner: navfn/NavfnROS
+  # used if a standalone planner is instantiated
+  global_planner: navfn/NavfnROS
 
-# give that much time to planner to find paths
-planner_timeout_duration: 1.0
+  # give that much time to planner to find paths
+  planner_timeout_duration: 1.0
 
-# valid types: initial, middle, centroid
-frontier_representation: centroid
-visualize_paths: true 
+  # valid types: initial, middle, centroid
+  frontier_representation: centroid
+  visualize_paths: true
 
-cost_functions:
-  dist_scale: 0.8
-  size_scale: 2.0
-  alignment_scale: 1.0
-  visited_scale: 2.0
+  cost_functions:
+    size_scale: 2.0
+    dist_scale: 0.8
+    alignment_scale: 1.0
+    visited_scale: 2.0
+
+coverage:
+  # call move base service
+  plan_service_name: move_base/NavfnROS/make_plan
+
+  # used if a standalone planner is instantiated
+  global_planner: navfn/NavfnROS
+
+  # give that much time to planner to find paths
+  planner_timeout_duration: 1.0
+
+  # valid types: initial, middle, centroid
+  frontier_representation: initial
+  visualize_paths: true
+
+  cost_functions:
+    size_scale: 0.35
+    dist_scale: 0.2
+    alignment_scale: 0.15
+    visited_scale: 0.3
 
 

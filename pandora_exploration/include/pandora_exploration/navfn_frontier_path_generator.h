@@ -38,6 +38,7 @@
 #ifndef PANDORA_EXPLORATION_NAVFN_FRONTIER_PATH_GENERATOR_H
 #define PANDORA_EXPLORATION_NAVFN_FRONTIER_PATH_GENERATOR_H
 
+#include <string>
 #include <ros/ros.h>
 #include <nav_msgs/GetPlan.h>
 #include <boost/foreach.hpp>
@@ -50,27 +51,27 @@
 
 namespace pandora_exploration {
 
-  class NavfnFrontierPathGenerator : public FrontierPathGenerator
+class NavfnFrontierPathGenerator : public FrontierPathGenerator {
+ public:
+  NavfnFrontierPathGenerator(const std::string& name, const std::string& frontier_representation,
+                             const boost::shared_ptr<costmap_2d::Costmap2DROS>& costmap_ros);
+
+  virtual bool findPaths(const geometry_msgs::PoseStamped& start,
+                         const FrontierListPtr& frontier_list);
+
+  ~NavfnFrontierPathGenerator()
   {
-   public:
+  }
 
-    NavfnFrontierPathGenerator(std::string frontier_representation,
-      const boost::shared_ptr<costmap_2d::Costmap2DROS>& costmap_ros);
+ private:
+  ros::NodeHandle pnh_;
 
-    virtual bool findPaths(const geometry_msgs::PoseStamped& start, const FrontierListPtr& frontier_list);
+  boost::shared_ptr<nav_core::BaseGlobalPlanner> planner_;
+  pluginlib::ClassLoader<nav_core::BaseGlobalPlanner> planner_loader_;
 
-    ~NavfnFrontierPathGenerator() {}
+  boost::shared_ptr<costmap_2d::Costmap2DROS> costmap_ros_;
+};
 
-   private:
+}  // namespace pandora_exploration
 
-    ros::NodeHandle pnh_;
-
-    boost::shared_ptr<nav_core::BaseGlobalPlanner> planner_;
-    pluginlib::ClassLoader<nav_core::BaseGlobalPlanner> planner_loader_;
-
-    boost::shared_ptr<costmap_2d::Costmap2DROS> costmap_ros_;
-  };
-
-} // namespace pandora_exploration
-
-#endif // PANDORA_EXPLORATION_NAVFN_FRONTIER_PATH_GENERATOR_H
+#endif  // PANDORA_EXPLORATION_NAVFN_FRONTIER_PATH_GENERATOR_H

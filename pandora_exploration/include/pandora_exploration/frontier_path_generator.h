@@ -38,31 +38,35 @@
 #ifndef PANDORA_EXPLORATION_FRONTIER_PATH_GENERATOR_H
 #define PANDORA_EXPLORATION_FRONTIER_PATH_GENERATOR_H
 
+#include <string>
 #include <nav_msgs/Path.h>
 
 #include "pandora_exploration/frontier.h"
 
 namespace pandora_exploration {
 
-  class FrontierPathGenerator
+class FrontierPathGenerator {
+ public:
+  virtual bool findPaths(const geometry_msgs::PoseStamped& start,
+                         const FrontierListPtr& frontier_list) = 0;
+
+  virtual ~FrontierPathGenerator()
   {
-   public:
+  }
 
-    virtual bool findPaths(const geometry_msgs::PoseStamped& start, const FrontierListPtr& frontier_list) = 0;
+ protected:
+  FrontierPathGenerator(const std::string& name, const std::string& frontier_representation)
+    : name_(name), frontier_representation_(frontier_representation)
+  {
+  }
 
-    virtual ~FrontierPathGenerator() {}
+ protected:
+  std::string name_;
+  std::string frontier_representation_;
+};
 
-   protected:
+typedef boost::shared_ptr<FrontierPathGenerator> FrontierPathGeneratorPtr;
 
-    FrontierPathGenerator(std::string frontier_representation) : frontier_representation_(frontier_representation){}
+}  // namespace pandora_exploration
 
-   protected:
-   
-    std::string frontier_representation_;
-  };
-
-  typedef boost::shared_ptr<FrontierPathGenerator> FrontierPathGeneratorPtr;
-
-} // namespace pandora_exploration
-
-#endif // PANDORA_EXPLORATION_FRONTIER_PATH_GENERATOR_H
+#endif  // PANDORA_EXPLORATION_FRONTIER_PATH_GENERATOR_H

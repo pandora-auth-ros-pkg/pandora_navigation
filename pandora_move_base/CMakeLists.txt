@@ -10,6 +10,10 @@ find_package(catkin REQUIRED
       dynamic_reconfigure
       nav_core
       tf
+      visualization_msgs
+      move_base_msgs
+      nav_core
+      geometry_msgs
 )
 
 
@@ -22,7 +26,7 @@ generate_dynamic_reconfigure_options(
 )
 
 catkin_package(
-#  DEPENDS 
+#  DEPENDS
   CATKIN_DEPENDS
     roscpp
     pluginlib
@@ -30,9 +34,13 @@ catkin_package(
     dynamic_reconfigure
     nav_core
     tf
-  INCLUDE_DIRS
-    include
-#  LIBRARIES 
+    visualization_msgs
+    move_base_msgs
+    nav_core
+    geometry_msgs
+#  INCLUDE_DIRS
+#    include
+#  LIBRARIES
 )
 
 include_directories(

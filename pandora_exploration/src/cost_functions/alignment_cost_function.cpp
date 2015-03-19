@@ -35,49 +35,47 @@
 * Author: Chris Zalidis <zalidis@gmail.com>
 *********************************************************************/
 
-#include "pandora_exploration/visited_cost_function.h"
+#include "pandora_exploration/cost_functions/alignment_cost_function.h"
 
 namespace pandora_exploration {
 
-VisitedCostFunction::VisitedCostFunction(double scale, const std::vector<geometry_msgs::PoseStamped>& selected_goals)
-  : FrontierCostFunction(scale), selected_goals_(selected_goals)
+AlignmentCostFunction::AlignmentCostFunction(double scale,
+                                             const geometry_msgs::PoseStamped& robot_pose)
+  : FrontierCostFunction(scale), robot_pose_(robot_pose)
 {
 }
 
-void VisitedCostFunction::scoreFrontiers(const FrontierListPtr& frontier_list)
+void AlignmentCostFunction::scoreFrontiers(const FrontierListPtr& frontier_list)
 {
-  //iterate over all frontiers 
-  BOOST_FOREACH(Frontier& frontier, *frontier_list)
+  // iterate over all frontiers
+  BOOST_FOREACH(Frontier & frontier, *frontier_list)
   {
-    //if frontier has a already negative cost no point to run this cost function
+    // if frontier has a already negative cost no point to run this cost function
     if (frontier.cost < 0) {
       continue;
     }
 
-    //how many times we have send a similar goal
-    int weight = 0;
-    
-    //iterate over all previous goals
-    BOOST_FOREACH(const geometry_msgs::PoseStamped& selected_goal, selected_goals_)
-    {
-      //find distance between selected_goal and frontier
-      //using initial point, maybe get from param later
-      double dx = selected_goal.pose.position.x - frontier.initial.x;
-      double dy = selected_goal.pose.position.y - frontier.initial.y;
-
-      if (::hypot(dx, dy) < 0.3) {
-        double time_since = (frontier.header.stamp - selected_goal.header.stamp).toSec();
-        weight += 1/time_since;
-      }
-      
+    // select a point in path to find angle to
+    // if no valid plan to frontier, cost should already be negative
+    // and this function will never run
+    geometry_msgs::PoseStamped goal_pose;
+    if (frontier.path.poses.size() < 10) {
+      goal_pose = frontier.path.poses.back();
+    } else {
+      goal_pose = frontier.path.poses[9];
     }
 
-    //if this is the first time, nothing to do
-    if (weight == 0)
-      continue;
-    
-    frontier.cost /= scale_ * weight;
+    // find angle from robot to goal
+    double angle_to_goal = atan2(goal_pose.pose.position.y - robot_pose_.pose.position.y,
+                                 goal_pose.pose.position.x - robot_pose_.pose.position.x);
+
+    // find shortest angle, result from -pi to pi
+    double final_angle =
+        angles::shortest_angular_distance(angle_to_goal, tf::getYaw(robot_pose_.pose.orientation));
+
+    // update frontier's cost
+    frontier.cost += scale_ * cos(final_angle / 2.0);
   }
 }
 
-} // namespace pandora_exploration
+}  // namespace pandora_exploration

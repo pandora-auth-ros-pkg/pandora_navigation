@@ -35,27 +35,26 @@
 * Author: Chris Zalidis <zalidis@gmail.com>
 *********************************************************************/
 
-#include "pandora_exploration/size_cost_function.h"
+#ifndef PANDORA_EXPLORATION_COST_FUNCTIONS_DISTANCE_COST_FUNCTION_H
+#define PANDORA_EXPLORATION_COST_FUNCTIONS_DISTANCE_COST_FUNCTION_H
+
+#include <boost/foreach.hpp>
+
+#include "pandora_exploration/cost_functions/frontier_cost_function.h"
 
 namespace pandora_exploration {
 
-SizeCostFunction::SizeCostFunction(double scale) : FrontierCostFunction(scale) 
-{
-}
-
-void SizeCostFunction::scoreFrontiers(const FrontierListPtr& frontier_list)
-{
-  //iterate over all frontiers 
-  BOOST_FOREACH(Frontier & frontier, *frontier_list)
+  class DistanceCostFunction : public FrontierCostFunction
   {
-    //if frontier has a already negative cost no point to run this cost function
-    if (frontier.cost < 0) {
-      continue;
-    }
-    
-    //update frontier's cost
-    frontier.cost += scale_ *  frontier.size; //consider normalizing over all frontiers
-  }
-}
+   public:
+
+    explicit DistanceCostFunction(double scale);
+
+    virtual void scoreFrontiers(const FrontierListPtr& frontier_list);
+
+    ~DistanceCostFunction() {}
+  };
 
 } // namespace pandora_exploration
+
+#endif  // PANDORA_EXPLORATION_COST_FUNCTIONS_DISTANCE_COST_FUNCTION_H

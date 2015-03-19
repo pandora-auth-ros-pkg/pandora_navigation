@@ -35,39 +35,49 @@
 * Author: Chris Zalidis <zalidis@gmail.com>
 *********************************************************************/
 
-#include "pandora_exploration/distance_cost_function.h"
+#include "pandora_exploration/cost_functions/distance_cost_function.h"
 
 namespace pandora_exploration {
 
-DistanceCostFunction::DistanceCostFunction(double scale)
-  : FrontierCostFunction(scale)
+DistanceCostFunction::DistanceCostFunction(double scale) : FrontierCostFunction(scale)
 {
 }
 
 void DistanceCostFunction::scoreFrontiers(const FrontierListPtr& frontier_list)
 {
-  //iterate over all frontiers 
+  int max_path = 0;
+  // iterate over all frontiers and find max distance
+  BOOST_FOREACH(const Frontier & frontier, *frontier_list)
+  {
+    if (frontier.path.poses.size() > max_path) {
+      max_path = frontier.path.poses.size();
+    }
+  }
+
+  // iterate over all frontiers
   BOOST_FOREACH(Frontier & frontier, *frontier_list)
   {
-    //if frontier has a already negative cost no point to run this cost function
+    // if frontier has a already negative cost no point to run this cost function
     if (frontier.cost < 0) {
       continue;
     }
-    
-    //find path distance based on path
-    //frontier.path
 
-    //if no path found penalize frontier
+    // find path distance based on path
+    // frontier.path
+
+    // if no path found penalize frontier
     if (frontier.path.poses.empty()) {
       frontier.cost = -1.0;
       continue;
     }
 
-    //size of path shows "straightness" and lenght of the path, this has to be reviewed
-    double path_dist = static_cast<double>(frontier.path.poses.size());
-    //update frontier's cost
-    frontier.cost /= scale_ * path_dist; //consider normalizing over all frontiers
+    // size of path shows "straightness" and lenght of the path, this has to be reviewed
+    double path_dist =
+        static_cast<double>(frontier.path.poses.size()) / static_cast<double>(max_path);
+
+    // update frontier's cost
+    frontier.cost += scale_ * exp(-path_dist * M_E);
   }
 }
 
-} // namespace pandora_exploration
+}  // namespace pandora_exploration

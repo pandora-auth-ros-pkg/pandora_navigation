@@ -18,12 +18,10 @@ include_directories(
 )
 
 catkin_package(
-  INCLUDE_DIRS
-    include
-    ${EIGEN_INCLUDE_DIRS}
+#  INCLUDE_DIRS
+#    include
   LIBRARIES
   CATKIN_DEPENDS
-    cmake_modules
     roscpp
     sensor_msgs
     tf

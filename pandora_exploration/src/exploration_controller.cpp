@@ -39,108 +39,129 @@
 
 namespace pandora_exploration {
 
-ExplorationController::ExplorationController() :
-  private_nh_("~"),
-  goal_searches_count_(0),
-  abort_count_(0),
-  aborted_(false),
-  do_exploration_server_(nh_, "do_exploration", boost::bind(&ExplorationController::executeCb, this, _1), false),
-  move_base_client_("move_base", true),
-  first_time_(true)
+ExplorationController::ExplorationController()
+  : private_nh_("~"),
+    goal_searches_count_(0),
+    abort_count_(0),
+    aborted_(false),
+    do_exploration_server_(nh_, "do_exploration",
+                           boost::bind(&ExplorationController::executeCb, this, _1), false),
+    move_base_client_("move_base", true),
+    first_time_(true)
 {
-  goal_selector_.reset( new  FrontierGoalSelector() );
-  do_exploration_server_.registerPreemptCallback(boost::bind(&ExplorationController::preemptCb, this));
+  explore_goal_selector_.reset(new FrontierGoalSelector("explore"));
+
+  bool use_coverage;
+  private_nh_.param<bool>("use_coverage", use_coverage, false);
+
+  if (use_coverage)
+    coverage_goal_selector_.reset(new FrontierGoalSelector("coverage"));
+
+  do_exploration_server_.registerPreemptCallback(
+      boost::bind(&ExplorationController::preemptCb, this));
 
   private_nh_.param<int>("max_goal_searches", max_goal_searches_, 5);
   private_nh_.param<int>("max_abortions", max_abortions_, 5);
 
-  //proporsional to number of frontiers?
+  // proporsional to number of frontiers?
   private_nh_.param<double>("goal_reached_dist", goal_reached_dist_, 1.0);
 
-  //robot has that many seconds to reach a goal
-  //TODO: it could be proportional to path's length
+  // robot has that many seconds to reach a goal
+  // TODO(czalidis): it could be proportional to path's length
   double goal_timeout;
   private_nh_.param<double>("goal_timeout", goal_timeout, 20.0);
   goal_timeout_ = ros::Duration(goal_timeout);
-  
+
   do_exploration_server_.start();
 }
 
-void ExplorationController::executeCb(const pandora_navigation_msgs::DoExplorationGoalConstPtr &goal)
+void ExplorationController::executeCb(
+    const pandora_navigation_msgs::DoExplorationGoalConstPtr& goal)
 {
-  //wait for move_base to set-up
+  // wait for move_base to set-up
   if (!move_base_client_.waitForServer(ros::Duration(1.0))) {
     do_exploration_server_.setAborted(pandora_navigation_msgs::DoExplorationResult(),
-                                                        "Could not connect to move_base action");
+                                      "Could not connect to move_base action");
     return;
   }
 
   ROS_INFO("[%s] Received request to explore the world!", ros::this_node::getName().c_str());
 
-  //reset aborts from previous time, this shouldn't really happen
+  // reset aborts from previous time, this shouldn't really happen
   abort_count_ = 0;
   goal_searches_count_ = 0;
 
-  //while we didn't receive a preempt request
-  while (ros::ok() && do_exploration_server_.isActive())
-  {
-    //we reached maximum goal searches retries
+  // while we didn't receive a preempt request
+  while (ros::ok() && do_exploration_server_.isActive()) {
+    // we reached maximum goal searches retries
     if (goal_searches_count_ >= max_goal_searches_) {
       do_exploration_server_.setAborted(pandora_navigation_msgs::DoExplorationResult(),
-                                                        "Max retries reached, we could not find more goals");
+                                        "Max retries reached, we could not find more goals");
       return;
     }
 
     if (abort_count_ >= max_abortions_) {
       do_exploration_server_.setAborted(pandora_navigation_msgs::DoExplorationResult(),
-                                                        "Robot refuses to move, aborting...");
+                                        "Robot refuses to move, aborting...");
       return;
     }
-    
-    if (!goal_selector_->findNextGoal(&current_goal_)) {
+
+    bool success = false;
+
+    if (goal->exploration_type == pandora_navigation_msgs::DoExplorationGoal::TYPE_DEEP &&
+        coverage_goal_selector_) {
+      success = coverage_goal_selector_->findNextGoal(&current_goal_);
+    } else {
+      success = explore_goal_selector_->findNextGoal(&current_goal_);
+    }
+
+    if (!success) {
       goal_searches_count_++;
-      //wait a little
+      // wait a little
       ros::Duration(0.2).sleep();
       continue;
     }
-    //we have a valid goal
+    // we have a valid goal
     else {
-      //reset failures
+      // reset failures
       goal_searches_count_ = 0;
       aborted_ = false;
 
-      //prepare a MoveBaseGoal
+      // prepare a MoveBaseGoal
       move_base_msgs::MoveBaseGoal move_base_goal;
       move_base_goal.target_pose = current_goal_;
-      
-      //send new goal to move_base
-      //cancel goals before?
-      move_base_client_.sendGoal(move_base_goal,
-                                  boost::bind(&ExplorationController::doneMovingCb, this, _1, _2),
-                                  NULL,
-                                  boost::bind(&ExplorationController::feedbackMovingCb, this, _1));
 
-      //set selected goal to all goal selectors (currently only one)
-      goal_selector_->setSelectedGoal(current_goal_);
+      // send new goal to move_base
+      // cancel goals before?
+      move_base_client_.sendGoal(
+          move_base_goal, boost::bind(&ExplorationController::doneMovingCb, this, _1, _2), NULL,
+          boost::bind(&ExplorationController::feedbackMovingCb, this, _1));
+
+      // set selected goal to all goal selectors
+      explore_goal_selector_->setSelectedGoal(current_goal_);
+      if (coverage_goal_selector_)
+        coverage_goal_selector_->setSelectedGoal(current_goal_);
     }
 
-    while(ros::ok() && do_exploration_server_.isActive() && !isGoalReached() &&  !isTimeReached() && !aborted_)
+    while (ros::ok() && do_exploration_server_.isActive() && !isGoalReached() && !isTimeReached() &&
+           !aborted_)
       ros::Duration(0.1).sleep();
-    
-  }//end of outer while  
 
-  //goal should never be active at this point
+  }  // end of outer while
+
+  // goal should never be active at this point
   ROS_ASSERT(!do_exploration_server_.isActive());
 }
 
-void ExplorationController::feedbackMovingCb(const move_base_msgs::MoveBaseFeedbackConstPtr& feedback)
+void ExplorationController::feedbackMovingCb(
+    const move_base_msgs::MoveBaseFeedbackConstPtr& feedback)
 {
   feedback_.base_position = feedback->base_position;
   do_exploration_server_.publishFeedback(feedback_);
 }
 
 void ExplorationController::doneMovingCb(const actionlib::SimpleClientGoalState& state,
-                                            const move_base_msgs::MoveBaseResultConstPtr& result)
+                                         const move_base_msgs::MoveBaseResultConstPtr& result)
 {
   if (state == actionlib::SimpleClientGoalState::ABORTED) {
     abort_count_++;
@@ -153,35 +174,34 @@ void ExplorationController::preemptCb()
   move_base_client_.cancelGoalsAtAndBeforeTime(ros::Time::now());
   ROS_WARN("[%s] Preempt request from up-stairs!", ros::this_node::getName().c_str());
 
-  if(do_exploration_server_.isActive())
-    do_exploration_server_.setPreempted();
+  if (do_exploration_server_.isActive()) do_exploration_server_.setPreempted();
 }
 
 bool ExplorationController::isGoalReached()
 {
-  //check if we are close to target
-  //TODO: check for race condition
+  // check if we are close to target
+  // TODO(czalidis): check for race condition
   double dx = current_goal_.pose.position.x - feedback_.base_position.pose.position.x;
   double dy = current_goal_.pose.position.y - feedback_.base_position.pose.position.y;
 
   double dist = goal_reached_dist_;
 
   if (first_time_) {
-    dist = 0.2;
+    dist = 0.1;
   }
-  
+
   if (::hypot(dx, dy) < dist) {
     abort_count_ = 0;
     first_time_ = false;
     return true;
   }
-  
+
   return false;
 }
 
 bool ExplorationController::isTimeReached()
 {
-  //something is wrong here
+  // something is wrong here
   if (ros::Time::now() - current_goal_.header.stamp < goal_timeout_) {
     return false;
   }
@@ -190,4 +210,4 @@ bool ExplorationController::isTimeReached()
   return true;
 }
 
-} // namespace pandora_exploration
+}  // namespace pandora_exploration

@@ -39,46 +39,50 @@
 
 namespace pandora_exploration {
 
-NavfnFrontierPathGenerator::NavfnFrontierPathGenerator(std::string frontier_representation,
-          const boost::shared_ptr<costmap_2d::Costmap2DROS>& costmap_ros)
+NavfnFrontierPathGenerator::NavfnFrontierPathGenerator(
+    const std::string& name, const std::string& frontier_representation,
+    const boost::shared_ptr<costmap_2d::Costmap2DROS>& costmap_ros)
   : pnh_("~"),
     costmap_ros_(costmap_ros),
-    FrontierPathGenerator(frontier_representation),
+    FrontierPathGenerator(name, frontier_representation),
     planner_loader_("nav_core", "nav_core::BaseGlobalPlanner")
 {
-  //get planner's name 
+  // get planner's name
   std::string planner_name;
-  pnh_.param<std::string>("global_planner", planner_name, "navfn/NavfnROS");
+  pnh_.param<std::string>(name_ + "/global_planner", planner_name, "navfn/NavfnROS");
 
-  //check if planner plugin exists
-  if(!planner_loader_.isClassAvailable(planner_name)) {
-    ROS_FATAL("[%s] Could not find planner plugin %s", ros::this_node::getName().c_str(), planner_name.c_str());
+  // check if planner plugin exists
+  if (!planner_loader_.isClassAvailable(planner_name)) {
+    ROS_FATAL("[%s] Could not find planner plugin %s", ros::this_node::getName().c_str(),
+              planner_name.c_str());
     ROS_BREAK();
   }
 
-  //create planner
-  try {
+  // create planner
+  try
+  {
     planner_ = planner_loader_.createInstance(planner_name);
     planner_->initialize(planner_loader_.getName(planner_name), costmap_ros_.get());
   }
-  catch (const pluginlib::PluginlibException& ex) {
+  catch (const pluginlib::PluginlibException& ex)
+  {
     ROS_FATAL("[%s] %s", ros::this_node::getName().c_str(), ex.what());
     ROS_BREAK();
   }
 }
 
 bool NavfnFrontierPathGenerator::findPaths(const geometry_msgs::PoseStamped& start,
-                                                            const FrontierListPtr& frontier_list)
+                                           const FrontierListPtr& frontier_list)
 {
-  //calculate path for each frontier
-  BOOST_FOREACH(Frontier& frontier, *frontier_list)
+  // calculate path for each frontier
+  BOOST_FOREACH(Frontier & frontier, *frontier_list)
   {
     nav_msgs::Path plan;
     geometry_msgs::PoseStamped goal;
 
     goal.header = frontier.header;
 
-    //check to what point we want to plan
+    // check to what point we want to plan
     if (frontier_representation_ == "centroid") {
       goal.pose.position = frontier.centroid;
     }
@@ -99,4 +103,4 @@ bool NavfnFrontierPathGenerator::findPaths(const geometry_msgs::PoseStamped& sta
   return true;
 }
 
-} // namespace pandora_exploration
+}  // namespace pandora_exploration

@@ -19,5 +19,5 @@ global_costmap:
     lethal_cost_threshold: 61
 
   inflation_layer:
-    inflation_radius: 0.8
-    cost_scaling_factor: 5.0
+    inflation_radius: 0.5
+    cost_scaling_factor: 7.0

@@ -39,14 +39,14 @@
 
 namespace pandora_exploration {
 
-NavfnServiceFrontierPathGenerator::NavfnServiceFrontierPathGenerator(std::string frontier_representation,
-                                                                        ros::Duration max_duration)
+NavfnServiceFrontierPathGenerator::NavfnServiceFrontierPathGenerator(const std::string& name,
+              const std::string& frontier_representation, ros::Duration max_duration)
   : pnh_("~"),
-    FrontierPathGenerator(frontier_representation),
+    FrontierPathGenerator(name, frontier_representation),
     max_duration_(max_duration)
 {
   std::string service_name;
-  pnh_.param<std::string>("plan_service_name", service_name, "move_base/make_plan");
+  pnh_.param<std::string>(name_ + "/plan_service_name", service_name, "move_base/make_plan");
   path_client_ = nh_.serviceClient<nav_msgs::GetPlan>(service_name);
 }
 

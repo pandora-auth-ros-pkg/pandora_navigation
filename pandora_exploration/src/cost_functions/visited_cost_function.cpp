@@ -35,48 +35,51 @@
 * Author: Chris Zalidis <zalidis@gmail.com>
 *********************************************************************/
 
-#include "pandora_exploration/alignment_cost_function.h"
+#include "pandora_exploration/cost_functions/visited_cost_function.h"
 
 namespace pandora_exploration {
 
-AlignmentCostFunction::AlignmentCostFunction(double scale, const geometry_msgs::PoseStamped& robot_pose)
-  : FrontierCostFunction(scale), robot_pose_(robot_pose)
+VisitedCostFunction::VisitedCostFunction(
+    double scale, const std::vector<geometry_msgs::PoseStamped>& selected_goals)
+  : FrontierCostFunction(scale), selected_goals_(selected_goals)
 {
 }
 
-void AlignmentCostFunction::scoreFrontiers(const FrontierListPtr& frontier_list)
+void VisitedCostFunction::scoreFrontiers(const FrontierListPtr& frontier_list)
 {
-  //iterate over all frontiers 
-  BOOST_FOREACH(Frontier& frontier, *frontier_list)
+  // iterate over all frontiers
+  BOOST_FOREACH(Frontier & frontier, *frontier_list)
   {
-    //if frontier has a already negative cost no point to run this cost function
+    // if frontier has a already negative cost no point to run this cost function
     if (frontier.cost < 0) {
       continue;
     }
 
-    //select a point in path to find angle to
-    //if no valid plan to frontier, cost should already be negative
-    //and this function will never run
-    geometry_msgs::PoseStamped goal_pose;
-    if (frontier.path.poses.size() < 10) {
-      goal_pose = frontier.path.poses.back();
+    // how many times we have send a similar goal
+    int times_seen = 0;
+    double time = 0;
+
+    // iterate over all previous goals
+    BOOST_FOREACH(const geometry_msgs::PoseStamped & selected_goal, selected_goals_)
+    {
+      // find distance between selected_goal and frontier
+      // using initial point, maybe get from param later
+      double dx = selected_goal.pose.position.x - frontier.initial.x;
+      double dy = selected_goal.pose.position.y - frontier.initial.y;
+
+      if (::hypot(dx, dy) < 0.2) {
+        time += (frontier.header.stamp - selected_goal.header.stamp).toSec();
+        times_seen++;
+      }
     }
-    else {
-      goal_pose = frontier.path.poses[9];
-    }
 
-    //find angle from robot to goal
-    double angle_to_goal = atan2(goal_pose.pose.position.y - robot_pose_.pose.position.y,
-                                      goal_pose.pose.position.x - robot_pose_.pose.position.x);
+    //    std::cout << (1.0 - pow((1.0/freq), 1.0/5.0)) << std::endl;
+    //    std::cout << exp(-static_cast<double>(times_seen)) << std::endl;
 
-    //find shortest angle, result from -pi to pi
-    double final_angle = angles::shortest_angular_distance(angle_to_goal, tf::getYaw(robot_pose_.pose.orientation));
-
-    
-    //update frontier's cost
-///    frontier.cost += scale_ *  (M_PI - fabs(final_angle));
-    frontier.cost /= scale_ * fabs(final_angle);
+    // update cost
+    //    frontier.cost += scale_ * (1.0 - pow((1.0/freq), 1.0/5.0));
+    frontier.cost += scale_ * exp(-static_cast<double>(times_seen));
   }
 }
 
-} // namespace pandora_exploration
+}  // namespace pandora_exploration

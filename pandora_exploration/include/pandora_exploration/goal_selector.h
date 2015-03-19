@@ -38,35 +38,39 @@
 #ifndef PANDORA_EXPLORATION_GOAL_SELECTOR_H
 #define PANDORA_EXPLORATION_GOAL_SELECTOR_H
 
+#include <string>
+#include <vector>
 #include <boost/shared_ptr.hpp>
 #include <geometry_msgs/PoseStamped.h>
 
 namespace pandora_exploration {
 
-  class GoalSelector
+class GoalSelector {
+ public:
+  virtual bool findNextGoal(geometry_msgs::PoseStamped* goal) = 0;
+
+  virtual void setSelectedGoal(const geometry_msgs::PoseStamped& selected_goal)
   {
-   public:
+    selected_goals_.push_back(selected_goal);
+  }
 
-    virtual bool findNextGoal(geometry_msgs::PoseStamped* goal) = 0;
+  virtual ~GoalSelector()
+  {
+  }
 
-    virtual void setSelectedGoal(const geometry_msgs::PoseStamped& selected_goal)
-    {
-      selected_goals_.push_back(selected_goal);
-    }
+ protected:
+  explicit GoalSelector(const std::string& name) : name_(name)
+  {
+  }
 
-    virtual ~GoalSelector() {}
+ protected:
+  std::string name_;
 
-   protected:
+  std::vector<geometry_msgs::PoseStamped> selected_goals_;
+};
 
-    GoalSelector() {}
+typedef boost::shared_ptr<GoalSelector> GoalSelectorPtr;
 
-   protected:
+}  // namespace pandora_exploration
 
-    std::vector<geometry_msgs::PoseStamped> selected_goals_;
-  };
-
-  typedef boost::shared_ptr<GoalSelector> GoalSelectorPtr;
-
-} // namespace pandora_exploration
-
-#endif // PANDORA_EXPLORATION_GOAL_SELECTOR_H
+#endif  // PANDORA_EXPLORATION_GOAL_SELECTOR_H

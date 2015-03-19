@@ -44,6 +44,6 @@ int main(int argc, char* argv[])
   pandora_exploration::ExplorationController exploration_controller;
 
   ros::spin();
-  
+
   return 0;
 }

@@ -38,6 +38,7 @@
 #ifndef PANDORA_EXPLORATION_NAVFN_SERVICE_FRONTIER_PATH_GENERATOR_H
 #define PANDORA_EXPLORATION_NAVFN_SERVICE_FRONTIER_PATH_GENERATOR_H
 
+#include <string>
 #include <ros/ros.h>
 #include <nav_msgs/GetPlan.h>
 #include <boost/foreach.hpp>
@@ -46,32 +47,33 @@
 
 namespace pandora_exploration {
 
-  class NavfnServiceFrontierPathGenerator : public FrontierPathGenerator
+class NavfnServiceFrontierPathGenerator : public FrontierPathGenerator {
+ public:
+  NavfnServiceFrontierPathGenerator(const std::string& name,
+                                    const std::string& frontier_representation,
+                                    ros::Duration max_duration = ros::Duration(5.0));
+
+  virtual bool findPaths(const geometry_msgs::PoseStamped& start,
+                         const FrontierListPtr& frontier_list);
+
+  inline void setExpiration(const ros::Duration& max_duration)
   {
-   public:
+    max_duration_ = max_duration;
+  }
 
-    NavfnServiceFrontierPathGenerator(std::string frontier_representation,
-                        ros::Duration max_duration = ros::Duration(5.0));
+  ~NavfnServiceFrontierPathGenerator()
+  {
+  }
 
-    virtual bool findPaths(const geometry_msgs::PoseStamped& start, const FrontierListPtr& frontier_list);
+ private:
+  ros::NodeHandle nh_;
+  ros::NodeHandle pnh_;
 
-    inline void setExpiration(const ros::Duration& max_duration)
-    {
-      max_duration_ = max_duration;
-    }
+  ros::Duration max_duration_;
 
-    ~NavfnServiceFrontierPathGenerator() {}
+  ros::ServiceClient path_client_;
+};
 
-   private:
+}  // namespace pandora_exploration
 
-    ros::NodeHandle nh_;
-    ros::NodeHandle pnh_;
-
-    ros::Duration max_duration_;
-    
-    ros::ServiceClient path_client_;
-  };
-
-} // namespace pandora_exploration
-
-#endif // PANDORA_EXPLORATION_NAVFN_SERVICE_FRONTIER_PATH_GENERATOR_H
+#endif  // PANDORA_EXPLORATION_NAVFN_SERVICE_FRONTIER_PATH_GENERATOR_H

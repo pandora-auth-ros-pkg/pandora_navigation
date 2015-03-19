@@ -5,5 +5,7 @@ max_goal_searches: 5
 goal_timeout: 20.0
 
 # how far from a goal the robot has to be
-# to considered visited (in meters) 
-goal_reached_dist: 1.2
+# to considered visited (in meters)
+goal_reached_dist: 0.6
+
+use_coverage: false

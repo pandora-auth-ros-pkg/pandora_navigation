@@ -15,11 +15,12 @@ find_package(catkin REQUIRED
       nav_core
       angles
       tf
+      roslint
 )
 
 
 catkin_package(
-#  DEPENDS 
+#  DEPENDS
   CATKIN_DEPENDS
     roscpp
     visualization_msgs
@@ -33,8 +34,8 @@ catkin_package(
     nav_core
     angles
     tf
-  INCLUDE_DIRS
-    include
+#  INCLUDE_DIRS
+#    include
 #  LIBRARIES
 )
 
@@ -54,10 +55,10 @@ add_library(frontier_path_generators
 target_link_libraries(frontier_path_generators ${catkin_LIBRARIES})
 
 add_library(frontier_cost_functions
-    src/distance_cost_function.cpp
-    src/size_cost_function.cpp
-    src/alignment_cost_function.cpp
-    src/visited_cost_function.cpp
+    src/cost_functions/distance_cost_function.cpp
+    src/cost_functions/size_cost_function.cpp
+    src/cost_functions/alignment_cost_function.cpp
+    src/cost_functions/visited_cost_function.cpp
     )
 target_link_libraries(frontier_cost_functions ${catkin_LIBRARIES})
 
@@ -69,13 +70,34 @@ target_link_libraries(frontier_goal_selector
     frontier_cost_functions
 )
 
-add_executable(exploration_controller src/exploration_controller.cpp src/exploration_controller_node.cpp)
-add_dependencies(exploration_controller pandora_navigation_msgs_gencpp)
+add_executable(exploration_controller
+  src/exploration_controller.cpp
+  src/exploration_controller_node.cpp)
+add_dependencies(exploration_controller ${catkin_EXPORTED_TARGETS})
 target_link_libraries(exploration_controller
     ${catkin_LIBRARIES}
     frontier_goal_selector
 )
 
+## Roslint
+set(ROSLINT_CPP_OPTS
+  "--filter=-build/include_what_you_use, -whitespace/comments, -whitespace/blank_line, -whitespace/braces")
+file(GLOB_RECURSE ${PROJECT_NAME}_LINT_SRCS
+  RELATIVE ${PROJECT_SOURCE_DIR}
+    include/pandora_exploration/*.h
+    include/pandora_exploration/cost_functions/*.h
+    src/*.cpp
+    src/cost_functions/*.cpp
+    )
+list(REMOVE_ITEM ${PROJECT_NAME}_LINT_SRCS
+  RELATIVE ${PROJECT_SOURCE_DIR}
+    include/pandora_exploration/geometry_tools.h
+    include/pandora_exploration/costmap_tools.h
+    include/pandora_exploration/map_frontier_search.h
+    include/pandora_exploration/frontier.h
+    src/map_frontier_search.cpp
+    )
+roslint_cpp(${${PROJECT_NAME}_LINT_SRCS})
 
 if(CATKIN_ENABLE_TESTING)
   add_subdirectory(test)

@@ -53,59 +53,58 @@
 
 namespace pandora_exploration {
 
-  typedef actionlib::SimpleActionServer<pandora_navigation_msgs::DoExplorationAction> DoExplorationServer;
-  typedef actionlib::SimpleActionClient<move_base_msgs::MoveBaseAction> MoveBaseClient;
-  
-  class ExplorationController
-  {
-   public:
-    ExplorationController();
+typedef actionlib::SimpleActionServer<pandora_navigation_msgs::DoExplorationAction>
+    DoExplorationServer;
+typedef actionlib::SimpleActionClient<move_base_msgs::MoveBaseAction> MoveBaseClient;
 
-    void executeCb(const pandora_navigation_msgs::DoExplorationGoalConstPtr &goal);
-    void feedbackMovingCb(const move_base_msgs::MoveBaseFeedbackConstPtr& feedback);
-    void doneMovingCb(const actionlib::SimpleClientGoalState& state,
-                              const move_base_msgs::MoveBaseResultConstPtr& result);
-    void preemptCb();
+class ExplorationController {
+ public:
+  ExplorationController();
 
-   private:
+  void executeCb(const pandora_navigation_msgs::DoExplorationGoalConstPtr& goal);
+  void feedbackMovingCb(const move_base_msgs::MoveBaseFeedbackConstPtr& feedback);
+  void doneMovingCb(const actionlib::SimpleClientGoalState& state,
+                    const move_base_msgs::MoveBaseResultConstPtr& result);
+  void preemptCb();
 
-    bool isGoalReached();
-    bool isTimeReached();
-    
-   private:
-  
-    ros::NodeHandle nh_;
-    ros::NodeHandle private_nh_;
+ private:
+  bool isGoalReached();
+  bool isTimeReached();
 
-    DoExplorationServer do_exploration_server_;
-    MoveBaseClient move_base_client_;
+ private:
+  ros::NodeHandle nh_;
+  ros::NodeHandle private_nh_;
 
-    GoalSelectorPtr goal_selector_;
+  DoExplorationServer do_exploration_server_;
+  MoveBaseClient move_base_client_;
 
-    ros::Duration goal_timeout_;
-    
-    //count how many times robot couldn't move
-    int abort_count_;
-    int max_abortions_;
-    bool aborted_;
-    
-    //count how many times we couldn't find a goal
-    int goal_searches_count_;
-    int max_goal_searches_;
+  GoalSelectorPtr explore_goal_selector_;
+  GoalSelectorPtr coverage_goal_selector_;
 
-    //distance for goal reached
-    double goal_reached_dist_;
+  ros::Duration goal_timeout_;
 
-    //current goal holder
-    geometry_msgs::PoseStamped current_goal_;
+  // count how many times robot couldn't move
+  int abort_count_;
+  int max_abortions_;
+  bool aborted_;
 
-    pandora_navigation_msgs::DoExplorationFeedback feedback_;
-    
-    boost::shared_ptr<boost::thread> computation_thread_;
+  // count how many times we couldn't find a goal
+  int goal_searches_count_;
+  int max_goal_searches_;
 
-    bool first_time_;
-  };
+  // distance for goal reached
+  double goal_reached_dist_;
 
-} // namespace pandora_exploration
+  // current goal holder
+  geometry_msgs::PoseStamped current_goal_;
 
-#endif // PANDORA_EXPLORATION_EXPLORATION_CONTROLLER_H
+  pandora_navigation_msgs::DoExplorationFeedback feedback_;
+
+  boost::shared_ptr<boost::thread> computation_thread_;
+
+  bool first_time_;
+};
+
+}  // namespace pandora_exploration
+
+#endif  // PANDORA_EXPLORATION_EXPLORATION_CONTROLLER_H

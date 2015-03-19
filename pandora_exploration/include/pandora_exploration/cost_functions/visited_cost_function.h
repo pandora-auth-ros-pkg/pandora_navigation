@@ -35,27 +35,33 @@
 * Author: Chris Zalidis <zalidis@gmail.com>
 *********************************************************************/
 
-#ifndef PANDORA_EXPLORATION_SIZE_COST_FUNCTION_H
-#define PANDORA_EXPLORATION_SIZE_COST_FUNCTION_H
+#ifndef PANDORA_EXPLORATION_COST_FUNCTIONS_VISITED_COST_FUNCTION_H
+#define PANDORA_EXPLORATION_COST_FUNCTIONS_VISITED_COST_FUNCTION_H
 
+#include <vector>
 #include <boost/foreach.hpp>
+#include <tf/tf.h>
+#include <angles/angles.h>
 
-#include "pandora_exploration/frontier_cost_function.h"
+#include "pandora_exploration/cost_functions/frontier_cost_function.h"
 
 namespace pandora_exploration {
 
-  class SizeCostFunction : public FrontierCostFunction
+  class VisitedCostFunction : public FrontierCostFunction
   {
    public:
 
-    SizeCostFunction(double scale);
+    VisitedCostFunction(double scale, const std::vector<geometry_msgs::PoseStamped>& selected_goals);
 
     virtual void scoreFrontiers(const FrontierListPtr& frontier_list);
 
-    ~SizeCostFunction() {}
+    ~VisitedCostFunction() {}
 
+   private:
+
+    const std::vector<geometry_msgs::PoseStamped>& selected_goals_;
   };
 
 } // namespace pandora_exploration
 
-#endif // PANDORA_EXPLORATION_SIZE_COST_FUNCTION_H
+#endif  // PANDORA_EXPLORATION_COST_FUNCTIONS_VISITED_COST_FUNCTION_H

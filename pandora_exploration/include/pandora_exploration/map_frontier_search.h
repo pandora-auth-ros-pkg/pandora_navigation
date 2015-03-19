@@ -1,5 +1,5 @@
-#ifndef FRONTIER_SEARCH_H_
-#define FRONTIER_SEARCH_H_
+#ifndef PANDORA_EXPLORATION_MAP_FRONTIER_SEARCH_H
+#define PANDORA_EXPLORATION_MAP_FRONTIER_SEARCH_H
 
 #include "pandora_exploration/frontier_search.h"
 
@@ -11,12 +11,12 @@ namespace pandora_exploration {
 class MapFrontierSearch : public FrontierSearch {
 
  public:
-
   /**
    * @brief Constructor for search task
    * @param costmap Reference to costmap data to search.
    */
-  MapFrontierSearch(const boost::shared_ptr<costmap_2d::Costmap2D>& costmap, std::string costmap_frame);
+  MapFrontierSearch(const boost::shared_ptr<costmap_2d::Costmap2D>& costmap,
+                    std::string costmap_frame);
 
   /**
    * @brief Runs search implementation, outward from the start position
@@ -25,10 +25,11 @@ class MapFrontierSearch : public FrontierSearch {
    */
   virtual std::list<Frontier> searchFrom(geometry_msgs::Point position);
 
-  ~MapFrontierSearch() {}
+  ~MapFrontierSearch()
+  {
+  }
 
  private:
-
   /**
    * @brief Starting from an initial cell, build a frontier from valid adjacent cells
    * @param initial_cell Index of cell to start frontier building
@@ -36,7 +37,8 @@ class MapFrontierSearch : public FrontierSearch {
    * @param frontier_flag Flag vector indicating which cells are already marked as frontiers
    * @return
    */
-  Frontier buildNewFrontier(unsigned int initial_cell, unsigned int reference, std::vector<bool>& frontier_flag);
+  Frontier buildNewFrontier(unsigned int initial_cell, unsigned int reference,
+                            std::vector<bool>& frontier_flag);
 
   /**
    * @brief isNewFrontierCell Evaluate if candidate cell is a valid candidate for a new frontier.
@@ -47,9 +49,5 @@ class MapFrontierSearch : public FrontierSearch {
   bool isNewFrontierCell(unsigned int idx, const std::vector<bool>& frontier_flag);
 };
 
-
-}
-#endif
-
-
-
+}  // namespace pandora_exploration
+#endif  // PANDORA_EXPLORATION_MAP_FRONTIER_SEARCH_H
