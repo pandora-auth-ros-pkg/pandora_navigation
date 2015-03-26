@@ -1,0 +1,98 @@
+\hypertarget{classpandora__exploration_1_1_distance_cost_function}{\section{pandora\-\_\-exploration\-:\-:\-Distance\-Cost\-Function \-Class \-Reference}
+\label{classpandora__exploration_1_1_distance_cost_function}\index{pandora\-\_\-exploration\-::\-Distance\-Cost\-Function@{pandora\-\_\-exploration\-::\-Distance\-Cost\-Function}}
+}
+
+
+\-A class implementing a frontier cost function using the provided interface.  
+
+
+
+
+{\ttfamily \#include $<$distance\-\_\-cost\-\_\-function.\-h$>$}
+
+\-Inheritance diagram for pandora\-\_\-exploration\-:\-:\-Distance\-Cost\-Function\-:\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[height=2.000000cm]{classpandora__exploration_1_1_distance_cost_function}
+\end{center}
+\end{figure}
+\subsection*{\-Public \-Member \-Functions}
+\begin{DoxyCompactItemize}
+\item 
+\hyperlink{classpandora__exploration_1_1_distance_cost_function_a1b5c513565474e7ca1e544a5bf92cf0d}{\-Distance\-Cost\-Function} (double scale)
+\begin{DoxyCompactList}\small\item\em \-Explicit constructor for the \hyperlink{classpandora__exploration_1_1_distance_cost_function}{\-Distance\-Cost\-Function} class. \end{DoxyCompactList}\item 
+virtual void \hyperlink{classpandora__exploration_1_1_distance_cost_function_ae8202eb69bfe1888983f4f57b7b6e95f}{score\-Frontiers} (const \hyperlink{namespacepandora__exploration_a6f3b1959fca391e2ef3ac46b6e96be7a}{\-Frontier\-List\-Ptr} \&frontier\-\_\-list)
+\begin{DoxyCompactList}\small\item\em \-Takes a list of frontiers and adds a cost to each one of them. \end{DoxyCompactList}\item 
+\hyperlink{classpandora__exploration_1_1_distance_cost_function_ab51dbb14ab0215ed8eb358c9b34683e9}{$\sim$\-Distance\-Cost\-Function} ()
+\begin{DoxyCompactList}\small\item\em \-Destructor for the \hyperlink{classpandora__exploration_1_1_distance_cost_function}{\-Distance\-Cost\-Function} class. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsection{\-Detailed \-Description}
+\-A class implementing a frontier cost function using the provided interface. 
+
+\-This cost function add costs to the frontiers based on the straightness and length of the path. \-Cost are normalized to a scale between 0 and 1. 
+
+\-Definition at line 55 of file distance\-\_\-cost\-\_\-function.\-h.
+
+
+
+\subsection{\-Constructor \& \-Destructor \-Documentation}
+\hypertarget{classpandora__exploration_1_1_distance_cost_function_a1b5c513565474e7ca1e544a5bf92cf0d}{\index{pandora\-\_\-exploration\-::\-Distance\-Cost\-Function@{pandora\-\_\-exploration\-::\-Distance\-Cost\-Function}!\-Distance\-Cost\-Function@{\-Distance\-Cost\-Function}}
+\index{\-Distance\-Cost\-Function@{\-Distance\-Cost\-Function}!pandora_exploration::DistanceCostFunction@{pandora\-\_\-exploration\-::\-Distance\-Cost\-Function}}
+\subsubsection[{\-Distance\-Cost\-Function}]{\setlength{\rightskip}{0pt plus 5cm}{\bf pandora\-\_\-exploration\-::\-Distance\-Cost\-Function\-::\-Distance\-Cost\-Function} (
+\begin{DoxyParamCaption}
+\item[{double}]{scale}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily  \mbox{[}explicit\mbox{]}}}}\label{classpandora__exploration_1_1_distance_cost_function_a1b5c513565474e7ca1e544a5bf92cf0d}
+
+
+\-Explicit constructor for the \hyperlink{classpandora__exploration_1_1_distance_cost_function}{\-Distance\-Cost\-Function} class. 
+
+
+\begin{DoxyParams}{\-Parameters}
+{\em scale} & \-The weight we set on the cost function \\
+\hline
+\end{DoxyParams}
+\hypertarget{classpandora__exploration_1_1_distance_cost_function_ab51dbb14ab0215ed8eb358c9b34683e9}{\index{pandora\-\_\-exploration\-::\-Distance\-Cost\-Function@{pandora\-\_\-exploration\-::\-Distance\-Cost\-Function}!$\sim$\-Distance\-Cost\-Function@{$\sim$\-Distance\-Cost\-Function}}
+\index{$\sim$\-Distance\-Cost\-Function@{$\sim$\-Distance\-Cost\-Function}!pandora_exploration::DistanceCostFunction@{pandora\-\_\-exploration\-::\-Distance\-Cost\-Function}}
+\subsubsection[{$\sim$\-Distance\-Cost\-Function}]{\setlength{\rightskip}{0pt plus 5cm}{\bf pandora\-\_\-exploration\-::\-Distance\-Cost\-Function\-::$\sim$\-Distance\-Cost\-Function} (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily  \mbox{[}inline\mbox{]}}}}\label{classpandora__exploration_1_1_distance_cost_function_ab51dbb14ab0215ed8eb358c9b34683e9}
+
+
+\-Destructor for the \hyperlink{classpandora__exploration_1_1_distance_cost_function}{\-Distance\-Cost\-Function} class. 
+
+
+
+\-Definition at line 77 of file distance\-\_\-cost\-\_\-function.\-h.
+
+
+
+\subsection{\-Member \-Function \-Documentation}
+\hypertarget{classpandora__exploration_1_1_distance_cost_function_ae8202eb69bfe1888983f4f57b7b6e95f}{\index{pandora\-\_\-exploration\-::\-Distance\-Cost\-Function@{pandora\-\_\-exploration\-::\-Distance\-Cost\-Function}!score\-Frontiers@{score\-Frontiers}}
+\index{score\-Frontiers@{score\-Frontiers}!pandora_exploration::DistanceCostFunction@{pandora\-\_\-exploration\-::\-Distance\-Cost\-Function}}
+\subsubsection[{score\-Frontiers}]{\setlength{\rightskip}{0pt plus 5cm}virtual void {\bf pandora\-\_\-exploration\-::\-Distance\-Cost\-Function\-::score\-Frontiers} (
+\begin{DoxyParamCaption}
+\item[{const {\bf \-Frontier\-List\-Ptr} \&}]{frontier\-\_\-list}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily  \mbox{[}virtual\mbox{]}}}}\label{classpandora__exploration_1_1_distance_cost_function_ae8202eb69bfe1888983f4f57b7b6e95f}
+
+
+\-Takes a list of frontiers and adds a cost to each one of them. 
+
+
+\begin{DoxyParams}{\-Parameters}
+{\em frontier\-\_\-list} & \-A pointer to a list of frontiers that are to be evaluated.\\
+\hline
+\end{DoxyParams}
+\-If a frontier has already assigned a negative cost then score\-Frontiers doesn't add any cost. \-Also if there is no path to a frontier it assigns a cost of -\/1. 
+
+\-Implements \hyperlink{classpandora__exploration_1_1_frontier_cost_function_a1049bc25e934365fdf3a1a6ab88c4cca}{pandora\-\_\-exploration\-::\-Frontier\-Cost\-Function}.
+
+
+
+\-The documentation for this class was generated from the following file\-:\begin{DoxyCompactItemize}
+\item 
+include/pandora\-\_\-exploration/cost\-\_\-functions/\hyperlink{distance__cost__function_8h}{distance\-\_\-cost\-\_\-function.\-h}\end{DoxyCompactItemize}

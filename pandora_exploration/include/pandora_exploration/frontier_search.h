@@ -2,7 +2,7 @@
 *
 * Software License Agreement (BSD License)
 *
-*  Copyright (c) 2014, P.A.N.D.O.R.A. Team.
+*  Copyright (c) 2014 - 2015, P.A.N.D.O.R.A. Team.
 *  All rights reserved.
 *
 *  Redistribution and use in source and binary forms, with or without
@@ -32,7 +32,8 @@
 *  ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 *  POSSIBILITY OF SUCH DAMAGE.
 *
-* Author: Chris Zalidis <zalidis@gmail.com>
+* Author: Chris Zalidis <zalidis@gmail.com>,
+          Dimitrios Kirtsios <dimkirts@gmail.com>
 *********************************************************************/
 
 #ifndef PANDORA_EXPLORATION_FRONTIER_SEARCH_H
@@ -49,21 +50,36 @@
 
 namespace pandora_exploration {
 
+/**
+  * @class FrontierSearch
+  * @brief Provides an interface for the frontier searcher used in frontier goal selector.
+  * Every frontier searcher implementation must adhere to this interface. 
+  */
 class FrontierSearch {
  public:
   virtual std::list<Frontier> searchFrom(geometry_msgs::Point position) = 0;
 
+  /**
+    * @brief Destructor for the class FrontierSearch
+    */
   virtual ~FrontierSearch()
   {
   }
 
  protected:
+  /**
+    * @brief Constructor for the class FrontierSearch
+    * @param costmap A ptr to a costmap
+    * @param costmap_frame The frame of the costmap
+    */
   FrontierSearch(const boost::shared_ptr<costmap_2d::Costmap2D>& costmap, std::string costmap_frame)
     : costmap_(costmap), costmap_frame_(costmap_frame)
   {
   }
 
  protected:
+  
+  // shared ptr that holds the costmap
   boost::shared_ptr<costmap_2d::Costmap2D> costmap_;
   std::string costmap_frame_;
 };

@@ -2,7 +2,7 @@
 *
 * Software License Agreement (BSD License)
 *
-*  Copyright (c) 2014, P.A.N.D.O.R.A. Team.
+*  Copyright (c) 2014 - 2015, P.A.N.D.O.R.A. Team.
 *  All rights reserved.
 *
 *  Redistribution and use in source and binary forms, with or without
@@ -32,9 +32,11 @@
 *  ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 *  POSSIBILITY OF SUCH DAMAGE.
 *
-* Author: Chris Zalidis <zalidis@gmail.com>
+* Author: Chris Zalidis <zalidis@gmail.com>,
+          Dimitrios Kirtsios <dimkirts@gmail.com>
 *********************************************************************/
-
+// for M_E usage
+#include <cmath>
 #include "pandora_exploration/cost_functions/size_cost_function.h"
 
 namespace pandora_exploration {
@@ -65,6 +67,7 @@ void SizeCostFunction::scoreFrontiers(const FrontierListPtr& frontier_list)
     frontier.cost +=
         scale_ *
         (1.0 - exp(-static_cast<double>(frontier.size) / static_cast<double>(max_size) * M_E));
+        // Cost are normalized, frontier with the highest size scores 1.
   }
 }
 

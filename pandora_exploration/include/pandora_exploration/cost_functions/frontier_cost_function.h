@@ -2,7 +2,7 @@
 *
 * Software License Agreement (BSD License)
 *
-*  Copyright (c) 2014, P.A.N.D.O.R.A. Team.
+*  Copyright (c) 2014 - 2015, P.A.N.D.O.R.A. Team.
 *  All rights reserved.
 *
 *  Redistribution and use in source and binary forms, with or without
@@ -32,7 +32,8 @@
 *  ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 *  POSSIBILITY OF SUCH DAMAGE.
 *
-* Author: Chris Zalidis <zalidis@gmail.com>
+* Authors: Chris Zalidis <zalidis@gmail.com>,
+           Dimitrios Kirtsios <dimkirts@gmail.com>
 *********************************************************************/
 
 #ifndef PANDORA_EXPLORATION_COST_FUNCTIONS_FRONTIER_COST_FUNCTION_H
@@ -42,16 +43,32 @@
 
 namespace pandora_exploration {
 
+  /**
+    * @class FrontierCostFunction
+    * @brief Provides an interface for the cost functions of the frontier goal selector. Every 
+    * frontier cost function implementation must adhere to this interface. 
+    */
   class FrontierCostFunction
   {
    public:
 
+    /**
+      * @brief Takes a list of frontiers and adds a cost to each one of them
+      * @param frontier_list The list holding the frontiers to be evaluated
+      */
     virtual void scoreFrontiers(const FrontierListPtr& frontier_list) = 0;
 
+    /**
+      * @brief Destructor for the FrontierCostFunction
+      */
     virtual ~FrontierCostFunction() {}
 
    protected:
 
+    /**
+      * @brief Explicit constructor for FrontierCostFunction
+      * @param scale The weight we set on this cost function
+      */
     explicit FrontierCostFunction(double scale = 1.0) : scale_(scale) {}
 
    protected:
@@ -61,6 +78,6 @@ namespace pandora_exploration {
 
   typedef boost::shared_ptr<FrontierCostFunction> FrontierCostFunctionPtr;
 
-} // namespace pandora_exploration
+}   // namespace pandora_exploration
 
 #endif  // PANDORA_EXPLORATION_COST_FUNCTIONS_FRONTIER_COST_FUNCTION_H

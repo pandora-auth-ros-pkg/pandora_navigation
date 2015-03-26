@@ -2,7 +2,7 @@
 *
 * Software License Agreement (BSD License)
 *
-*  Copyright (c) 2014, P.A.N.D.O.R.A. Team.
+*  Copyright (c) 2014 - 2015, P.A.N.D.O.R.A. Team.
 *  All rights reserved.
 *
 *  Redistribution and use in source and binary forms, with or without
@@ -32,7 +32,8 @@
 *  ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 *  POSSIBILITY OF SUCH DAMAGE.
 *
-* Author: Chris Zalidis <zalidis@gmail.com>
+* Author: Chris Zalidis <zalidis@gmail.com>,
+          Dimitrios Kirtsios <dimkirts@gmail.com>
 *********************************************************************/
 
 #ifndef PANDORA_EXPLORATION_FRONTIER_PATH_GENERATOR_H
@@ -45,23 +46,49 @@
 
 namespace pandora_exploration {
 
+/**
+  * @class FrontierPathGenerator
+  * @brief Provides an interface for the frontier path generator used in frontier
+  * goal selector. Every frontier path generator implementation must adhere 
+  * to this interface. 
+  */
 class FrontierPathGenerator {
  public:
+  
+  /**
+    * @brief Creates paths from start pose to a frontier, for all the frontiers we pass
+    * @param start The start pose from where we create the path for each frontier
+    * @param frontier_list A list with all the frontiers we want to generate paths for 
+    * @return True when it has finished creating the paths for all the frontiers
+    * inside frontier_list
+    */
   virtual bool findPaths(const geometry_msgs::PoseStamped& start,
                          const FrontierListPtr& frontier_list) = 0;
 
+  /**
+    * @brief Destructor for the class FrontierPathGenerator
+    */
   virtual ~FrontierPathGenerator()
   {
   }
 
  protected:
+  
+ /**
+    * @brief Constructor for the class FrontierPathGenerator
+    * @param name The name of the frontier path generator
+    * @param frontier_represantation Set the frontier representation, centroid, middle or initial
+    */
   FrontierPathGenerator(const std::string& name, const std::string& frontier_representation)
     : name_(name), frontier_representation_(frontier_representation)
   {
   }
 
  protected:
+  // name of the frontier path generator
   std::string name_;
+
+  // frontier representation, centroid, middle or initial
   std::string frontier_representation_;
 };
 

@@ -1,0 +1,98 @@
+\hypertarget{classpandora__exploration_1_1_size_cost_function}{\section{pandora\-\_\-exploration\-:\-:\-Size\-Cost\-Function \-Class \-Reference}
+\label{classpandora__exploration_1_1_size_cost_function}\index{pandora\-\_\-exploration\-::\-Size\-Cost\-Function@{pandora\-\_\-exploration\-::\-Size\-Cost\-Function}}
+}
+
+
+\-A class implementing a frontier cost function using the provided interface.  
+
+
+
+
+{\ttfamily \#include $<$size\-\_\-cost\-\_\-function.\-h$>$}
+
+\-Inheritance diagram for pandora\-\_\-exploration\-:\-:\-Size\-Cost\-Function\-:\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[height=2.000000cm]{classpandora__exploration_1_1_size_cost_function}
+\end{center}
+\end{figure}
+\subsection*{\-Public \-Member \-Functions}
+\begin{DoxyCompactItemize}
+\item 
+\hyperlink{classpandora__exploration_1_1_size_cost_function_a77903e97453ce0f802bb4b6159898c13}{\-Size\-Cost\-Function} (double scale)
+\begin{DoxyCompactList}\small\item\em \-Explicit constructor for the \hyperlink{classpandora__exploration_1_1_size_cost_function}{\-Size\-Cost\-Function} class. \end{DoxyCompactList}\item 
+virtual void \hyperlink{classpandora__exploration_1_1_size_cost_function_a8d56949087483e7bd6d838b631bff52d}{score\-Frontiers} (const \hyperlink{namespacepandora__exploration_a6f3b1959fca391e2ef3ac46b6e96be7a}{\-Frontier\-List\-Ptr} \&frontier\-\_\-list)
+\begin{DoxyCompactList}\small\item\em \-Takes a list of frontiers and adds a cost to each one of them. \end{DoxyCompactList}\item 
+\hyperlink{classpandora__exploration_1_1_size_cost_function_a1d6c85e7649d236d6c31c97fa474c1b8}{$\sim$\-Size\-Cost\-Function} ()
+\begin{DoxyCompactList}\small\item\em \-Destructor for the \hyperlink{classpandora__exploration_1_1_size_cost_function}{\-Size\-Cost\-Function} class. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsection{\-Detailed \-Description}
+\-A class implementing a frontier cost function using the provided interface. 
+
+\-This cost function adds costs to the frontiers based on the frontier size. \-Frontiers bigger in size are added higher costs. \-Cost are normalized to a scale between 0 and 1. 
+
+\-Definition at line 56 of file size\-\_\-cost\-\_\-function.\-h.
+
+
+
+\subsection{\-Constructor \& \-Destructor \-Documentation}
+\hypertarget{classpandora__exploration_1_1_size_cost_function_a77903e97453ce0f802bb4b6159898c13}{\index{pandora\-\_\-exploration\-::\-Size\-Cost\-Function@{pandora\-\_\-exploration\-::\-Size\-Cost\-Function}!\-Size\-Cost\-Function@{\-Size\-Cost\-Function}}
+\index{\-Size\-Cost\-Function@{\-Size\-Cost\-Function}!pandora_exploration::SizeCostFunction@{pandora\-\_\-exploration\-::\-Size\-Cost\-Function}}
+\subsubsection[{\-Size\-Cost\-Function}]{\setlength{\rightskip}{0pt plus 5cm}{\bf pandora\-\_\-exploration\-::\-Size\-Cost\-Function\-::\-Size\-Cost\-Function} (
+\begin{DoxyParamCaption}
+\item[{double}]{scale}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily  \mbox{[}explicit\mbox{]}}}}\label{classpandora__exploration_1_1_size_cost_function_a77903e97453ce0f802bb4b6159898c13}
+
+
+\-Explicit constructor for the \hyperlink{classpandora__exploration_1_1_size_cost_function}{\-Size\-Cost\-Function} class. 
+
+
+\begin{DoxyParams}{\-Parameters}
+{\em scale} & \-The weight we set on the cost function \\
+\hline
+\end{DoxyParams}
+\hypertarget{classpandora__exploration_1_1_size_cost_function_a1d6c85e7649d236d6c31c97fa474c1b8}{\index{pandora\-\_\-exploration\-::\-Size\-Cost\-Function@{pandora\-\_\-exploration\-::\-Size\-Cost\-Function}!$\sim$\-Size\-Cost\-Function@{$\sim$\-Size\-Cost\-Function}}
+\index{$\sim$\-Size\-Cost\-Function@{$\sim$\-Size\-Cost\-Function}!pandora_exploration::SizeCostFunction@{pandora\-\_\-exploration\-::\-Size\-Cost\-Function}}
+\subsubsection[{$\sim$\-Size\-Cost\-Function}]{\setlength{\rightskip}{0pt plus 5cm}{\bf pandora\-\_\-exploration\-::\-Size\-Cost\-Function\-::$\sim$\-Size\-Cost\-Function} (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily  \mbox{[}inline\mbox{]}}}}\label{classpandora__exploration_1_1_size_cost_function_a1d6c85e7649d236d6c31c97fa474c1b8}
+
+
+\-Destructor for the \hyperlink{classpandora__exploration_1_1_size_cost_function}{\-Size\-Cost\-Function} class. 
+
+
+
+\-Definition at line 79 of file size\-\_\-cost\-\_\-function.\-h.
+
+
+
+\subsection{\-Member \-Function \-Documentation}
+\hypertarget{classpandora__exploration_1_1_size_cost_function_a8d56949087483e7bd6d838b631bff52d}{\index{pandora\-\_\-exploration\-::\-Size\-Cost\-Function@{pandora\-\_\-exploration\-::\-Size\-Cost\-Function}!score\-Frontiers@{score\-Frontiers}}
+\index{score\-Frontiers@{score\-Frontiers}!pandora_exploration::SizeCostFunction@{pandora\-\_\-exploration\-::\-Size\-Cost\-Function}}
+\subsubsection[{score\-Frontiers}]{\setlength{\rightskip}{0pt plus 5cm}virtual void {\bf pandora\-\_\-exploration\-::\-Size\-Cost\-Function\-::score\-Frontiers} (
+\begin{DoxyParamCaption}
+\item[{const {\bf \-Frontier\-List\-Ptr} \&}]{frontier\-\_\-list}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily  \mbox{[}virtual\mbox{]}}}}\label{classpandora__exploration_1_1_size_cost_function_a8d56949087483e7bd6d838b631bff52d}
+
+
+\-Takes a list of frontiers and adds a cost to each one of them. 
+
+
+\begin{DoxyParams}{\-Parameters}
+{\em frontier\-\_\-list} & \-A pointer to a list of frontiers that are to be evaluated.\\
+\hline
+\end{DoxyParams}
+\-If a frontier has already assigned a negative cost then score\-Frontiers doesn't add any cost. 
+
+\-Implements \hyperlink{classpandora__exploration_1_1_frontier_cost_function_a1049bc25e934365fdf3a1a6ab88c4cca}{pandora\-\_\-exploration\-::\-Frontier\-Cost\-Function}.
+
+
+
+\-The documentation for this class was generated from the following file\-:\begin{DoxyCompactItemize}
+\item 
+include/pandora\-\_\-exploration/cost\-\_\-functions/\hyperlink{size__cost__function_8h}{size\-\_\-cost\-\_\-function.\-h}\end{DoxyCompactItemize}

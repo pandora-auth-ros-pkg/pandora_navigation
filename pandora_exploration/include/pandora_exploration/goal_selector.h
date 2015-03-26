@@ -2,7 +2,7 @@
 *
 * Software License Agreement (BSD License)
 *
-*  Copyright (c) 2014, P.A.N.D.O.R.A. Team.
+*  Copyright (c) 2014 - 2015, P.A.N.D.O.R.A. Team.
 *  All rights reserved.
 *
 *  Redistribution and use in source and binary forms, with or without
@@ -32,7 +32,8 @@
 *  ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 *  POSSIBILITY OF SUCH DAMAGE.
 *
-* Author: Chris Zalidis <zalidis@gmail.com>
+* Author: Chris Zalidis <zalidis@gmail.com>,
+          Dimitrios Kirtsios <dimkirts@gmail.com>
 *********************************************************************/
 
 #ifndef PANDORA_EXPLORATION_GOAL_SELECTOR_H
@@ -45,20 +46,45 @@
 
 namespace pandora_exploration {
 
+/**
+  * @class GoalSelector
+  * @brief Provides an interface for goal selectors used in pandora exploration.
+  * Every goal selector implementation must adhere to this interface.
+  *
+  * This is the interface for the class that will wrap-up all the implementation
+  * of the goal selection.
+  */
 class GoalSelector {
  public:
+  
+  /**
+    * @brief Finds next exploration goal
+    * @param goal We pass the goal that is found to this argument
+    * @return True if a goal is found
+    */
   virtual bool findNextGoal(geometry_msgs::PoseStamped* goal) = 0;
 
+  /**
+    * @brief Sets a selected goal to a vector
+    * @param selected_goal A goal that has been selected by findNextGoal
+    */
   virtual void setSelectedGoal(const geometry_msgs::PoseStamped& selected_goal)
   {
     selected_goals_.push_back(selected_goal);
   }
 
+  /**
+    * @brief Destructor for the goal selector.
+    */
   virtual ~GoalSelector()
   {
   }
 
  protected:
+  /**
+    * @brief Explicit constructor for the goal selector.
+    * @param name The name of the goal selector
+    */
   explicit GoalSelector(const std::string& name) : name_(name)
   {
   }
@@ -66,6 +92,7 @@ class GoalSelector {
  protected:
   std::string name_;
 
+  // A vector that holds all the goals that have been selected
   std::vector<geometry_msgs::PoseStamped> selected_goals_;
 };
 

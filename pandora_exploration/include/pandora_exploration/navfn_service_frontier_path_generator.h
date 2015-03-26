@@ -2,7 +2,7 @@
 *
 * Software License Agreement (BSD License)
 *
-*  Copyright (c) 2014, P.A.N.D.O.R.A. Team.
+*  Copyright (c) 2014 - 2015, P.A.N.D.O.R.A. Team.
 *  All rights reserved.
 *
 *  Redistribution and use in source and binary forms, with or without
@@ -32,7 +32,8 @@
 *  ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 *  POSSIBILITY OF SUCH DAMAGE.
 *
-* Author: Chris Zalidis <zalidis@gmail.com>
+* Author: Chris Zalidis <zalidis@gmail.com>,
+          Dimitrios Kirtsios <dimkirts@gmail.com>
 *********************************************************************/
 
 #ifndef PANDORA_EXPLORATION_NAVFN_SERVICE_FRONTIER_PATH_GENERATOR_H
@@ -47,20 +48,49 @@
 
 namespace pandora_exploration {
 
+/**
+  * @class NavfnServiceFrontierPathGenerator
+  * @brief A class implementing a frontier path generator using the FrontierPathGenerator
+  * interface 
+  * 
+  * This path generator uses the service GetPlan from nav_msgs to generate the path from
+  * the robot's pose to each frontier.
+  */
 class NavfnServiceFrontierPathGenerator : public FrontierPathGenerator {
  public:
+  
+  /**
+    * @brief Constructor for the class NavfnServiceFrontierPathGenerator
+    * @param name The name of the frontier path generator
+    * @param frontier_represantation Set the frontier representation, centroid, middle or initial
+    * @param max_duration The max time we allot for path creation
+    */
   NavfnServiceFrontierPathGenerator(const std::string& name,
                                     const std::string& frontier_representation,
                                     ros::Duration max_duration = ros::Duration(5.0));
 
+  /**
+    * @brief Creates paths from start pose to a frontier, for all the frontiers we pass
+    * @param start The start stamped pose from where we create the path for each frontier
+    * @param frontier_list A list with all the frontiers we want to generate paths for 
+    * @return True when it has finished creating the paths for all the frontiers
+    * inside frontier_list
+    */
   virtual bool findPaths(const geometry_msgs::PoseStamped& start,
                          const FrontierListPtr& frontier_list);
 
+  /**
+    * @brief Sets the max time for path calculations
+    * @param max_duration The time we allot for path calculations
+    */
   inline void setExpiration(const ros::Duration& max_duration)
   {
     max_duration_ = max_duration;
   }
 
+  /**
+    * @brief Destructor for the class NavfnServiceFrontierPathGenerator
+    */
   ~NavfnServiceFrontierPathGenerator()
   {
   }

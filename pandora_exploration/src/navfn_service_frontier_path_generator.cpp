@@ -2,7 +2,7 @@
 *
 * Software License Agreement (BSD License)
 *
-*  Copyright (c) 2014, P.A.N.D.O.R.A. Team.
+*  Copyright (c) 2014 - 2015, P.A.N.D.O.R.A. Team.
 *  All rights reserved.
 *
 *  Redistribution and use in source and binary forms, with or without
@@ -32,7 +32,8 @@
 *  ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 *  POSSIBILITY OF SUCH DAMAGE.
 *
-* Author: Chris Zalidis <zalidis@gmail.com>
+* Author: Chris Zalidis <zalidis@gmail.com>,
+          Dimitrios Kirtsios <dimkirts@gmail.com>
 *********************************************************************/
 
 #include "pandora_exploration/navfn_service_frontier_path_generator.h"
@@ -45,6 +46,7 @@ NavfnServiceFrontierPathGenerator::NavfnServiceFrontierPathGenerator(const std::
     FrontierPathGenerator(name, frontier_representation),
     max_duration_(max_duration)
 {
+  // service name will be loaded here from parameter server
   std::string service_name;
   pnh_.param<std::string>(name_ + "/plan_service_name", service_name, "move_base/make_plan");
   path_client_ = nh_.serviceClient<nav_msgs::GetPlan>(service_name);
@@ -53,23 +55,24 @@ NavfnServiceFrontierPathGenerator::NavfnServiceFrontierPathGenerator(const std::
 bool NavfnServiceFrontierPathGenerator::findPaths(const geometry_msgs::PoseStamped& start,
                                                             const FrontierListPtr& frontier_list)
 {
-  //find service
+  // find service
   if (!path_client_.waitForExistence()) {
     ROS_ERROR("[%s] Could not connect to make_plan service!", ros::this_node::getName().c_str());
     return false;
   }
 
-  //track start
+  // track start
   ros::Time start_time = ros::Time::now();
 
-  //calculate path for each frontier
+  // calculate path for each frontier
   BOOST_FOREACH(Frontier& frontier, *frontier_list)
   {
     nav_msgs::GetPlan srv;
     srv.request.start = start;
 
     srv.request.goal.header = frontier.header;
-    //check to what point we want to plan
+    
+    // check to what point we want to plan
     if (frontier_representation_ == "centroid") {
       srv.request.goal.pose.position = frontier.centroid;
     }
@@ -80,10 +83,10 @@ bool NavfnServiceFrontierPathGenerator::findPaths(const geometry_msgs::PoseStamp
       srv.request.goal.pose.position = frontier.initial;
     }
 
-    //send a valid pose
+    // send a valid pose
     srv.request.goal.pose.orientation.w = 1.0;
 
-    //call service
+    // call service
     if (!path_client_.call(srv)) {
       ROS_ERROR("[%s] make_plan did not respond!", ros::this_node::getName().c_str());
       return false;
@@ -91,7 +94,7 @@ bool NavfnServiceFrontierPathGenerator::findPaths(const geometry_msgs::PoseStamp
 
     frontier.path = srv.response.plan;
 
-    //if max time alloted return
+    // if max time alloted return
     if (ros::Time::now() - start_time > max_duration_)
     {
       ROS_DEBUG("[%s] Time expired!", ros::this_node::getName().c_str());

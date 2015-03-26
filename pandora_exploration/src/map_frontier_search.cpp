@@ -86,7 +86,7 @@ Frontier MapFrontierSearch::buildNewFrontier(unsigned int initial_cell, unsigned
   Frontier output;
   output.centroid.x = 0;
   output.centroid.y = 0;
-  output.size = 1;
+  output.size = 1;  // htan 1
   output.min_distance = std::numeric_limits<double>::infinity();
 
   // record initial contact point for frontier
@@ -161,6 +161,7 @@ bool MapFrontierSearch::isNewFrontierCell(unsigned int idx, const std::vector<bo
   unsigned char* map = costmap_->getCharMap();
 
   // check that cell is unknown and not already marked as frontier
+  // frontier_flag[idx] = true means that this frontier has already marked as a valid frontier
   if (map[idx] != NO_INFORMATION || frontier_flag[idx]) {
     return false;
   }

@@ -19,8 +19,8 @@ plugins:
 
 static:
   map_topic: /slam/map
-  # map_topic: move_base/global_costmap/costmap
-  subscribe_to_updates: false
+  #map_topic: move_base/global_costmap/costmap
+  subscribe_to_updates: false #htan fasle
   unknown_cost_value: 51
   lethal_cost_threshold: 61
 

@@ -2,7 +2,7 @@
 *
 * Software License Agreement (BSD License)
 *
-*  Copyright (c) 2014, P.A.N.D.O.R.A. Team.
+*  Copyright (c) 2014 - 2015, P.A.N.D.O.R.A. Team.
 *  All rights reserved.
 *
 *  Redistribution and use in source and binary forms, with or without
@@ -32,7 +32,8 @@
 *  ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 *  POSSIBILITY OF SUCH DAMAGE.
 *
-* Author: Chris Zalidis <zalidis@gmail.com>
+* Author: Chris Zalidis <zalidis@gmail.com>,
+          Dimitrios Kirtsios <dimkirts@gmail.com>
 *********************************************************************/
 
 #ifndef PANDORA_EXPLORATION_COST_FUNCTIONS_DISTANCE_COST_FUNCTION_H
@@ -44,17 +45,39 @@
 
 namespace pandora_exploration {
 
+  /**
+    * @class DistanceCostFunction
+    * @brief A class implementing a frontier cost function using the FrontierCostFunction
+    * interface
+    * 
+    * This cost function add costs to the frontiers based on the straightness and length
+    * of the path. Cost are normalized to a scale between 0 and 1. 
+    */
   class DistanceCostFunction : public FrontierCostFunction
   {
    public:
 
+    /**
+      * @brief Explicit constructor for the DistanceCostFunction class
+      * @param scale The weight we set on the cost function
+      */
     explicit DistanceCostFunction(double scale);
 
+    /**
+      * @brief Takes a list of frontiers and adds a cost to each one of them
+      * @param frontier_list A pointer to a list of frontiers that are to be evaluated.
+      * 
+      * If a frontier has already assigned a negative cost then scoreFrontiers doesn't 
+      * add any cost. Also if there is no path to a frontier it assigns a cost of -1.
+      */
     virtual void scoreFrontiers(const FrontierListPtr& frontier_list);
 
+    /**
+      * @brief Destructor for the DistanceCostFunction class.
+      */
     ~DistanceCostFunction() {}
   };
 
-} // namespace pandora_exploration
+}  // namespace pandora_exploration
 
 #endif  // PANDORA_EXPLORATION_COST_FUNCTIONS_DISTANCE_COST_FUNCTION_H

@@ -1,0 +1,111 @@
+\hypertarget{classpandora__exploration_1_1_map_frontier_search}{\section{pandora\-\_\-exploration\-:\-:\-Map\-Frontier\-Search \-Class \-Reference}
+\label{classpandora__exploration_1_1_map_frontier_search}\index{pandora\-\_\-exploration\-::\-Map\-Frontier\-Search@{pandora\-\_\-exploration\-::\-Map\-Frontier\-Search}}
+}
+
+
+\-Thread-\/safe implementation of a frontier-\/search task for an input costmap.  
+
+
+
+
+{\ttfamily \#include $<$map\-\_\-frontier\-\_\-search.\-h$>$}
+
+\-Inheritance diagram for pandora\-\_\-exploration\-:\-:\-Map\-Frontier\-Search\-:\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[height=2.000000cm]{classpandora__exploration_1_1_map_frontier_search}
+\end{center}
+\end{figure}
+\subsection*{\-Public \-Member \-Functions}
+\begin{DoxyCompactItemize}
+\item 
+\hyperlink{classpandora__exploration_1_1_map_frontier_search_a0bbc0f03067d93638d0d0ec70b29d703}{\-Map\-Frontier\-Search} (const boost\-::shared\-\_\-ptr$<$ costmap\-\_\-2d\-::\-Costmap2\-D $>$ \&costmap, std\-::string costmap\-\_\-frame)
+\begin{DoxyCompactList}\small\item\em \-Constructor for search task. \end{DoxyCompactList}\item 
+virtual std\-::list$<$ \hyperlink{classpandora__exploration_1_1_frontier}{\-Frontier} $>$ \hyperlink{classpandora__exploration_1_1_map_frontier_search_ac948f0d38270a28905ea4f29e16270b2}{search\-From} (geometry\-\_\-msgs\-::\-Point position)
+\begin{DoxyCompactList}\small\item\em \-Runs search implementation, outward from the start position. \end{DoxyCompactList}\item 
+\hyperlink{classpandora__exploration_1_1_map_frontier_search_aca72d27c08f4a69516be48230ea76549}{$\sim$\-Map\-Frontier\-Search} ()
+\end{DoxyCompactItemize}
+\subsection*{\-Friends}
+\begin{DoxyCompactItemize}
+\item 
+class \hyperlink{classpandora__exploration_1_1_map_frontier_search_a70b63bda669585bd36090d1655f87613}{\-Map\-Frontier\-Search\-Test}
+\end{DoxyCompactItemize}
+
+
+\subsection{\-Detailed \-Description}
+\-Thread-\/safe implementation of a frontier-\/search task for an input costmap. 
+
+\-Definition at line 11 of file map\-\_\-frontier\-\_\-search.\-h.
+
+
+
+\subsection{\-Constructor \& \-Destructor \-Documentation}
+\hypertarget{classpandora__exploration_1_1_map_frontier_search_a0bbc0f03067d93638d0d0ec70b29d703}{\index{pandora\-\_\-exploration\-::\-Map\-Frontier\-Search@{pandora\-\_\-exploration\-::\-Map\-Frontier\-Search}!\-Map\-Frontier\-Search@{\-Map\-Frontier\-Search}}
+\index{\-Map\-Frontier\-Search@{\-Map\-Frontier\-Search}!pandora_exploration::MapFrontierSearch@{pandora\-\_\-exploration\-::\-Map\-Frontier\-Search}}
+\subsubsection[{\-Map\-Frontier\-Search}]{\setlength{\rightskip}{0pt plus 5cm}{\bf pandora\-\_\-exploration\-::\-Map\-Frontier\-Search\-::\-Map\-Frontier\-Search} (
+\begin{DoxyParamCaption}
+\item[{const boost\-::shared\-\_\-ptr$<$ costmap\-\_\-2d\-::\-Costmap2\-D $>$ \&}]{costmap, }
+\item[{std\-::string}]{costmap\-\_\-frame}
+\end{DoxyParamCaption}
+)}}\label{classpandora__exploration_1_1_map_frontier_search_a0bbc0f03067d93638d0d0ec70b29d703}
+
+
+\-Constructor for search task. 
+
+
+\begin{DoxyParams}{\-Parameters}
+{\em costmap} & \-Reference to costmap data to search. \\
+\hline
+\end{DoxyParams}
+\hypertarget{classpandora__exploration_1_1_map_frontier_search_aca72d27c08f4a69516be48230ea76549}{\index{pandora\-\_\-exploration\-::\-Map\-Frontier\-Search@{pandora\-\_\-exploration\-::\-Map\-Frontier\-Search}!$\sim$\-Map\-Frontier\-Search@{$\sim$\-Map\-Frontier\-Search}}
+\index{$\sim$\-Map\-Frontier\-Search@{$\sim$\-Map\-Frontier\-Search}!pandora_exploration::MapFrontierSearch@{pandora\-\_\-exploration\-::\-Map\-Frontier\-Search}}
+\subsubsection[{$\sim$\-Map\-Frontier\-Search}]{\setlength{\rightskip}{0pt plus 5cm}{\bf pandora\-\_\-exploration\-::\-Map\-Frontier\-Search\-::$\sim$\-Map\-Frontier\-Search} (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily  \mbox{[}inline\mbox{]}}}}\label{classpandora__exploration_1_1_map_frontier_search_aca72d27c08f4a69516be48230ea76549}
+
+
+\-Definition at line 28 of file map\-\_\-frontier\-\_\-search.\-h.
+
+
+
+\subsection{\-Member \-Function \-Documentation}
+\hypertarget{classpandora__exploration_1_1_map_frontier_search_ac948f0d38270a28905ea4f29e16270b2}{\index{pandora\-\_\-exploration\-::\-Map\-Frontier\-Search@{pandora\-\_\-exploration\-::\-Map\-Frontier\-Search}!search\-From@{search\-From}}
+\index{search\-From@{search\-From}!pandora_exploration::MapFrontierSearch@{pandora\-\_\-exploration\-::\-Map\-Frontier\-Search}}
+\subsubsection[{search\-From}]{\setlength{\rightskip}{0pt plus 5cm}virtual std\-::list$<${\bf \-Frontier}$>$ {\bf pandora\-\_\-exploration\-::\-Map\-Frontier\-Search\-::search\-From} (
+\begin{DoxyParamCaption}
+\item[{geometry\-\_\-msgs\-::\-Point}]{position}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily  \mbox{[}virtual\mbox{]}}}}\label{classpandora__exploration_1_1_map_frontier_search_ac948f0d38270a28905ea4f29e16270b2}
+
+
+\-Runs search implementation, outward from the start position. 
+
+
+\begin{DoxyParams}{\-Parameters}
+{\em position} & \-Initial position to search from \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{\-Returns}
+\-List of frontiers, if any 
+\end{DoxyReturn}
+
+
+\-Implements \hyperlink{classpandora__exploration_1_1_frontier_search_ab5229aa64c1876a50f55d7c84e961cf8}{pandora\-\_\-exploration\-::\-Frontier\-Search}.
+
+
+
+\subsection{\-Friends \-And \-Related \-Function \-Documentation}
+\hypertarget{classpandora__exploration_1_1_map_frontier_search_a70b63bda669585bd36090d1655f87613}{\index{pandora\-\_\-exploration\-::\-Map\-Frontier\-Search@{pandora\-\_\-exploration\-::\-Map\-Frontier\-Search}!\-Map\-Frontier\-Search\-Test@{\-Map\-Frontier\-Search\-Test}}
+\index{\-Map\-Frontier\-Search\-Test@{\-Map\-Frontier\-Search\-Test}!pandora_exploration::MapFrontierSearch@{pandora\-\_\-exploration\-::\-Map\-Frontier\-Search}}
+\subsubsection[{\-Map\-Frontier\-Search\-Test}]{\setlength{\rightskip}{0pt plus 5cm}friend class {\bf \-Map\-Frontier\-Search\-Test}\hspace{0.3cm}{\ttfamily  \mbox{[}friend\mbox{]}}}}\label{classpandora__exploration_1_1_map_frontier_search_a70b63bda669585bd36090d1655f87613}
+
+
+\-Definition at line 52 of file map\-\_\-frontier\-\_\-search.\-h.
+
+
+
+\-The documentation for this class was generated from the following file\-:\begin{DoxyCompactItemize}
+\item 
+include/pandora\-\_\-exploration/\hyperlink{map__frontier__search_8h}{map\-\_\-frontier\-\_\-search.\-h}\end{DoxyCompactItemize}

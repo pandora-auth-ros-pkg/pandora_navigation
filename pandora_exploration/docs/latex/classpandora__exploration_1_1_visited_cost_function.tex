@@ -1,0 +1,99 @@
+\hypertarget{classpandora__exploration_1_1_visited_cost_function}{\section{pandora\-\_\-exploration\-:\-:\-Visited\-Cost\-Function \-Class \-Reference}
+\label{classpandora__exploration_1_1_visited_cost_function}\index{pandora\-\_\-exploration\-::\-Visited\-Cost\-Function@{pandora\-\_\-exploration\-::\-Visited\-Cost\-Function}}
+}
+
+
+\-A class implementing a frontier cost function using the provided interface.  
+
+
+
+
+{\ttfamily \#include $<$visited\-\_\-cost\-\_\-function.\-h$>$}
+
+\-Inheritance diagram for pandora\-\_\-exploration\-:\-:\-Visited\-Cost\-Function\-:\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[height=2.000000cm]{classpandora__exploration_1_1_visited_cost_function}
+\end{center}
+\end{figure}
+\subsection*{\-Public \-Member \-Functions}
+\begin{DoxyCompactItemize}
+\item 
+\hyperlink{classpandora__exploration_1_1_visited_cost_function_a1b27e0e529b72f00f839be39347343f5}{\-Visited\-Cost\-Function} (double scale, const std\-::vector$<$ geometry\-\_\-msgs\-::\-Pose\-Stamped $>$ \&selected\-\_\-goals)
+\begin{DoxyCompactList}\small\item\em \-Constructor for the \hyperlink{classpandora__exploration_1_1_alignment_cost_function}{\-Alignment\-Cost\-Function} class. \end{DoxyCompactList}\item 
+virtual void \hyperlink{classpandora__exploration_1_1_visited_cost_function_a01607b04d8f76e004ff6089fd31a6a3e}{score\-Frontiers} (const \hyperlink{namespacepandora__exploration_a6f3b1959fca391e2ef3ac46b6e96be7a}{\-Frontier\-List\-Ptr} \&frontier\-\_\-list)
+\begin{DoxyCompactList}\small\item\em \-Takes a list of frontiers and adds a cost to each one of them. \end{DoxyCompactList}\item 
+\hyperlink{classpandora__exploration_1_1_visited_cost_function_a11232018d47b5ea679399db0128254c0}{$\sim$\-Visited\-Cost\-Function} ()
+\begin{DoxyCompactList}\small\item\em \-Destructor for the \hyperlink{classpandora__exploration_1_1_visited_cost_function}{\-Visited\-Cost\-Function} class. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsection{\-Detailed \-Description}
+\-A class implementing a frontier cost function using the provided interface. 
+
+\-Definition at line 56 of file visited\-\_\-cost\-\_\-function.\-h.
+
+
+
+\subsection{\-Constructor \& \-Destructor \-Documentation}
+\hypertarget{classpandora__exploration_1_1_visited_cost_function_a1b27e0e529b72f00f839be39347343f5}{\index{pandora\-\_\-exploration\-::\-Visited\-Cost\-Function@{pandora\-\_\-exploration\-::\-Visited\-Cost\-Function}!\-Visited\-Cost\-Function@{\-Visited\-Cost\-Function}}
+\index{\-Visited\-Cost\-Function@{\-Visited\-Cost\-Function}!pandora_exploration::VisitedCostFunction@{pandora\-\_\-exploration\-::\-Visited\-Cost\-Function}}
+\subsubsection[{\-Visited\-Cost\-Function}]{\setlength{\rightskip}{0pt plus 5cm}{\bf pandora\-\_\-exploration\-::\-Visited\-Cost\-Function\-::\-Visited\-Cost\-Function} (
+\begin{DoxyParamCaption}
+\item[{double}]{scale, }
+\item[{const std\-::vector$<$ geometry\-\_\-msgs\-::\-Pose\-Stamped $>$ \&}]{selected\-\_\-goals}
+\end{DoxyParamCaption}
+)}}\label{classpandora__exploration_1_1_visited_cost_function_a1b27e0e529b72f00f839be39347343f5}
+
+
+\-Constructor for the \hyperlink{classpandora__exploration_1_1_alignment_cost_function}{\-Alignment\-Cost\-Function} class. 
+
+
+\begin{DoxyParams}{\-Parameters}
+{\em scale} & \-The weight we set on the cost function \\
+\hline
+{\em selected\-\_\-goals} & \\
+\hline
+\end{DoxyParams}
+\hypertarget{classpandora__exploration_1_1_visited_cost_function_a11232018d47b5ea679399db0128254c0}{\index{pandora\-\_\-exploration\-::\-Visited\-Cost\-Function@{pandora\-\_\-exploration\-::\-Visited\-Cost\-Function}!$\sim$\-Visited\-Cost\-Function@{$\sim$\-Visited\-Cost\-Function}}
+\index{$\sim$\-Visited\-Cost\-Function@{$\sim$\-Visited\-Cost\-Function}!pandora_exploration::VisitedCostFunction@{pandora\-\_\-exploration\-::\-Visited\-Cost\-Function}}
+\subsubsection[{$\sim$\-Visited\-Cost\-Function}]{\setlength{\rightskip}{0pt plus 5cm}{\bf pandora\-\_\-exploration\-::\-Visited\-Cost\-Function\-::$\sim$\-Visited\-Cost\-Function} (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily  \mbox{[}inline\mbox{]}}}}\label{classpandora__exploration_1_1_visited_cost_function_a11232018d47b5ea679399db0128254c0}
+
+
+\-Destructor for the \hyperlink{classpandora__exploration_1_1_visited_cost_function}{\-Visited\-Cost\-Function} class. 
+
+
+
+\-Definition at line 79 of file visited\-\_\-cost\-\_\-function.\-h.
+
+
+
+\subsection{\-Member \-Function \-Documentation}
+\hypertarget{classpandora__exploration_1_1_visited_cost_function_a01607b04d8f76e004ff6089fd31a6a3e}{\index{pandora\-\_\-exploration\-::\-Visited\-Cost\-Function@{pandora\-\_\-exploration\-::\-Visited\-Cost\-Function}!score\-Frontiers@{score\-Frontiers}}
+\index{score\-Frontiers@{score\-Frontiers}!pandora_exploration::VisitedCostFunction@{pandora\-\_\-exploration\-::\-Visited\-Cost\-Function}}
+\subsubsection[{score\-Frontiers}]{\setlength{\rightskip}{0pt plus 5cm}virtual void {\bf pandora\-\_\-exploration\-::\-Visited\-Cost\-Function\-::score\-Frontiers} (
+\begin{DoxyParamCaption}
+\item[{const {\bf \-Frontier\-List\-Ptr} \&}]{frontier\-\_\-list}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily  \mbox{[}virtual\mbox{]}}}}\label{classpandora__exploration_1_1_visited_cost_function_a01607b04d8f76e004ff6089fd31a6a3e}
+
+
+\-Takes a list of frontiers and adds a cost to each one of them. 
+
+
+\begin{DoxyParams}{\-Parameters}
+{\em frontier\-\_\-list} & \-A pointer to a list of frontiers that are to be evaluated.\\
+\hline
+\end{DoxyParams}
+\-If a frontier has already assigned a negative cost then score\-Frontiers doesn't add any cost. 
+
+\-Implements \hyperlink{classpandora__exploration_1_1_frontier_cost_function_a1049bc25e934365fdf3a1a6ab88c4cca}{pandora\-\_\-exploration\-::\-Frontier\-Cost\-Function}.
+
+
+
+\-The documentation for this class was generated from the following file\-:\begin{DoxyCompactItemize}
+\item 
+include/pandora\-\_\-exploration/cost\-\_\-functions/\hyperlink{visited__cost__function_8h}{visited\-\_\-cost\-\_\-function.\-h}\end{DoxyCompactItemize}
