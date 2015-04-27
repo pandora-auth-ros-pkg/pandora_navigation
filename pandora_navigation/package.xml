@@ -16,7 +16,6 @@
   <buildtool_depend>catkin</buildtool_depend>
 
   <exec_depend>pandora_navigation_msgs</exec_depend>
-  <exec_depend>pandora_local_planner</exec_depend>
   <exec_depend>pandora_move_base</exec_depend>
   <exec_depend>pandora_costmap</exec_depend>
   <exec_depend>pandora_exploration</exec_depend>

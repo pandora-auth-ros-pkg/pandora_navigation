@@ -33,6 +33,7 @@
 
   <!--These deps aren't strictly needed, but the default params require them to work-->
   <depend>base_local_planner</depend>
+  <depend>dwa_local_planner</depend>
   <depend>navfn</depend>
   <depend>clear_costmap_recovery</depend>
   <depend>rotate_recovery</depend>
