@@ -3,7 +3,7 @@
   <node pkg="pandora_costmap" type="cloud_cropper" name="local_cropper" output="screen" ns="costmap">
     <param name="min_frame_id" value="laser_link" />
     <param name="max_frame_id" value="co2_link" />
-    <param name="in_topic" value="/kinect/depth_registered/points/still" />
+    <param name="in_topic" value="/kinect/depth_registered/points" />
     <param name="out_topic" value="local_cropped_cloud" />
   </node>
 
@@ -16,5 +16,13 @@
   </node>
 -->
 
+<!--
+  <node pkg="pandora_costmap" type="cloud_cropper" name="range_cloud_cropper" output="screen" ns="costmap">
+    <param name="min_frame_id" value="base_stabilized" />
+    <param name="max_frame_id" value="middle_thermal_link" />
+    <param name="in_topic" value="/sensors/range/point_cloud" />
+    <param name="out_topic" value="range_cropped_cloud" />
+  </node>
+-->
 
 </launch>

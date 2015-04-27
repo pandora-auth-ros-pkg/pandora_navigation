@@ -33,3 +33,10 @@ catkin_package(
 
 add_executable(cloud_cropper src/point_cloud_cropper.cpp)
 target_link_libraries(cloud_cropper ${catkin_LIBRARIES})
+
+add_executable(
+  range_to_point_cloud_converter
+  src/range_to_point_cloud_converter.cpp)
+target_link_libraries(
+  range_to_point_cloud_converter
+  ${catkin_LIBRARIES})
