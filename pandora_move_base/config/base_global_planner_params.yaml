@@ -1,4 +1,11 @@
+# The name of the global planner plugin to use
 base_global_planner: navfn/NavfnROS
+
+# Settings for the plugin
 NavfnROS:
+
+  # Specifies whether or not to visualize the potential area computed by navfn via a PointCloud2
   visualize_potential: false
+
+  # Specifies whether or not to allow navfn to create plans that traverse unknown space
   allow_unknown: true

@@ -1,7 +1,9 @@
-controller_frequency: 5.0
 #base_local_planner: base_local_planner/TrajectoryPlannerROS
+
+# The name of the local planner plugin to use
 base_local_planner: dwa_local_planner/DWAPlannerROS
 
+# Settings for the plugins
 TrajectoryPlannerROS:
   max_vel_x: 0.1
   min_vel_x: 0.0

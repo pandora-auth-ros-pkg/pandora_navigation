@@ -1,10 +1,23 @@
 global_costmap:
+  # The coordinate frame the costmap will run in
   global_frame: /map
+
+  # The coordinate frame the costmap will reference for the base of the robot 
   robot_base_frame: /base_footprint
+
+  # The frequency in Hz, at which the costmap will run it's update loop
   update_frequency: 1.0
+
+  # The frequency in Hz, at which the costmap to publish display information
   publish_frequency: 1.0
-  static_map: true
+
+  # The delay in transform(tf) that is tolerable in seconds 
   transform_tolerance: 0.5
+
+  # If static map is used then rolling window must be false (default) and vice-versa
+  static_map: true
+  rolling_window: false
+
   plugins:
     -
       name: static_layer
@@ -14,10 +27,17 @@ global_costmap:
       type: costmap_2d::InflationLayer
 
   static_layer:
+    # The topic that the costmap subscribes to for the static map
     map_topic: /slam/map
+
+    # The value for which a cost should be considered unknown when reading in a map
     unknown_cost_value: 51
+
+    # The threshold value at which to consider a cost lethal when reading in a map
     lethal_cost_threshold: 61
 
   inflation_layer:
-    inflation_radius: 0.5
+    inflation_radius: 0.45
+
+    # Increasing the factor will decrease the resulting cost values
     cost_scaling_factor: 7.0
