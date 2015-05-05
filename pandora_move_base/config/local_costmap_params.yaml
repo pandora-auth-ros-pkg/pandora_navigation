@@ -6,10 +6,10 @@ local_costmap:
   robot_base_frame: /base_footprint
 
   # The frequency in Hz, at which the costmap will run it's update loop
-  update_frequency: 2.0
+  update_frequency: 4.0
 
   # The frequency in Hz, at which the costmap to publish display information
-  publish_frequency: 2.0
+  publish_frequency: 4.0
 
   # The delay in transform(tf) that is tolerable in seconds 
   transform_tolerance: 0.7
