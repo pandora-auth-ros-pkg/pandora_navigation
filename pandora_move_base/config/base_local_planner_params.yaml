@@ -1,9 +1,11 @@
 #base_local_planner: base_local_planner/TrajectoryPlannerROS
 
-# The name of the local planner plugin to use
+# The name of the local planner plugin to use, take into account only the
+# parameters corresponding to your plugin.
 base_local_planner: dwa_local_planner/DWAPlannerROS
 
 # Settings for the plugins
+# Overrides settings in BaseLocalPlanner.cfg
 TrajectoryPlannerROS:
   max_vel_x: 0.1
   min_vel_x: 0.0
@@ -19,7 +21,7 @@ TrajectoryPlannerROS:
   holonomic_robot: false
   yaw_goal_tolerance: 0.2
   xy_goal_tolerance: 0.2
-  
+
   goal_distance_bias: 0.4
   path_distance_bias: 1.0
   occdist_scale: 0.1
@@ -35,8 +37,11 @@ TrajectoryPlannerROS:
   publish_cost_grid_pc: true
   meter_scoring: true
 
+# Overrides the settings of DWAPlanner.cfg and LocalPlannerLimits
+# LocalPlannerLimits is defined in base_local_planner/src/local_planner_limits
 DWAPlannerROS:
   publish_cost_grid_pc: true
   publish_traj_pc: true
   cheat_factor: 2
-  
+  acc_lim_theta: 2.5
+  use_dwa: true
