@@ -1,8 +1,9 @@
 # robot footprint with center of robot assumed (0.0, 0.0) 
 
 # woody
-footprint: [[-0.27, -0.21], [-0.27, 0.21], [0.27, 0.21], [0.27, -0.21]]
+#footprint: [[-0.27, -0.21], [-0.27, 0.21], [0.27, 0.21], [0.27, -0.21]]
 
 # gears
-#footprint: [[-0.29, -0.21], [-0.29, 0.21], [0.29, 0.21], [0.29, -0.21]]
+footprint: [[-0.29, -0.21], [-0.29, 0.21], [0.29, 0.21], [0.29, -0.21]]
 footprint_padding: 0.01
+transform_tolerance: 0.7

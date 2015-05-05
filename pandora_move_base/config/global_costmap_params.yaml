@@ -12,11 +12,11 @@ global_costmap:
   publish_frequency: 1.0
 
   # The delay in transform(tf) that is tolerable in seconds 
-  transform_tolerance: 0.5
+  transform_tolerance: 0.7
 
   # If static map is used then rolling window must be false (default) and vice-versa
   static_map: true
-  rolling_window: false
+  #rolling_window: false
 
   plugins:
     -
@@ -37,7 +37,7 @@ global_costmap:
     lethal_cost_threshold: 61
 
   inflation_layer:
-    inflation_radius: 0.45
+    inflation_radius: 0.40
 
     # Increasing the factor will decrease the resulting cost values
     cost_scaling_factor: 7.0

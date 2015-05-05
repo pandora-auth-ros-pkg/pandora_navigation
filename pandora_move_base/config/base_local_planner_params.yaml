@@ -40,8 +40,77 @@ TrajectoryPlannerROS:
 # Overrides the settings of DWAPlanner.cfg and LocalPlannerLimits
 # LocalPlannerLimits is defined in base_local_planner/src/local_planner_limits
 DWAPlannerROS:
+  # Acceleration Params
+  acc_lim_x: 1.0
+  acc_lim_y: 0.0
+
+  acc_lim_theta: 3.2
+  acc_limit_trans: 1.0
+
+  # Velocity Params in m/s and rad/s
+  max_trans_vel: 0.1
+  min_trans_vel: 0.0
+
+  max_vel_x: 0.1
+  min_vel_x: 0.0
+
+  max_vel_y: 0.0
+  min_vel_y: 0.0
+
+  max_rot_vel: 0.15
+  min_rot_vel: 0.05
+
+  # Tolerances, in radians and meters
+  yaw_goal_tolerance: 0.3
+  xy_goal_tolerance: 0.5
+  latch_xy_goal_tolerance: true
+
+  # Below these velocities we consider the robot to be stopped
+  trans_stopped_vel: 0.01
+  rot_stopped_vel: 0.05
+
+  # Forward simulation parameters
+  sim_time: 1.5
+  sim_granularity: 0.025
+  angular_sim_granularity: 0.1
+  vx_samles: 20
+  vy_samples: 1
+  vtheta_samples: 30
+  penalize_negative: true
+
+  # Trajectory scoring parameters
+  # How much the controller should stay close to the path (def 32.0)
+  path_distance_bias: 70
+
+  # How much the controller should attempt to reach its local goal, also controls speed (def 24.0)
+  goal_distance_bias: 60
+
+  # How much the controller should attempt to avoid obstacles (def 0.01)
+  occdist_scale: 0.1
+  forward_point_distance: 0.325
+
+  #isws na to riksw gia na mhn egklwvizetai
+  prefer_forward_penalty: 10
+  prefer_forward_scale: 10
+
+  # The amount of time that the robot must stop before a collision in order for a trajectory to be considered valid in seconds
+  stop_time_buffer: 0.2
+
+  # The absolute value of the velocity at which to start scaling the robot's footprint, in m/s
+  scaling_speed: 0.25
+  max_scaling_factor: 0.2
+
+
+  # Oscillation Prevention parameters
+  oscillation_reset_dist: 0.1
+  oscillation_reset_angle: 1.52
+
+  # Global Plan parameters
+  prune_plan: true
+
+
+
   publish_cost_grid_pc: true
   publish_traj_pc: true
   cheat_factor: 2
-  acc_lim_theta: 2.5
   use_dwa: true
