@@ -57,7 +57,7 @@ local_costmap:
     max_obstacle_height: 1.0
 
     # Whether or not to publish the underlying voxel grid for visualization purposes.
-    publish_voxel_map: false  # false because we don't use voxel layer
+    publish_voxel_map: true  # false because we don't use voxel layer
 
   inflation_layer:
     inflation_radius: 0.40
