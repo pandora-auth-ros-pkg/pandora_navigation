@@ -29,7 +29,7 @@ coverage:
   planner_timeout_duration: 1.0
 
   # valid types: initial, middle, centroid
-  frontier_representation: initial
+  frontier_representation: centroid
   visualize_paths: true
 
   cost_functions:

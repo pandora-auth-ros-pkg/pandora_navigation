@@ -48,10 +48,10 @@ DWAPlannerROS:
   acc_limit_trans: 1.0
 
   # Velocity Params in m/s and rad/s
-  max_trans_vel: 0.1
+  max_trans_vel: 0.8
   min_trans_vel: 0.0
 
-  max_vel_x: 0.1
+  max_vel_x: 0.8
   min_vel_x: 0.0
 
   max_vel_y: 0.0
@@ -60,6 +60,7 @@ DWAPlannerROS:
   max_rot_vel: 0.15
   min_rot_vel: 0.05
 
+  #controller_frequency: 15.0
   # Tolerances, in radians and meters
   yaw_goal_tolerance: 0.3
   xy_goal_tolerance: 0.5
@@ -80,10 +81,10 @@ DWAPlannerROS:
 
   # Trajectory scoring parameters
   # How much the controller should stay close to the path (def 32.0)
-  path_distance_bias: 70
+  path_distance_bias: 32
 
   # How much the controller should attempt to reach its local goal, also controls speed (def 24.0)
-  goal_distance_bias: 60
+  goal_distance_bias: 25
 
   # How much the controller should attempt to avoid obstacles (def 0.01)
   occdist_scale: 0.1

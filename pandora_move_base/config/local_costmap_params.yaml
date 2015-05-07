@@ -6,10 +6,10 @@ local_costmap:
   robot_base_frame: /base_footprint
 
   # The frequency in Hz, at which the costmap will run it's update loop
-  update_frequency: 4.0
+  update_frequency: 4.5
 
   # The frequency in Hz, at which the costmap to publish display information
-  publish_frequency: 4.0
+  publish_frequency: 4.5
 
   # The delay in transform(tf) that is tolerable in seconds 
   transform_tolerance: 0.7
@@ -41,6 +41,12 @@ local_costmap:
     laser: {data_type: LaserScan, topic: /laser/scan, marking: true, clearing: true}
     kinect: {data_type: PointCloud2, topic: /costmap/local_cropped_cloud, marking: true, clearing: true}
 
+    # How long to keep each sensor reading in seconds. A value of 0.0 will only keep the most recent reading.
+    observation_persistence: 0.0
+
+    # How often to expect a reading from a sensor in seconds. A value of 0.0 will allow infinite time between readings
+    expected_update_rate: 0.30
+
     # Determines the max range sensor reading(meters) that will result in an obstacle being put in the costmap
     obstacle_range: 2.5
 
@@ -51,9 +57,9 @@ local_costmap:
     max_obstacle_height: 1.0
 
     # Whether or not to publish the underlying voxel grid for visualization purposes.
-    publish_voxel_map: true
+    publish_voxel_map: false  # false because we don't use voxel layer
 
   inflation_layer:
-    inflation_radius: 0.51
+    inflation_radius: 0.40
 
 
