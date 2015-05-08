@@ -6,46 +6,46 @@ base_local_planner: dwa_local_planner/DWAPlannerROS
 
 # Settings for the plugins
 # Overrides settings in BaseLocalPlanner.cfg
-TrajectoryPlannerROS:
-  max_vel_x: 0.1
-  min_vel_x: 0.0
-  max_rotational_vel: 0.25
-  min_in_place_rotational_vel: 0.02
-  acc_lim_th: 2.0
-  acc_lim_x: 1.0
-  acc_lim_y: 0.0
+# TrajectoryPlannerROS:
+#   max_vel_x: 0.5
+#   min_vel_x: 0.0
+#   max_rotational_vel: 0.2
+#   min_in_place_rotational_vel: 0.02
+#   acc_lim_th: 2.0
+#   acc_lim_x: 1.1
+#   acc_lim_y: 0.0
 
-  escape_vel: -0.2
-  escape_reset_dist: 0.25
+#   escape_vel: -0.2
+#   escape_reset_dist: 0.25
 
-  holonomic_robot: false
-  yaw_goal_tolerance: 0.2
-  xy_goal_tolerance: 0.2
+#   holonomic_robot: false
+#   yaw_goal_tolerance: 0.2
+#   xy_goal_tolerance: 0.2
 
-  goal_distance_bias: 0.4
-  path_distance_bias: 1.0
-  occdist_scale: 0.1
+#   goal_distance_bias: 0.4
+#   path_distance_bias: 1.0
+#   occdist_scale: 0.1
 
-  sim_time: 1.5
-  heading_lookahead: 0.4
-  oscillation_reset_dist: 0.35
+#   sim_time: 1.5
+#   heading_lookahead: 0.4
+#   oscillation_reset_dist: 0.35
 
-  vx_samples: 8
-  vtheta_samples: 20
-  dwa: false
+#   vx_samples: 8
+#   vtheta_samples: 20
+#   dwa: true
 
-  publish_cost_grid_pc: true
-  meter_scoring: true
+#   publish_cost_grid_pc: true
+#   meter_scoring: true
 
 # Overrides the settings of DWAPlanner.cfg and LocalPlannerLimits
 # LocalPlannerLimits is defined in base_local_planner/src/local_planner_limits
 DWAPlannerROS:
   # Acceleration Params
-  acc_lim_x: 1.0
+  acc_lim_x: 1.5
   acc_lim_y: 0.0
 
-  acc_lim_theta: 3.2
-  acc_limit_trans: 1.0
+  acc_lim_theta: 1.5
+  acc_limit_trans: 1.5
 
   # Velocity Params in m/s and rad/s
   max_trans_vel: 0.8
@@ -71,7 +71,7 @@ DWAPlannerROS:
   rot_stopped_vel: 0.05
 
   # Forward simulation parameters
-  sim_time: 1.5
+  sim_time: 1.3
   sim_granularity: 0.025
   angular_sim_granularity: 0.1
   vx_samles: 20
@@ -109,7 +109,7 @@ DWAPlannerROS:
   # Global Plan parameters
   prune_plan: true
 
-
+  planner_frequency: 3.0
 
   publish_cost_grid_pc: true
   publish_traj_pc: true

@@ -6,10 +6,10 @@ local_costmap:
   robot_base_frame: /base_footprint
 
   # The frequency in Hz, at which the costmap will run it's update loop
-  update_frequency: 4.5
+  update_frequency: 4.0
 
   # The frequency in Hz, at which the costmap to publish display information
-  publish_frequency: 4.5
+  publish_frequency: 4.0
 
   # The delay in transform(tf) that is tolerable in seconds 
   transform_tolerance: 0.7
@@ -23,7 +23,7 @@ local_costmap:
   height: 4.0
 
   # Meters per cell
-  resolution: 0.02
+  resolution: 0.05
 
 
   plugins:
@@ -60,6 +60,6 @@ local_costmap:
     publish_voxel_map: true  # false because we don't use voxel layer
 
   inflation_layer:
-    inflation_radius: 0.40
+    inflation_radius: 0.45
 
 
