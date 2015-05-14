@@ -849,7 +849,7 @@ namespace move_base {
 
       if(!tc_->setPlan(*controller_plan_)){
         //ABORT and SHUTDOWN COSTMAPS
-        ROS_ERROR("Failed to pass global plan to the controller, aborting.");
+        ROS_ERROR("[move_base] Failed to pass global plan to the controller, aborting.");
         resetState();
 
         //disable the planner thread
