@@ -493,7 +493,7 @@ namespace move_base {
     //get the starting pose of the robot
     tf::Stamped<tf::Pose> global_pose;
     if(!planner_costmap_ros_->getRobotPose(global_pose)) {
-      ROS_WARN("Unable to get starting pose of robot, unable to create global plan");
+      ROS_WARN("[pandora_move_base] Unable to get starting pose of robot, unable to create global plan");
       return false;
     }
 
@@ -777,7 +777,7 @@ namespace move_base {
       r.sleep();
       //make sure to sleep for the remainder of our cycle time
       if(r.cycleTime() > ros::Duration(1 / controller_frequency_) && state_ == CONTROLLING)
-        ROS_WARN("Control loop missed its desired rate of %.4fHz... the loop actually took %.4f seconds", controller_frequency_, r.cycleTime().toSec());
+        ROS_WARN("[pandora_move_base] Control loop missed its desired rate of %.4fHz... the loop actually took %.4f seconds", controller_frequency_, r.cycleTime().toSec());
     }
 
     //wake up the planner thread so that it can exit cleanly
@@ -849,7 +849,7 @@ namespace move_base {
 
       if(!tc_->setPlan(*controller_plan_)){
         //ABORT and SHUTDOWN COSTMAPS
-        ROS_ERROR("Failed to pass global plan to the controller, aborting.");
+        ROS_ERROR("[pandora_move_base] Failed to pass global plan to the controller, aborting.");
         resetState();
 
         //disable the planner thread

@@ -124,7 +124,7 @@ bool FrontierGoalSelector::findNextGoal(geometry_msgs::PoseStamped* goal)
 
   // if no frontiers found return false
   if (frontier_list_->empty()) {
-    ROS_ERROR("No frontiers found, exploration complete");
+    ROS_ERROR("[%s] No frontiers found, exploration complete", ros::this_node::getName().c_str());
     return false;
   }
 
