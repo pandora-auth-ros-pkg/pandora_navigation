@@ -1,5 +1,5 @@
 # try that many times, in a row, to find a goal
-max_goal_searches: 5
+max_goal_searches: 12
 
 # robot has that many seconds to reach a goal
 goal_timeout: 3.0
