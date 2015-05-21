@@ -95,8 +95,8 @@ void ExplorationController::executeCb(
   while (ros::ok() && do_exploration_server_.isActive()) {
     // we reached maximum goal searches retries
     if (goal_searches_count_ >= max_goal_searches_) {
-      do_exploration_server_.setAborted(pandora_navigation_msgs::DoExplorationResult(),
-                                        "Max retries reached, we could not find more goals");
+      do_exploration_server_.setSucceeded(pandora_navigation_msgs::DoExplorationResult(),
+                                        "[explorer] Max retries reached, we could not find more goals - exploration completed");
       return;
     }
 
