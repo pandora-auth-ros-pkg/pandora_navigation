@@ -29,4 +29,3 @@ install:
 script: # All commands must exit with code 0 on success. Anything else is considered failure.
   - catkin_make --only-pkg-with-deps $REPOSITORY_NAME
   - source devel/setup.bash
-  - catkin_make roslint_pandora_exploration
