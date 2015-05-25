@@ -2,7 +2,7 @@
 *
 * Software License Agreement (BSD License)
 *
-*  Copyright (c) 2014, P.A.N.D.O.R.A. Team.
+*  Copyright (c) 2014 - 2015, P.A.N.D.O.R.A. Team.
 *  All rights reserved.
 *
 *  Redistribution and use in source and binary forms, with or without
@@ -32,7 +32,8 @@
 *  ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 *  POSSIBILITY OF SUCH DAMAGE.
 *
-* Author: Chris Zalidis <zalidis@gmail.com>
+* Author: Chris Zalidis <zalidis@gmail.com>,
+          Dimitrios Kirtsios <dimkirts@gmail.com>
 *********************************************************************/
 
 #include "pandora_exploration/frontier_goal_selector.h"
@@ -43,23 +44,27 @@ FrontierGoalSelector::FrontierGoalSelector(const std::string& name)
   : GoalSelector(name), tf_listener_(ros::Duration(10.0))
 {
   ros::NodeHandle private_nh("~");
+
+  // setup exploration costmap
   explore_costmap_ros_.reset(new costmap_2d::Costmap2DROS(name_ + "_costmap", tf_listener_));
+  
+  // setup marker publisher
   frontier_marker_pub_ =
       private_nh.advertise<visualization_msgs::MarkerArray>(name_ + "_frontier_markers", 10);
 
-  // path distance scale and straight scale
+  // load path distance scale and straight scale
   double dist_scale;
   private_nh.param<double>(name_ + "/cost_functions/dist_scale", dist_scale, 1.0);
 
-  // frontier size scale
+  // load frontier size scale
   double size_scale;
   private_nh.param<double>(name_ + "/cost_functions/size_scale", size_scale, 1.0);
 
-  // frontier alignment scale
+  // load frontier alignment scale
   double alignment_scale;
   private_nh.param<double>(name_ + "/cost_functions/alignment_scale", alignment_scale, 1.0);
 
-  // frontier alignment scale
+  // load frontier alignment scale
   double visited_scale;
   private_nh.param<double>(name_ + "/cost_functions/visited_scale", alignment_scale, 1.0);
 
@@ -87,14 +92,17 @@ FrontierGoalSelector::FrontierGoalSelector(const std::string& name)
   frontier_path_generator_.reset(
       new NavfnServiceFrontierPathGenerator(name_, frontier_representation_, expiration));
 
-  // set-up cost functions
+  // set-up cost functions, using the scales previously loaded
   FrontierCostFunctionPtr size_cost_function(new SizeCostFunction(size_scale));
   frontier_cost_function_vec_.push_back(size_cost_function);
+
   FrontierCostFunctionPtr distance_cost_function(new DistanceCostFunction(dist_scale));
   frontier_cost_function_vec_.push_back(distance_cost_function);
+  
   FrontierCostFunctionPtr alignment_cost_function(
       new AlignmentCostFunction(alignment_scale, current_robot_pose_));
   frontier_cost_function_vec_.push_back(alignment_cost_function);
+  
   FrontierCostFunctionPtr visited_cost_function(
       new VisitedCostFunction(visited_scale, selected_goals_));
   frontier_cost_function_vec_.push_back(visited_cost_function);
@@ -245,6 +253,8 @@ void FrontierGoalSelector::visualizeFrontiers()
     marker.scale.y = 0.1;
     marker.scale.z = 0.1;
     marker.color.r = 1.0;
+    //marker.color.g = 0.0;
+    //marker.color.b = 0.0;
     marker.color.a = 1.0;
     markers.markers.push_back(marker);
 
@@ -275,7 +285,9 @@ void FrontierGoalSelector::visualizeFrontiers()
       paths_marker.type = visualization_msgs::Marker::LINE_STRIP;
       paths_marker.id = id;
       paths_marker.scale.x = 0.01;
+      //paths_marker.color.r = 0.0;
       paths_marker.color.g = 1.0;
+      //paths_marker.color.b = 0.0;
       paths_marker.color.a = 1.0;
       paths_marker.pose.orientation.w = 1.0;
 
@@ -305,8 +317,11 @@ void FrontierGoalSelector::visualizeFrontiers()
   marker.scale.x = 0.15;
   marker.scale.y = 0.15;
   marker.scale.z = 0.15;
+  //marker.color.r = 0.0;
   marker.color.b = 1.0;
-  marker.color.a = 1.0;
+  //marker.color.g = 0.0;
+  // "a" is by default "0" if you forget it marker will be invisble
+  marker.color.a = 1.0;  
   if (frontier_representation_ == "centroid") {
     marker.pose.position.x = best.centroid.x;
     marker.pose.position.y = best.centroid.y;

@@ -2,7 +2,7 @@
 *
 * Software License Agreement (BSD License)
 *
-*  Copyright (c) 2014, P.A.N.D.O.R.A. Team.
+*  Copyright (c) 2014 - 2015, P.A.N.D.O.R.A. Team.
 *  All rights reserved.
 *
 *  Redistribution and use in source and binary forms, with or without
@@ -32,7 +32,8 @@
 *  ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 *  POSSIBILITY OF SUCH DAMAGE.
 *
-* Author: Chris Zalidis <zalidis@gmail.com>
+* Author: Chris Zalidis <zalidis@gmail.com>,
+          Dimitrios Kirtsios <dimkirts@gmail.com>
 *********************************************************************/
 
 #include "pandora_exploration/navfn_frontier_path_generator.h"
@@ -58,7 +59,7 @@ NavfnFrontierPathGenerator::NavfnFrontierPathGenerator(
     ROS_BREAK();
   }
 
-  // create planner
+  // create planner, exception is throwed if plugin is not available
   try
   {
     planner_ = planner_loader_.createInstance(planner_name);
@@ -77,6 +78,7 @@ bool NavfnFrontierPathGenerator::findPaths(const geometry_msgs::PoseStamped& sta
   // calculate path for each frontier
   BOOST_FOREACH(Frontier & frontier, *frontier_list)
   {
+    // Here we will store the plan to 
     nav_msgs::Path plan;
     geometry_msgs::PoseStamped goal;
 
@@ -94,9 +96,13 @@ bool NavfnFrontierPathGenerator::findPaths(const geometry_msgs::PoseStamped& sta
     }
     goal.pose.orientation.w = 1.0;
 
+    // start pose, goal pose, plan filled by the planner
+    // TODO isws edw kati den paei kala, an xrhsimopoiithei autos o generator
+    // to make plan epistrefei true an vrhke ena valid plan alliws false.
     planner_->makePlan(start, goal, plan.poses);
 
     plan.header = frontier.header;
+    // store the calculated plan to frontier.path variable
     frontier.path = plan;
   }
 

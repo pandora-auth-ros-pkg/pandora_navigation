@@ -2,7 +2,7 @@
 *
 * Software License Agreement (BSD License)
 *
-*  Copyright (c) 2014, P.A.N.D.O.R.A. Team.
+*  Copyright (c) 2014 - 2015, P.A.N.D.O.R.A. Team.
 *  All rights reserved.
 *
 *  Redistribution and use in source and binary forms, with or without
@@ -32,7 +32,8 @@
 *  ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 *  POSSIBILITY OF SUCH DAMAGE.
 *
-* Author: Chris Zalidis <zalidis@gmail.com>
+* Author: Chris Zalidis <zalidis@gmail.com>,
+          Dimitrios Kirtsios <dimkirts@gmail.com>
 *********************************************************************/
 
 #ifndef PANDORA_EXPLORATION_FRONTIER_GOAL_SELECTOR_H
@@ -58,32 +59,95 @@
 
 namespace pandora_exploration {
 
+/**
+  * @class FrontierGoalSelector
+  * @brief A class implementing a goal selector using the GoalSelector interface
+  *
+  * This goal selector is using the idea of frontiers to choose it's next 
+  * exploration target. The possible goals are frontiers of the
+  * explored map.
+  */
 class FrontierGoalSelector : public GoalSelector {
  public:
+  
+  /**
+    * @brief Explicit constructor for the FrontierGoalSelector class
+    * @param name The name of the goal selector
+    * 
+    * Inside the constructor the params for the scales of the cost 
+    * functions are loaded. Also the setup of exploration costmap,
+    * map frontier searchers, frontier path generators, frontier 
+    * cost functions, frontier list takes place.
+    */
   explicit FrontierGoalSelector(const std::string& name);
 
+  /**
+    * @brief Finds next exploration goal
+    * @param goal We pass the goal that is found to this argument
+    * @return True if a goal is found
+    */
   virtual bool findNextGoal(geometry_msgs::PoseStamped* goal);
 
+  /**
+    * @brief Destructor for the frontier goal selector.
+    */
   ~FrontierGoalSelector()
   {
   }
 
  private:
+  
+  /**
+    * @brief Finds the best frontier from the frontier list and passes it
+    * to the frontier ptr we pass as argument
+    * @params selected Frontier ptr to passed with the best frontier found
+    * @return True if a frontier with positive cost is found
+    *
+    * The frontier with the max cost is choosed
+    */
   bool findBestFrontier(Frontier* selected);
+  
+  /**
+    * @brief Calculates the final orientation of the goal
+    * @param frontier The goal frontier
+    * 
+    * Calculates the final goal orientation using the two last points 
+    * of the frontier path and assigns this orientation to the last point
+    * of the frontier path
+    */
   void calculateFinalGoalOrientation(Frontier* frontier);
+  
+  /**
+    * @brief Implements the visualization procedure in rviz
+    * 
+    * Each frontier is represented as red SHERE
+    * The path to each frontier is represented as green LINE_STRIP
+    * Best frontier is represented as blue SPHERE
+    * 
+    */
   void visualizeFrontiers();
 
  private:
+  // Marker publisher used for visualization purposes
   ros::Publisher frontier_marker_pub_;
+  
+  // A shared ptr to the Costmap2DROS 
   boost::shared_ptr<costmap_2d::Costmap2DROS> explore_costmap_ros_;
+  
+  // A shared ptr to an std::list of frontier objects 
   FrontierListPtr frontier_list_;
 
   tf::TransformListener tf_listener_;
 
   geometry_msgs::PoseStamped current_robot_pose_;
 
+  // A vector that holds pointers to all frontier searcher implementations
   std::vector<FrontierSearchPtr> frontier_search_vec_;
+
+  // A vector that holds pointers to all frontier cost function implementations
   std::vector<FrontierCostFunctionPtr> frontier_cost_function_vec_;
+
+  // A shared ptr to a frontier path generator
   FrontierPathGeneratorPtr frontier_path_generator_;
 
   std::string frontier_representation_;

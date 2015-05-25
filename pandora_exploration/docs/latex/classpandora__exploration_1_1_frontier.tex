@@ -1,0 +1,155 @@
+\hypertarget{classpandora__exploration_1_1_frontier}{\section{pandora\-\_\-exploration\-:\-:\-Frontier \-Class \-Reference}
+\label{classpandora__exploration_1_1_frontier}\index{pandora\-\_\-exploration\-::\-Frontier@{pandora\-\_\-exploration\-::\-Frontier}}
+}
+
+
+\-A class implementing the frontier object.  
+
+
+
+
+{\ttfamily \#include $<$frontier.\-h$>$}
+
+\subsection*{\-Public \-Member \-Functions}
+\begin{DoxyCompactItemize}
+\item 
+\hyperlink{classpandora__exploration_1_1_frontier_a879fad0c64850a8c02fbfb9465c7c220}{\-Frontier} ()
+\begin{DoxyCompactList}\small\item\em \-Constructor for the \hyperlink{classpandora__exploration_1_1_frontier}{\-Frontier} class. \end{DoxyCompactList}\item 
+bool \hyperlink{classpandora__exploration_1_1_frontier_afb56bc9322aa17ff374d27aa55d2fe89}{operator$<$} (const \hyperlink{classpandora__exploration_1_1_frontier}{\-Frontier} \&other)
+\begin{DoxyCompactList}\small\item\em \-Overload of operator \char`\"{}$<$\char`\"{}. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{\-Public \-Attributes}
+\begin{DoxyCompactItemize}
+\item 
+std\-\_\-msgs\-::\-Header \hyperlink{classpandora__exploration_1_1_frontier_a1719db0e673aeef22055bec72c2acdc7}{header}
+\item 
+uint32\-\_\-t \hyperlink{classpandora__exploration_1_1_frontier_a86b37f33e2936fe582e8bab003d2441d}{size}
+\item 
+float \hyperlink{classpandora__exploration_1_1_frontier_a740f8b712061428819527269f4dcde42}{min\-\_\-distance}
+\item 
+float \hyperlink{classpandora__exploration_1_1_frontier_a117258cc30ad8177066ac19e130d81c2}{cost}
+\item 
+geometry\-\_\-msgs\-::\-Point \hyperlink{classpandora__exploration_1_1_frontier_a2f05815cfa7b4d6abd6c6657e9ccae71}{initial}
+\item 
+geometry\-\_\-msgs\-::\-Point \hyperlink{classpandora__exploration_1_1_frontier_ab4cdb84da6f9b587fb67a5f9965ba466}{centroid}
+\item 
+geometry\-\_\-msgs\-::\-Point \hyperlink{classpandora__exploration_1_1_frontier_a1aeebbe33da8ce3fd1279b20cbcd264e}{middle}
+\item 
+nav\-\_\-msgs\-::\-Path \hyperlink{classpandora__exploration_1_1_frontier_aee289fe84ddd496dafbdf90a0258554e}{path}
+\end{DoxyCompactItemize}
+
+
+\subsection{\-Detailed \-Description}
+\-A class implementing the frontier object. 
+
+\-The class is needed for the representation of the frontier idea, used in the frontier goal selector implmentation. 
+
+\-Definition at line 18 of file frontier.\-h.
+
+
+
+\subsection{\-Constructor \& \-Destructor \-Documentation}
+\hypertarget{classpandora__exploration_1_1_frontier_a879fad0c64850a8c02fbfb9465c7c220}{\index{pandora\-\_\-exploration\-::\-Frontier@{pandora\-\_\-exploration\-::\-Frontier}!\-Frontier@{\-Frontier}}
+\index{\-Frontier@{\-Frontier}!pandora_exploration::Frontier@{pandora\-\_\-exploration\-::\-Frontier}}
+\subsubsection[{\-Frontier}]{\setlength{\rightskip}{0pt plus 5cm}{\bf pandora\-\_\-exploration\-::\-Frontier\-::\-Frontier} (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily  \mbox{[}inline\mbox{]}}}}\label{classpandora__exploration_1_1_frontier_a879fad0c64850a8c02fbfb9465c7c220}
+
+
+\-Constructor for the \hyperlink{classpandora__exploration_1_1_frontier}{\-Frontier} class. 
+
+
+
+\-Definition at line 25 of file frontier.\-h.
+
+
+
+\subsection{\-Member \-Function \-Documentation}
+\hypertarget{classpandora__exploration_1_1_frontier_afb56bc9322aa17ff374d27aa55d2fe89}{\index{pandora\-\_\-exploration\-::\-Frontier@{pandora\-\_\-exploration\-::\-Frontier}!operator$<$@{operator$<$}}
+\index{operator$<$@{operator$<$}!pandora_exploration::Frontier@{pandora\-\_\-exploration\-::\-Frontier}}
+\subsubsection[{operator$<$}]{\setlength{\rightskip}{0pt plus 5cm}bool pandora\-\_\-exploration\-::\-Frontier\-::operator$<$ (
+\begin{DoxyParamCaption}
+\item[{const {\bf \-Frontier} \&}]{other}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily  \mbox{[}inline\mbox{]}}}}\label{classpandora__exploration_1_1_frontier_afb56bc9322aa17ff374d27aa55d2fe89}
+
+
+\-Overload of operator \char`\"{}$<$\char`\"{}. 
+
+
+\begin{DoxyParams}{\-Parameters}
+{\em other} & a frontier to compare \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{\-Returns}
+\-True if the frontier right to the operator has lower min distance than the frontier to the left of the operator 
+\end{DoxyReturn}
+
+
+\-Definition at line 38 of file frontier.\-h.
+
+
+
+\subsection{\-Member \-Data \-Documentation}
+\hypertarget{classpandora__exploration_1_1_frontier_ab4cdb84da6f9b587fb67a5f9965ba466}{\index{pandora\-\_\-exploration\-::\-Frontier@{pandora\-\_\-exploration\-::\-Frontier}!centroid@{centroid}}
+\index{centroid@{centroid}!pandora_exploration::Frontier@{pandora\-\_\-exploration\-::\-Frontier}}
+\subsubsection[{centroid}]{\setlength{\rightskip}{0pt plus 5cm}geometry\-\_\-msgs\-::\-Point {\bf pandora\-\_\-exploration\-::\-Frontier\-::centroid}}}\label{classpandora__exploration_1_1_frontier_ab4cdb84da6f9b587fb67a5f9965ba466}
+
+
+\-Definition at line 52 of file frontier.\-h.
+
+\hypertarget{classpandora__exploration_1_1_frontier_a117258cc30ad8177066ac19e130d81c2}{\index{pandora\-\_\-exploration\-::\-Frontier@{pandora\-\_\-exploration\-::\-Frontier}!cost@{cost}}
+\index{cost@{cost}!pandora_exploration::Frontier@{pandora\-\_\-exploration\-::\-Frontier}}
+\subsubsection[{cost}]{\setlength{\rightskip}{0pt plus 5cm}float {\bf pandora\-\_\-exploration\-::\-Frontier\-::cost}}}\label{classpandora__exploration_1_1_frontier_a117258cc30ad8177066ac19e130d81c2}
+
+
+\-Definition at line 49 of file frontier.\-h.
+
+\hypertarget{classpandora__exploration_1_1_frontier_a1719db0e673aeef22055bec72c2acdc7}{\index{pandora\-\_\-exploration\-::\-Frontier@{pandora\-\_\-exploration\-::\-Frontier}!header@{header}}
+\index{header@{header}!pandora_exploration::Frontier@{pandora\-\_\-exploration\-::\-Frontier}}
+\subsubsection[{header}]{\setlength{\rightskip}{0pt plus 5cm}std\-\_\-msgs\-::\-Header {\bf pandora\-\_\-exploration\-::\-Frontier\-::header}}}\label{classpandora__exploration_1_1_frontier_a1719db0e673aeef22055bec72c2acdc7}
+
+
+\-Definition at line 45 of file frontier.\-h.
+
+\hypertarget{classpandora__exploration_1_1_frontier_a2f05815cfa7b4d6abd6c6657e9ccae71}{\index{pandora\-\_\-exploration\-::\-Frontier@{pandora\-\_\-exploration\-::\-Frontier}!initial@{initial}}
+\index{initial@{initial}!pandora_exploration::Frontier@{pandora\-\_\-exploration\-::\-Frontier}}
+\subsubsection[{initial}]{\setlength{\rightskip}{0pt plus 5cm}geometry\-\_\-msgs\-::\-Point {\bf pandora\-\_\-exploration\-::\-Frontier\-::initial}}}\label{classpandora__exploration_1_1_frontier_a2f05815cfa7b4d6abd6c6657e9ccae71}
+
+
+\-Definition at line 51 of file frontier.\-h.
+
+\hypertarget{classpandora__exploration_1_1_frontier_a1aeebbe33da8ce3fd1279b20cbcd264e}{\index{pandora\-\_\-exploration\-::\-Frontier@{pandora\-\_\-exploration\-::\-Frontier}!middle@{middle}}
+\index{middle@{middle}!pandora_exploration::Frontier@{pandora\-\_\-exploration\-::\-Frontier}}
+\subsubsection[{middle}]{\setlength{\rightskip}{0pt plus 5cm}geometry\-\_\-msgs\-::\-Point {\bf pandora\-\_\-exploration\-::\-Frontier\-::middle}}}\label{classpandora__exploration_1_1_frontier_a1aeebbe33da8ce3fd1279b20cbcd264e}
+
+
+\-Definition at line 53 of file frontier.\-h.
+
+\hypertarget{classpandora__exploration_1_1_frontier_a740f8b712061428819527269f4dcde42}{\index{pandora\-\_\-exploration\-::\-Frontier@{pandora\-\_\-exploration\-::\-Frontier}!min\-\_\-distance@{min\-\_\-distance}}
+\index{min\-\_\-distance@{min\-\_\-distance}!pandora_exploration::Frontier@{pandora\-\_\-exploration\-::\-Frontier}}
+\subsubsection[{min\-\_\-distance}]{\setlength{\rightskip}{0pt plus 5cm}float {\bf pandora\-\_\-exploration\-::\-Frontier\-::min\-\_\-distance}}}\label{classpandora__exploration_1_1_frontier_a740f8b712061428819527269f4dcde42}
+
+
+\-Definition at line 48 of file frontier.\-h.
+
+\hypertarget{classpandora__exploration_1_1_frontier_aee289fe84ddd496dafbdf90a0258554e}{\index{pandora\-\_\-exploration\-::\-Frontier@{pandora\-\_\-exploration\-::\-Frontier}!path@{path}}
+\index{path@{path}!pandora_exploration::Frontier@{pandora\-\_\-exploration\-::\-Frontier}}
+\subsubsection[{path}]{\setlength{\rightskip}{0pt plus 5cm}nav\-\_\-msgs\-::\-Path {\bf pandora\-\_\-exploration\-::\-Frontier\-::path}}}\label{classpandora__exploration_1_1_frontier_aee289fe84ddd496dafbdf90a0258554e}
+
+
+\-Definition at line 55 of file frontier.\-h.
+
+\hypertarget{classpandora__exploration_1_1_frontier_a86b37f33e2936fe582e8bab003d2441d}{\index{pandora\-\_\-exploration\-::\-Frontier@{pandora\-\_\-exploration\-::\-Frontier}!size@{size}}
+\index{size@{size}!pandora_exploration::Frontier@{pandora\-\_\-exploration\-::\-Frontier}}
+\subsubsection[{size}]{\setlength{\rightskip}{0pt plus 5cm}uint32\-\_\-t {\bf pandora\-\_\-exploration\-::\-Frontier\-::size}}}\label{classpandora__exploration_1_1_frontier_a86b37f33e2936fe582e8bab003d2441d}
+
+
+\-Definition at line 47 of file frontier.\-h.
+
+
+
+\-The documentation for this class was generated from the following file\-:\begin{DoxyCompactItemize}
+\item 
+include/pandora\-\_\-exploration/\hyperlink{frontier_8h}{frontier.\-h}\end{DoxyCompactItemize}

@@ -1,0 +1,97 @@
+\hypertarget{classpandora__exploration_1_1_frontier_goal_selector}{\section{pandora\-\_\-exploration\-:\-:\-Frontier\-Goal\-Selector \-Class \-Reference}
+\label{classpandora__exploration_1_1_frontier_goal_selector}\index{pandora\-\_\-exploration\-::\-Frontier\-Goal\-Selector@{pandora\-\_\-exploration\-::\-Frontier\-Goal\-Selector}}
+}
+
+
+\-A class implementing a goal selector using the provided interface.  
+
+
+
+
+{\ttfamily \#include $<$frontier\-\_\-goal\-\_\-selector.\-h$>$}
+
+\-Inheritance diagram for pandora\-\_\-exploration\-:\-:\-Frontier\-Goal\-Selector\-:\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[height=2.000000cm]{classpandora__exploration_1_1_frontier_goal_selector}
+\end{center}
+\end{figure}
+\subsection*{\-Public \-Member \-Functions}
+\begin{DoxyCompactItemize}
+\item 
+\hyperlink{classpandora__exploration_1_1_frontier_goal_selector_a8da4904b3acb5d0a7fcee77b56a85f0d}{\-Frontier\-Goal\-Selector} (const std\-::string \&name)
+\begin{DoxyCompactList}\small\item\em \-Explicit constructor for the \hyperlink{classpandora__exploration_1_1_frontier_goal_selector}{\-Frontier\-Goal\-Selector} class. \end{DoxyCompactList}\item 
+virtual bool \hyperlink{classpandora__exploration_1_1_frontier_goal_selector_a9d623b7ca8901ecb569f052381ee3fcc}{find\-Next\-Goal} (geometry\-\_\-msgs\-::\-Pose\-Stamped $\ast$goal)
+\begin{DoxyCompactList}\small\item\em \-Finds next exploration goal. \end{DoxyCompactList}\item 
+\hyperlink{classpandora__exploration_1_1_frontier_goal_selector_a5453c390d3389c1481dcf4a59e046ee1}{$\sim$\-Frontier\-Goal\-Selector} ()
+\end{DoxyCompactItemize}
+
+
+\subsection{\-Detailed \-Description}
+\-A class implementing a goal selector using the provided interface. 
+
+\-This goal selector is using the idea of frontiers to choose it's next exploration target. \-The possible goals are frontiers of the explored map. 
+
+\-Definition at line 70 of file frontier\-\_\-goal\-\_\-selector.\-h.
+
+
+
+\subsection{\-Constructor \& \-Destructor \-Documentation}
+\hypertarget{classpandora__exploration_1_1_frontier_goal_selector_a8da4904b3acb5d0a7fcee77b56a85f0d}{\index{pandora\-\_\-exploration\-::\-Frontier\-Goal\-Selector@{pandora\-\_\-exploration\-::\-Frontier\-Goal\-Selector}!\-Frontier\-Goal\-Selector@{\-Frontier\-Goal\-Selector}}
+\index{\-Frontier\-Goal\-Selector@{\-Frontier\-Goal\-Selector}!pandora_exploration::FrontierGoalSelector@{pandora\-\_\-exploration\-::\-Frontier\-Goal\-Selector}}
+\subsubsection[{\-Frontier\-Goal\-Selector}]{\setlength{\rightskip}{0pt plus 5cm}{\bf pandora\-\_\-exploration\-::\-Frontier\-Goal\-Selector\-::\-Frontier\-Goal\-Selector} (
+\begin{DoxyParamCaption}
+\item[{const std\-::string \&}]{name}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily  \mbox{[}explicit\mbox{]}}}}\label{classpandora__exploration_1_1_frontier_goal_selector_a8da4904b3acb5d0a7fcee77b56a85f0d}
+
+
+\-Explicit constructor for the \hyperlink{classpandora__exploration_1_1_frontier_goal_selector}{\-Frontier\-Goal\-Selector} class. 
+
+
+\begin{DoxyParams}{\-Parameters}
+{\em name} & \-The name of the goal selector\\
+\hline
+\end{DoxyParams}
+\-Inside the constructor the params for the scales of the cost functions are loaded. \-Also the setup of exploration costmap, map frontier searchers, frontier path generators, frontier cost functions, frontier list takes place. \hypertarget{classpandora__exploration_1_1_frontier_goal_selector_a5453c390d3389c1481dcf4a59e046ee1}{\index{pandora\-\_\-exploration\-::\-Frontier\-Goal\-Selector@{pandora\-\_\-exploration\-::\-Frontier\-Goal\-Selector}!$\sim$\-Frontier\-Goal\-Selector@{$\sim$\-Frontier\-Goal\-Selector}}
+\index{$\sim$\-Frontier\-Goal\-Selector@{$\sim$\-Frontier\-Goal\-Selector}!pandora_exploration::FrontierGoalSelector@{pandora\-\_\-exploration\-::\-Frontier\-Goal\-Selector}}
+\subsubsection[{$\sim$\-Frontier\-Goal\-Selector}]{\setlength{\rightskip}{0pt plus 5cm}{\bf pandora\-\_\-exploration\-::\-Frontier\-Goal\-Selector\-::$\sim$\-Frontier\-Goal\-Selector} (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily  \mbox{[}inline\mbox{]}}}}\label{classpandora__exploration_1_1_frontier_goal_selector_a5453c390d3389c1481dcf4a59e046ee1}
+
+
+\-Definition at line 92 of file frontier\-\_\-goal\-\_\-selector.\-h.
+
+
+
+\subsection{\-Member \-Function \-Documentation}
+\hypertarget{classpandora__exploration_1_1_frontier_goal_selector_a9d623b7ca8901ecb569f052381ee3fcc}{\index{pandora\-\_\-exploration\-::\-Frontier\-Goal\-Selector@{pandora\-\_\-exploration\-::\-Frontier\-Goal\-Selector}!find\-Next\-Goal@{find\-Next\-Goal}}
+\index{find\-Next\-Goal@{find\-Next\-Goal}!pandora_exploration::FrontierGoalSelector@{pandora\-\_\-exploration\-::\-Frontier\-Goal\-Selector}}
+\subsubsection[{find\-Next\-Goal}]{\setlength{\rightskip}{0pt plus 5cm}virtual bool {\bf pandora\-\_\-exploration\-::\-Frontier\-Goal\-Selector\-::find\-Next\-Goal} (
+\begin{DoxyParamCaption}
+\item[{geometry\-\_\-msgs\-::\-Pose\-Stamped $\ast$}]{goal}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily  \mbox{[}virtual\mbox{]}}}}\label{classpandora__exploration_1_1_frontier_goal_selector_a9d623b7ca8901ecb569f052381ee3fcc}
+
+
+\-Finds next exploration goal. 
+
+
+\begin{DoxyParams}{\-Parameters}
+{\em goal} & \-The goal \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{\-Returns}
+\-True if a goal is found 
+\end{DoxyReturn}
+
+
+\-Implements \hyperlink{classpandora__exploration_1_1_goal_selector_a0f22d1642c779a143227ddc82dadaeca}{pandora\-\_\-exploration\-::\-Goal\-Selector}.
+
+
+
+\-The documentation for this class was generated from the following file\-:\begin{DoxyCompactItemize}
+\item 
+include/pandora\-\_\-exploration/\hyperlink{frontier__goal__selector_8h}{frontier\-\_\-goal\-\_\-selector.\-h}\end{DoxyCompactItemize}

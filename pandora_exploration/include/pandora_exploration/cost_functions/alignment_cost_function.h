@@ -2,7 +2,7 @@
 *
 * Software License Agreement (BSD License)
 *
-*  Copyright (c) 2014, P.A.N.D.O.R.A. Team.
+*  Copyright (c) 2014 - 2015, P.A.N.D.O.R.A. Team.
 *  All rights reserved.
 *
 *  Redistribution and use in source and binary forms, with or without
@@ -32,7 +32,8 @@
 *  ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 *  POSSIBILITY OF SUCH DAMAGE.
 *
-* Author: Chris Zalidis <zalidis@gmail.com>
+* Author: Chris Zalidis <zalidis@gmail.com>, 
+          Dimitrios Kirtsios <dimkirts@gmail.com>
 *********************************************************************/
 
 #ifndef PANDORA_EXPLORATION_COST_FUNCTIONS_ALIGNMENT_COST_FUNCTION_H
@@ -46,14 +47,39 @@
 
 namespace pandora_exploration {
 
+  /**
+    * @class AlignmentCostFunction
+    * @brief A class implementing a frontier cost function using the FrontierCostFunction
+    * interface
+    * 
+    * This cost function adds costs to the frontiers based on the alignment of the robot
+    * to the goal. The smaller the angle that describes the alignment of the robot to the
+    * target frontier, the higher the cost that is added. Cost are normalized to a scale 
+    * between 0 and 1. So a frontier that has angle(to robot) = 0 is rated with cost = 1.
+    */
   class AlignmentCostFunction : public FrontierCostFunction
   {
    public:
 
+    /**
+      * @brief Constructor for the AlignmentCostFunction class
+      * @param scale The weight we set on the cost function
+      * @param robot_pose The pose of the robot, needed for alignment calculation
+      */
     AlignmentCostFunction(double scale, const geometry_msgs::PoseStamped& robot_pose);
 
+    /**
+      * @brief Takes a list of frontiers and adds a cost to each one of them
+      * @param frontier_list A pointer to a list of frontiers that are to be evaluated.
+      * 
+      * If a frontier has already assigned a negative cost then scoreFrontiers doesn't 
+      * add any cost.
+      */
     virtual void scoreFrontiers(const FrontierListPtr& frontier_list);
 
+    /**
+      * @brief Destructor for the AlignmentCostFunction class.
+      */
     ~AlignmentCostFunction() {}
 
    private:
@@ -61,6 +87,6 @@ namespace pandora_exploration {
     const geometry_msgs::PoseStamped& robot_pose_;
   };
 
-} // namespace pandora_exploration
+}  // namespace pandora_exploration
 
 #endif  // PANDORA_EXPLORATION_COST_FUNCTIONS_ALIGNMENT_COST_FUNCTION_H

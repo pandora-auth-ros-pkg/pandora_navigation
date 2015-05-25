@@ -1,0 +1,20 @@
+\hypertarget{geometry__tools_8h}{\section{include/pandora\-\_\-exploration/geometry\-\_\-tools.h \-File \-Reference}
+\label{geometry__tools_8h}\index{include/pandora\-\_\-exploration/geometry\-\_\-tools.\-h@{include/pandora\-\_\-exploration/geometry\-\_\-tools.\-h}}
+}
+{\ttfamily \#include $<$geometry\-\_\-msgs/\-Polygon.\-h$>$}\*
+{\ttfamily \#include $<$geometry\-\_\-msgs/\-Point.\-h$>$}\*
+{\ttfamily \#include $<$costmap\-\_\-2d/costmap\-\_\-2d.\-h$>$}\*
+\subsection*{\-Namespaces}
+\begin{DoxyCompactItemize}
+\item 
+namespace \hyperlink{namespacepandora__exploration}{pandora\-\_\-exploration}
+\end{DoxyCompactItemize}
+\subsection*{\-Functions}
+\begin{DoxyCompactItemize}
+\item 
+bool \hyperlink{namespacepandora__exploration_a0a4c04362e4bc30b2e24a97663e63934}{pandora\-\_\-exploration\-::points\-Adjacent} (geometry\-\_\-msgs\-::\-Point one, geometry\-\_\-msgs\-::\-Point two, double proximity)
+\begin{DoxyCompactList}\small\item\em \-Evaluate whether two points are approximately adjacent, within a specified proximity distance. \end{DoxyCompactList}\item 
+bool \hyperlink{namespacepandora__exploration_a8c4561afa6c19ea155edf33981e2cb6a}{pandora\-\_\-exploration\-::point\-In\-Polygon} (geometry\-\_\-msgs\-::\-Point point, geometry\-\_\-msgs\-::\-Polygon polygon)
+\begin{DoxyCompactList}\small\item\em \-Evaluate if point is inside area defined by polygon. \-Undefined behaviour for points on line. \end{DoxyCompactList}\item 
+double \hyperlink{namespacepandora__exploration_a2f3f7dcfa04c4e3b7d50f5f2f2cc8f50}{pandora\-\_\-exploration\-::yaw\-Of\-Vector} (geometry\-\_\-msgs\-::\-Point origin, geometry\-\_\-msgs\-::\-Point end)
+\begin{DoxyCompactList}\small\item\em \-Calculate the yaw of vector defined by origin and end points. \end{DoxyCompactList}\end{DoxyCompactItemize}
