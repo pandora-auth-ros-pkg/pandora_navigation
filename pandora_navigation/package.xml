@@ -18,6 +18,7 @@
   <exec_depend>pandora_navigation_msgs</exec_depend>
   <exec_depend>pandora_move_base</exec_depend>
   <exec_depend>pandora_costmap</exec_depend>
+  <exec_depend>pandora_move_back_recovery</exec_depend>
 
   <export>
     <metapackage/>

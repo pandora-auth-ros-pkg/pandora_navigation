@@ -1,0 +1,7 @@
+<library path="lib/libpandora_move_back_recovery">
+  <class name="pandora_move_back_recovery/PandoraMoveBackRecovery" type="pandora_move_back_recovery::PandoraMoveBackRecovery" base_class_type="nav_core::RecoveryBehavior">
+    <description>
+      A recovery behavior that attempts to unstuck the robot by slowly moving backwards.
+    </description>
+  </class>
+</library>

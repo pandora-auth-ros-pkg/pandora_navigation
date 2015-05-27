@@ -1,0 +1,28 @@
+<package format="2">
+  <name>pandora_move_back_recovery</name>
+  <version>0.0.0</version>
+  <description>
+    This package provides a recovery behavior for the navigation stack that attempts to unstuck the robot by slowly moving backwards.
+  </description>
+
+  <maintainer email='dimkirts@gmail.com'>Dimitrios Kirtsios</maintainer>
+
+  <license>BSD</license>
+
+
+  <author>Dimitrios Kirtsios</author>
+
+  <buildtool_depend>catkin</buildtool_depend>
+
+  <build_depend>roslint</build_depend>
+  <depend>roscpp</depend>
+  <depend>tf</depend>
+  <depend>costmap2d</depend>
+  <depend>nav_core</depend>
+  <depend>pluginlib</depend>
+  <depend>base_local_planner</depend>  
+
+  <export>
+    <nav_core plugin="${prefix}/pandora_move_back_plugin.xml" />
+  </export>
+</package>
