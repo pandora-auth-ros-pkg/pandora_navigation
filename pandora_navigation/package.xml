@@ -18,7 +18,8 @@
   <exec_depend>pandora_navigation_msgs</exec_depend>
   <exec_depend>pandora_move_base</exec_depend>
   <exec_depend>pandora_costmap</exec_depend>
-
+  <exec_depend>range_sensor_layer</exec_depend>
+  
   <export>
     <metapackage/>
   </export>

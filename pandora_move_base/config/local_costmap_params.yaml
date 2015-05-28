@@ -16,6 +16,10 @@ local_costmap:
   - 
    name: inflation_layer
    type: costmap_2d::InflationLayer
+  - {name: sonar_layer,   type: "range_sensor_layer::RangeSensorLayer"}
+  #-
+  # name: sonar_layer
+  # type: range_sensor_layer::RangeSensorLayer
 
   obstacle_layer:
     observation_sources: laser kinect
@@ -26,6 +30,11 @@ local_costmap:
     raytrace_range: 3.0
     max_obstacle_height: 1.0
     publish_voxel_map: true
+
+  sonar_layer:
+    pandora_range_topic: "/sensors/range"
+    no_readings_timeout: 1.0
+
 
   inflation_layer:
     inflation_radius: 0.45
