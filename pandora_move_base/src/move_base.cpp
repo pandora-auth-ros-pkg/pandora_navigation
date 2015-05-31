@@ -1140,9 +1140,9 @@ namespace move_base {
 
   void MoveBase::findValidGoalApproximate(geometry_msgs::PoseStamped* goal)
   {
-    boost::unique_lock< boost::shared_mutex > lock(*(controller_costmap_ros_->getCostmap()->getLock()));
+    boost::unique_lock< boost::shared_mutex > lock(*(planner_costmap_ros_->getCostmap()->getLock()));
 
-    costmap_2d::Costmap2D* costmap = controller_costmap_ros_->getCostmap();
+    costmap_2d::Costmap2D* costmap = planner_costmap_ros_->getCostmap();
 
     unsigned int mx, my;
     if (!costmap->worldToMap(goal->pose.position.x, goal->pose.position.y, mx, my)){
