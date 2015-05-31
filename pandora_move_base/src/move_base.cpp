@@ -119,7 +119,7 @@ namespace move_base {
         for(unsigned int i = 0; i < classes.size(); ++i){
           if(global_planner == bgp_loader_.getName(classes[i])){
             //if we've found a match... we'll get the fully qualified name and break out of the loop
-            ROS_WARN("Planner specifications should now include the package name. You are using a deprecated API. Please switch from %s to %s in your yaml file.",
+            ROS_WARN("[pandora_move_base] Planner specifications should now include the package name. You are using a deprecated API. Please switch from %s to %s in your yaml file.",
                 global_planner.c_str(), classes[i].c_str());
             global_planner = classes[i];
             break;
@@ -131,7 +131,7 @@ namespace move_base {
       planner_->initialize(bgp_loader_.getName(global_planner), planner_costmap_ros_);
     } catch (const pluginlib::PluginlibException& ex)
     {
-      ROS_FATAL("Failed to create the %s planner, are you sure it is properly registered and that the containing library is built? Exception: %s", global_planner.c_str(), ex.what());
+      ROS_FATAL("[pandora_move_base] Failed to create the %s planner, are you sure it is properly registered and that the containing library is built? Exception: %s", global_planner.c_str(), ex.what());
       exit(1);
     }
 
@@ -147,7 +147,7 @@ namespace move_base {
         for(unsigned int i = 0; i < classes.size(); ++i){
           if(local_planner == blp_loader_.getName(classes[i])){
             //if we've found a match... we'll get the fully qualified name and break out of the loop
-            ROS_WARN("Planner specifications should now include the package name. You are using a deprecated API. Please switch from %s to %s in your yaml file.",
+            ROS_WARN("[pandora_move_base] Planner specifications should now include the package name. You are using a deprecated API. Please switch from %s to %s in your yaml file.",
                 local_planner.c_str(), classes[i].c_str());
             local_planner = classes[i];
             break;
@@ -156,11 +156,11 @@ namespace move_base {
       }
 
       tc_ = blp_loader_.createInstance(local_planner);
-      ROS_INFO("Created local_planner %s", local_planner.c_str());
+      ROS_INFO("[pandora_move_base] Created local_planner %s", local_planner.c_str());
       tc_->initialize(blp_loader_.getName(local_planner), &tf_, controller_costmap_ros_);
     } catch (const pluginlib::PluginlibException& ex)
     {
-      ROS_FATAL("Failed to create the %s planner, are you sure it is properly registered and that the containing library is built? Exception: %s", local_planner.c_str(), ex.what());
+      ROS_FATAL("[pandora_move_base] Failed to create the %s planner, are you sure it is properly registered and that the containing library is built? Exception: %s", local_planner.c_str(), ex.what());
       exit(1);
     }
 
@@ -245,7 +245,7 @@ namespace move_base {
     if(config.base_global_planner != last_config_.base_global_planner) {
       boost::shared_ptr<nav_core::BaseGlobalPlanner> old_planner = planner_;
       //initialize the global planner
-      ROS_INFO("Loading global planner %s", config.base_global_planner.c_str());
+      ROS_INFO("[pandora_move_base] Loading global planner %s", config.base_global_planner.c_str());
       try {
         //check if a non fully qualified name has potentially been passed in
         if(!bgp_loader_.isClassAvailable(config.base_global_planner)){
@@ -253,7 +253,7 @@ namespace move_base {
           for(unsigned int i = 0; i < classes.size(); ++i){
             if(config.base_global_planner == bgp_loader_.getName(classes[i])){
               //if we've found a match... we'll get the fully qualified name and break out of the loop
-              ROS_WARN("Planner specifications should now include the package name. You are using a deprecated API. Please switch from %s to %s in your yaml file.",
+              ROS_WARN("[pandora_move_base] Planner specifications should now include the package name. You are using a deprecated API. Please switch from %s to %s in your yaml file.",
                   config.base_global_planner.c_str(), classes[i].c_str());
               config.base_global_planner = classes[i];
               break;
@@ -276,7 +276,7 @@ namespace move_base {
         lock.unlock();
       } catch (const pluginlib::PluginlibException& ex)
       {
-        ROS_FATAL("Failed to create the %s planner, are you sure it is properly registered and that the containing library is built? Exception: %s", config.base_global_planner.c_str(), ex.what());
+        ROS_FATAL("[pandora_move_base] Failed to create the %s planner, are you sure it is properly registered and that the containing library is built? Exception: %s", config.base_global_planner.c_str(), ex.what());
         planner_ = old_planner;
         config.base_global_planner = last_config_.base_global_planner;
       }
@@ -287,13 +287,13 @@ namespace move_base {
       //create a local planner
       try {
         //check if a non fully qualified name has potentially been passed in
-        ROS_INFO("Loading local planner: %s", config.base_local_planner.c_str());
+        ROS_INFO("[pandora_move_base] Loading local planner: %s", config.base_local_planner.c_str());
         if(!blp_loader_.isClassAvailable(config.base_local_planner)){
           std::vector<std::string> classes = blp_loader_.getDeclaredClasses();
           for(unsigned int i = 0; i < classes.size(); ++i){
             if(config.base_local_planner == blp_loader_.getName(classes[i])){
               //if we've found a match... we'll get the fully qualified name and break out of the loop
-              ROS_WARN("Planner specifications should now include the package name. You are using a deprecated API. Please switch from %s to %s in your yaml file.",
+              ROS_WARN("[pandora_move_base] Planner specifications should now include the package name. You are using a deprecated API. Please switch from %s to %s in your yaml file.",
                   config.base_local_planner.c_str(), classes[i].c_str());
               config.base_local_planner = classes[i];
               break;
@@ -309,7 +309,7 @@ namespace move_base {
         tc_->initialize(blp_loader_.getName(config.base_local_planner), &tf_, controller_costmap_ros_);
       } catch (const pluginlib::PluginlibException& ex)
       {
-        ROS_FATAL("Failed to create the %s planner, are you sure it is properly registered and that the containing library is built? Exception: %s", config.base_local_planner.c_str(), ex.what());
+        ROS_FATAL("[pandora_move_base] Failed to create the %s planner, are you sure it is properly registered and that the containing library is built? Exception: %s", config.base_local_planner.c_str(), ex.what());
         tc_ = old_planner;
         config.base_local_planner = last_config_.base_local_planner;
       }
@@ -392,19 +392,19 @@ namespace move_base {
 
   bool MoveBase::planService(nav_msgs::GetPlan::Request &req, nav_msgs::GetPlan::Response &resp){
     if(as_->isActive()){
-      ROS_ERROR("move_base must be in an inactive state to make a plan for an external user");
+      ROS_ERROR("[pandora_move_base] move_base must be in an inactive state to make a plan for an external user");
       return false;
     }
 
     //make sure we have a costmap for our planner
     if(planner_costmap_ros_ == NULL){
-      ROS_ERROR("move_base cannot make a plan for you because it doesn't have a costmap");
+      ROS_ERROR("[pandora_move_base] move_base cannot make a plan for you because it doesn't have a costmap");
       return false;
     }
 
     tf::Stamped<tf::Pose> global_pose;
     if(!planner_costmap_ros_->getRobotPose(global_pose)){
-      ROS_ERROR("move_base cannot make a plan for you because it could not get the start pose of the robot");
+      ROS_ERROR("[pandora_move_base] move_base cannot make a plan for you because it could not get the start pose of the robot");
       return false;
     }
 
@@ -486,7 +486,7 @@ namespace move_base {
 
     //since this gets called on handle activate
     if(planner_costmap_ros_ == NULL) {
-      ROS_ERROR("Planner costmap ROS is NULL, unable to create global plan");
+      ROS_ERROR("[pandora_move_base] Planner costmap ROS is NULL, unable to create global plan");
       return false;
     }
 
@@ -521,7 +521,7 @@ namespace move_base {
   bool MoveBase::isQuaternionValid(const geometry_msgs::Quaternion& q){
     //first we need to check if the quaternion has nan's or infs
     if(!std::isfinite(q.x) || !std::isfinite(q.y) || !std::isfinite(q.z) || !std::isfinite(q.w)){
-      ROS_ERROR("Quaternion has nans or infs... discarding as a navigation goal");
+      ROS_ERROR("[pandora_move_base] Quaternion has nans or infs... discarding as a navigation goal");
       return false;
     }
 
@@ -529,7 +529,7 @@ namespace move_base {
 
     //next, we need to check if the length of the quaternion is close to zero
     if(tf_q.length2() < 1e-6){
-      ROS_ERROR("Quaternion has length close to zero... discarding as navigation goal");
+      ROS_ERROR("[pandora_move_base] Quaternion has length close to zero... discarding as navigation goal");
       return false;
     }
 
@@ -541,7 +541,7 @@ namespace move_base {
     double dot = up.dot(up.rotate(tf_q.getAxis(), tf_q.getAngle()));
 
     if(fabs(dot - 1) > 1e-3){
-      ROS_ERROR("Quaternion is invalid... for navigation the z-axis of the quaternion must be close to vertical.");
+      ROS_ERROR("[pandora_move_base] Quaternion is invalid... for navigation the z-axis of the quaternion must be close to vertical.");
       return false;
     }
 
@@ -561,7 +561,7 @@ namespace move_base {
       tf_.transformPose(global_frame, goal_pose, global_pose);
     }
     catch(tf::TransformException& ex){
-      ROS_WARN("Failed to transform the goal pose from %s into the %s frame: %s",
+      ROS_WARN("[pandora_move_base] Failed to transform the goal pose from %s into the %s frame: %s",
           goal_pose.frame_id_.c_str(), global_frame.c_str(), ex.what());
       return goal_pose_msg;
     }
@@ -580,7 +580,7 @@ namespace move_base {
     while(n.ok()){
       if(p_freq_change_)
       {
-        ROS_INFO("Setting planner frequency to %.2f", planner_frequency_);
+        ROS_INFO("[pandora_move_base] Setting planner frequency to %.2f", planner_frequency_);
         r = ros::Rate(planner_frequency_);
         p_freq_change_ = false;
       }
@@ -681,7 +681,7 @@ namespace move_base {
     {
       if(c_freq_change_)
       {
-        ROS_INFO("Setting controller frequency to %.2f", controller_frequency_);
+        ROS_INFO("[pandora_move_base] Setting controller frequency to %.2f", controller_frequency_);
         r = ros::Rate(controller_frequency_);
         c_freq_change_ = false;
       }
@@ -973,23 +973,23 @@ namespace move_base {
           ROS_DEBUG_NAMED("move_base_recovery","Something should abort after this.");
 
           if(recovery_trigger_ == CONTROLLING_R){
-            ROS_ERROR("Aborting because a valid control could not be found. Even after executing all recovery behaviors");
-            as_->setAborted(move_base_msgs::MoveBaseResult(), "Failed to find a valid control. Even after executing recovery behaviors.");
+            ROS_ERROR("[pandora_move_base] Aborting because a valid CONTROL could not be found. Even after executing all recovery behaviors");
+            as_->setAborted(move_base_msgs::MoveBaseResult(), "Failed to find a valid CONTROL. Even after executing recovery behaviors.");
           }
           else if(recovery_trigger_ == PLANNING_R){
-            ROS_ERROR("Aborting because a valid plan could not be found. Even after executing all recovery behaviors");
-            as_->setAborted(move_base_msgs::MoveBaseResult(), "Failed to find a valid plan. Even after executing recovery behaviors.");
+            ROS_ERROR("[pandora_move_base] Aborting because a valid PLAN could not be found. Even after executing all recovery behaviors");
+            as_->setAborted(move_base_msgs::MoveBaseResult(), "Failed to find a valid PLAN. Even after executing recovery behaviors.");
           }
           else if(recovery_trigger_ == OSCILLATION_R){
-            ROS_ERROR("Aborting because the robot appears to be oscillating over and over. Even after executing all recovery behaviors");
-            as_->setAborted(move_base_msgs::MoveBaseResult(), "Robot is oscillating. Even after executing recovery behaviors.");
+            ROS_ERROR("[pandora_move_base] Aborting because the robot appears to be OSCILLATING over and over. Even after executing all recovery behaviors");
+            as_->setAborted(move_base_msgs::MoveBaseResult(), "Robot is OSCILLATING. Even after executing recovery behaviors.");
           }
           resetState();
           return true;
         }
         break;
       default:
-        ROS_ERROR("This case should never be reached, something is wrong, aborting");
+        ROS_ERROR("[pandora_move_base] This case should never be reached, something is wrong, aborting");
         resetState();
         //disable the planner thread
         boost::unique_lock<boost::mutex> lock(planner_mutex_);
@@ -1017,7 +1017,7 @@ namespace move_base {
                     std::string name_i = behavior_list[i]["name"];
                     std::string name_j = behavior_list[j]["name"];
                     if(name_i == name_j){
-                      ROS_ERROR("A recovery behavior with the name %s already exists, this is not allowed. Using the default recovery behaviors instead.", 
+                      ROS_ERROR("[pandora_move_base] A recovery behavior with the name %s already exists, this is not allowed. Using the default recovery behaviors instead.", 
                           name_i.c_str());
                       return false;
                     }
@@ -1026,12 +1026,12 @@ namespace move_base {
               }
             }
             else{
-              ROS_ERROR("Recovery behaviors must have a name and a type and this does not. Using the default recovery behaviors instead.");
+              ROS_ERROR("[pandora_move_base] Recovery behaviors must have a name and a type and this does not. Using the default recovery behaviors instead.");
               return false;
             }
           }
           else{
-            ROS_ERROR("Recovery behaviors must be specified as maps, but they are XmlRpcType %d. We'll use the default recovery behaviors instead.",
+            ROS_ERROR("[pandora_move_base] Recovery behaviors must be specified as maps, but they are XmlRpcType %d. We'll use the default recovery behaviors instead.",
                 behavior_list[i].getType());
             return false;
           }
@@ -1046,7 +1046,7 @@ namespace move_base {
               for(unsigned int i = 0; i < classes.size(); ++i){
                 if(behavior_list[i]["type"] == recovery_loader_.getName(classes[i])){
                   //if we've found a match... we'll get the fully qualified name and break out of the loop
-                  ROS_WARN("Recovery behavior specifications should now include the package name. You are using a deprecated API. Please switch from %s to %s in your yaml file.",
+                  ROS_WARN("[pandora_move_base] Recovery behavior specifications should now include the package name. You are using a deprecated API. Please switch from %s to %s in your yaml file.",
                       std::string(behavior_list[i]["type"]).c_str(), classes[i].c_str());
                   behavior_list[i]["type"] = classes[i];
                   break;
@@ -1058,7 +1058,7 @@ namespace move_base {
 
             //shouldn't be possible, but it won't hurt to check
             if(behavior.get() == NULL){
-              ROS_ERROR("The ClassLoader returned a null pointer without throwing an exception. This should not happen");
+              ROS_ERROR("[pandora_move_base] The ClassLoader returned a null pointer without throwing an exception. This should not happen");
               return false;
             }
 
@@ -1067,13 +1067,13 @@ namespace move_base {
             recovery_behaviors_.push_back(behavior);
           }
           catch(pluginlib::PluginlibException& ex){
-            ROS_ERROR("Failed to load a plugin. Using default recovery behaviors. Error: %s", ex.what());
+            ROS_ERROR("[pandora_move_base] Failed to load a plugin. Using default recovery behaviors. Error: %s", ex.what());
             return false;
           }
         }
       }
       else{
-        ROS_ERROR("The recovery behavior specification must be a list, but is of XmlRpcType %d. We'll use the default recovery behaviors instead.", 
+        ROS_ERROR("[pandora_move_base] The recovery behavior specification must be a list, but is of XmlRpcType %d. We'll use the default recovery behaviors instead.", 
             behavior_list.getType());
         return false;
       }
@@ -1118,7 +1118,7 @@ namespace move_base {
         recovery_behaviors_.push_back(rotate);
     }
     catch(pluginlib::PluginlibException& ex){
-      ROS_FATAL("Failed to load a plugin. This should not happen on default recovery behaviors. Error: %s", ex.what());
+      ROS_FATAL("[pandora_move_base] Failed to load a plugin. This should not happen on default recovery behaviors. Error: %s", ex.what());
     }
 
     return;
@@ -1146,7 +1146,7 @@ namespace move_base {
 
     unsigned int mx, my;
     if (!costmap->worldToMap(goal->pose.position.x, goal->pose.position.y, mx, my)){
-        ROS_WARN("Robot out of costmap bounds, could not proceed");
+        ROS_WARN("[pandora_move_base] Robot out of costmap bounds, could not proceed");
         return;
     }
 
@@ -1168,7 +1168,7 @@ namespace move_base {
 
       previous_point = new_point;
       if (!costmap->worldToMap(new_point.x, new_point.y, mx, my)){
-        ROS_WARN("Robot out of costmap bounds, could not proceed");
+        ROS_WARN("[pandora_move_base] Robot out of costmap bounds, could not proceed");
         return;
       }
     }
