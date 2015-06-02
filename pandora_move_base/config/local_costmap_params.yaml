@@ -22,7 +22,7 @@ local_costmap:
   # type: range_sensor_layer::RangeSensorLayer
 
   obstacle_layer:
-    observation_sources: laser kinect
+    observation_sources: laser kinect sonar
     #~ observation_sources: laser
     laser: {data_type: LaserScan, topic: /laser/scan, marking: true, clearing: true}
     kinect: {data_type: PointCloud2, topic: /costmap/local_cropped_cloud, marking: true, clearing: true}
@@ -32,9 +32,9 @@ local_costmap:
     max_obstacle_height: 1.0
     publish_voxel_map: true
 
-  sonar_layer:
-    pandora_range_topic: "/sensors/range"
-    no_readings_timeout: 1.0
+  #sonar_layer:
+  #  pandora_range_topic: "/sensors/range"
+  #  no_readings_timeout: 1.0
 
 
   inflation_layer:
