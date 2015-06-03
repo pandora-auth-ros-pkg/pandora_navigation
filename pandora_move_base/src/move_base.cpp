@@ -1146,7 +1146,7 @@ namespace move_base {
 
     unsigned int mx, my;
     if (!costmap->worldToMap(goal->pose.position.x, goal->pose.position.y, mx, my)){
-        ROS_WARN("[pandora_move_base] Robot out of costmap bounds, could not proceed");
+        ROS_WARN("[pandora_move_base] [1] Robot out of costmap bounds, could not proceed");
         return;
     }
 
@@ -1168,7 +1168,7 @@ namespace move_base {
 
       previous_point = new_point;
       if (!costmap->worldToMap(new_point.x, new_point.y, mx, my)){
-        ROS_WARN("[pandora_move_base] Robot out of costmap bounds, could not proceed");
+        ROS_WARN("[pandora_move_base] [2] Robot out of costmap bounds, could not proceed");
         return;
       }
     }
