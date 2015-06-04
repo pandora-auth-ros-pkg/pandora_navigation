@@ -22,8 +22,8 @@ DWAPlannerROS:
   acc_lim_theta: 3.2
   acc_limit_trans: 1.3
 
-  #xy_goal_tolerance: 0.2
-  #yaw_goal_tolerance: 0.2
+  xy_goal_tolerance: 0.5
+  yaw_goal_tolerance: 0.4
   latch_xy_goal_tolerance: true
   #DWA cfg
   vx_samples: 30
