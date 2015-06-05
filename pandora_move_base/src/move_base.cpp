@@ -551,17 +551,22 @@ namespace move_base {
   geometry_msgs::PoseStamped MoveBase::goalToGlobalFrame(const geometry_msgs::PoseStamped& goal_pose_msg){
     std::string global_frame = planner_costmap_ros_->getGlobalFrameID();
     tf::Stamped<tf::Pose> goal_pose, global_pose;
-    poseStampedMsgToTF(goal_pose_msg, goal_pose);
+
+    // takes the goal msg pose data and set them to the goal pose
+    tf::poseStampedMsgToTF(goal_pose_msg, goal_pose);
 
     //just get the latest available transform... for accuracy they should send
     //goals in the frame of the planner
     goal_pose.stamp_ = ros::Time();
 
+    // Can throw InvalidArgument if quaternion is malformed or LookupException
+    // (Lookup exception) The most common reason for this is that the frame is not being published, 
+    // or a parent frame was not set correctly causing the tree to be broken.
     try{
       tf_.transformPose(global_frame, goal_pose, global_pose);
     }
     catch(tf::TransformException& ex){
-      ROS_WARN("[pandora_move_base] Failed to transform the goal pose from %s into the %s frame: %s",
+      ROS_WARN("[pandora_move_base] Exception! Failed to transform the goal pose from %s into the %s frame: %s",
           goal_pose.frame_id_.c_str(), global_frame.c_str(), ex.what());
       return goal_pose_msg;
     }
@@ -1145,8 +1150,10 @@ namespace move_base {
     costmap_2d::Costmap2D* costmap = planner_costmap_ros_->getCostmap();
 
     unsigned int mx, my;
+    // converts the goal coordinates from world coordinates to map coordinates
+    // returns True if conversion was successful
     if (!costmap->worldToMap(goal->pose.position.x, goal->pose.position.y, mx, my)){
-        ROS_WARN("[pandora_move_base] [1] Robot out of costmap bounds, could not proceed");
+        ROS_WARN("[pandora_move_base] [1] Goal out of costmap bounds, could not proceed");
         return;
     }
 

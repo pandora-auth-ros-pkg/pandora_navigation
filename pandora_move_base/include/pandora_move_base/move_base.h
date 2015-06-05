@@ -166,6 +166,10 @@ namespace move_base {
 
       double distance(const geometry_msgs::PoseStamped& p1, const geometry_msgs::PoseStamped& p2);
 
+      /**
+        * @brief Takes the goal message and transforms it to the global frame which is the frame of
+        * the global planner.
+        */
       geometry_msgs::PoseStamped goalToGlobalFrame(const geometry_msgs::PoseStamped& goal_pose_msg);
 
       void findValidGoalApproximate(geometry_msgs::PoseStamped* goal);

@@ -9,6 +9,7 @@ local_costmap:
   height: 4.0
   resolution: 0.02
   transform_tolerance: 0.5
+  #robot_radius: 0.381
   plugins:
   - 
    name: obstacle_layer
