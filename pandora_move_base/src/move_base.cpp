@@ -318,141 +318,6 @@ namespace move_base {
     last_config_ = config;
   }
 
-  void MoveBase::goalCB(const geometry_msgs::PoseStamped::ConstPtr& goal){
-    ROS_DEBUG_NAMED("move_base","In ROS goal callback, wrapping the PoseStamped in the action message and re-sending to the server.");
-    move_base_msgs::MoveBaseActionGoal action_goal;
-    action_goal.header.stamp = ros::Time::now();
-    action_goal.goal.target_pose = *goal;
-
-    action_goal_pub_.publish(action_goal);
-  }
-
-  void MoveBase::clearCostmapWindows(double size_x, double size_y){
-    tf::Stamped<tf::Pose> global_pose;
-
-    //clear the planner's costmap
-    planner_costmap_ros_->getRobotPose(global_pose);
-
-    std::vector<geometry_msgs::Point> clear_poly;
-    double x = global_pose.getOrigin().x();
-    double y = global_pose.getOrigin().y();
-    geometry_msgs::Point pt;
-
-    pt.x = x - size_x / 2;
-    pt.y = y - size_x / 2;
-    clear_poly.push_back(pt);
-
-    pt.x = x + size_x / 2;
-    pt.y = y - size_x / 2;
-    clear_poly.push_back(pt);
-
-    pt.x = x + size_x / 2;
-    pt.y = y + size_x / 2;
-    clear_poly.push_back(pt);
-
-    pt.x = x - size_x / 2;
-    pt.y = y + size_x / 2;
-    clear_poly.push_back(pt);
-
-    planner_costmap_ros_->getCostmap()->setConvexPolygonCost(clear_poly, costmap_2d::FREE_SPACE);
-
-    //clear the controller's costmap
-    controller_costmap_ros_->getRobotPose(global_pose);
-
-    clear_poly.clear();
-    x = global_pose.getOrigin().x();
-    y = global_pose.getOrigin().y();
-
-    pt.x = x - size_x / 2;
-    pt.y = y - size_x / 2;
-    clear_poly.push_back(pt);
-
-    pt.x = x + size_x / 2;
-    pt.y = y - size_x / 2;
-    clear_poly.push_back(pt);
-
-    pt.x = x + size_x / 2;
-    pt.y = y + size_x / 2;
-    clear_poly.push_back(pt);
-
-    pt.x = x - size_x / 2;
-    pt.y = y + size_x / 2;
-    clear_poly.push_back(pt);
-
-    controller_costmap_ros_->getCostmap()->setConvexPolygonCost(clear_poly, costmap_2d::FREE_SPACE);
-  }
-
-  bool MoveBase::clearCostmapsService(std_srvs::Empty::Request &req, std_srvs::Empty::Response &resp){
-    //clear the costmaps
-    planner_costmap_ros_->resetLayers();
-    controller_costmap_ros_->resetLayers();
-    return true;
-  }
-
-
-  bool MoveBase::planService(nav_msgs::GetPlan::Request &req, nav_msgs::GetPlan::Response &resp){
-    if(as_->isActive()){
-      ROS_ERROR("[pandora_move_base] move_base must be in an inactive state to make a plan for an external user");
-      return false;
-    }
-
-    //make sure we have a costmap for our planner
-    if(planner_costmap_ros_ == NULL){
-      ROS_ERROR("[pandora_move_base] move_base cannot make a plan for you because it doesn't have a costmap");
-      return false;
-    }
-
-    tf::Stamped<tf::Pose> global_pose;
-    if(!planner_costmap_ros_->getRobotPose(global_pose)){
-      ROS_ERROR("[pandora_move_base] move_base cannot make a plan for you because it could not get the start pose of the robot");
-      return false;
-    }
-
-    geometry_msgs::PoseStamped start;
-    //if the user does not specify a start pose, identified by an empty frame id, then use the robot's pose
-    if(req.start.header.frame_id == "")
-      tf::poseStampedTFToMsg(global_pose, start);
-    else
-      start = req.start;
-
-    //update the copy of the costmap the planner uses
-    clearCostmapWindows(2 * clearing_radius_, 2 * clearing_radius_);
-
-    //if we have a tolerance on the goal point that is greater
-    //than the resolution of the map... compute the full potential function
-    double resolution = planner_costmap_ros_->getCostmap()->getResolution();
-    std::vector<geometry_msgs::PoseStamped> global_plan;
-    geometry_msgs::PoseStamped p;
-    p = req.goal;
-    p.pose.position.y = req.goal.pose.position.y - req.tolerance;
-    bool found_legal = false;
-    while(!found_legal && p.pose.position.y <= req.goal.pose.position.y + req.tolerance){
-      p.pose.position.x = req.goal.pose.position.x - req.tolerance;
-      while(!found_legal && p.pose.position.x <= req.goal.pose.position.x + req.tolerance){
-        if(planner_->makePlan(start, p, global_plan)){
-          if(!global_plan.empty()){
-            global_plan.push_back(p);
-            found_legal = true;
-          }
-          else
-            ROS_DEBUG_NAMED("move_base","Failed to find a  plan to point (%.2f, %.2f)", p.pose.position.x, p.pose.position.y);
-        }
-        p.pose.position.x += resolution*3.0;
-      }
-      p.pose.position.y += resolution*3.0;
-    }
-
-    //copy the plan into a message to send out
-    resp.plan.poses.resize(global_plan.size());
-    for(unsigned int i = 0; i < global_plan.size(); ++i){
-      resp.plan.poses[i] = global_plan[i];
-    }
-
-
-
-    return true;
-  }
-
   MoveBase::~MoveBase(){
     recovery_behaviors_.clear();
 
@@ -476,330 +341,6 @@ namespace move_base {
 
     planner_.reset();
     tc_.reset();
-  }
-
-  bool MoveBase::makePlan(const geometry_msgs::PoseStamped& goal, std::vector<geometry_msgs::PoseStamped>& plan){
-    boost::unique_lock< boost::shared_mutex > lock(*(planner_costmap_ros_->getCostmap()->getLock()));
-
-    //make sure to set the plan to be empty initially
-    plan.clear();
-
-    //since this gets called on handle activate
-    if(planner_costmap_ros_ == NULL) {
-      ROS_ERROR("[pandora_move_base] Planner costmap ROS is NULL, unable to create global plan");
-      return false;
-    }
-
-    //get the starting pose of the robot
-    tf::Stamped<tf::Pose> global_pose;
-    if(!planner_costmap_ros_->getRobotPose(global_pose)) {
-      ROS_WARN("[pandora_move_base] Unable to get starting pose of robot, unable to create global plan");
-      return false;
-    }
-
-    geometry_msgs::PoseStamped start;
-    tf::poseStampedTFToMsg(global_pose, start);
-
-    //if the planner fails or returns a zero length plan, planning failed
-    if(!planner_->makePlan(start, goal, plan) || plan.empty()){
-      ROS_DEBUG_NAMED("move_base","Failed to find a  plan to point (%.2f, %.2f)", goal.pose.position.x, goal.pose.position.y);
-      return false;
-    }
-
-    return true;
-  }
-
-  void MoveBase::publishZeroVelocity(){
-    geometry_msgs::Twist cmd_vel;
-    cmd_vel.linear.x = 0.0;
-    cmd_vel.linear.y = 0.0;
-    cmd_vel.angular.z = 0.0;
-    vel_pub_.publish(cmd_vel);
-
-  }
-
-  bool MoveBase::isQuaternionValid(const geometry_msgs::Quaternion& q){
-    //first we need to check if the quaternion has nan's or infs
-    if(!std::isfinite(q.x) || !std::isfinite(q.y) || !std::isfinite(q.z) || !std::isfinite(q.w)){
-      ROS_ERROR("[pandora_move_base] Quaternion has nans or infs... discarding as a navigation goal");
-      return false;
-    }
-
-    tf::Quaternion tf_q(q.x, q.y, q.z, q.w);
-
-    //next, we need to check if the length of the quaternion is close to zero
-    if(tf_q.length2() < 1e-6){
-      ROS_ERROR("[pandora_move_base] Quaternion has length close to zero... discarding as navigation goal");
-      return false;
-    }
-
-    //next, we'll normalize the quaternion and check that it transforms the vertical vector correctly
-    tf_q.normalize();
-
-    tf::Vector3 up(0, 0, 1);
-
-    double dot = up.dot(up.rotate(tf_q.getAxis(), tf_q.getAngle()));
-
-    if(fabs(dot - 1) > 1e-3){
-      ROS_ERROR("[pandora_move_base] Quaternion is invalid... for navigation the z-axis of the quaternion must be close to vertical.");
-      return false;
-    }
-
-    return true;
-  }
-
-  geometry_msgs::PoseStamped MoveBase::goalToGlobalFrame(const geometry_msgs::PoseStamped& goal_pose_msg){
-    std::string global_frame = planner_costmap_ros_->getGlobalFrameID();
-    tf::Stamped<tf::Pose> goal_pose, global_pose;
-
-    // takes the goal msg pose data and set them to the goal pose
-    tf::poseStampedMsgToTF(goal_pose_msg, goal_pose);
-
-    //just get the latest available transform... for accuracy they should send
-    //goals in the frame of the planner
-    goal_pose.stamp_ = ros::Time();
-
-    // Can throw InvalidArgument if quaternion is malformed or LookupException
-    // (Lookup exception) The most common reason for this is that the frame is not being published, 
-    // or a parent frame was not set correctly causing the tree to be broken.
-    try{
-      tf_.transformPose(global_frame, goal_pose, global_pose);
-    }
-    catch(tf::TransformException& ex){
-      ROS_WARN("[pandora_move_base] Exception! Failed to transform the goal pose from %s into the %s frame: %s",
-          goal_pose.frame_id_.c_str(), global_frame.c_str(), ex.what());
-      return goal_pose_msg;
-    }
-
-    geometry_msgs::PoseStamped global_pose_msg;
-    tf::poseStampedTFToMsg(global_pose, global_pose_msg);
-    return global_pose_msg;
-
-  }
-
-  void MoveBase::planThread(){
-    ROS_DEBUG_NAMED("move_base_plan_thread","Starting planner thread...");
-    ros::NodeHandle n;
-    ros::Rate r(planner_frequency_);
-    boost::unique_lock<boost::mutex> lock(planner_mutex_);
-    while(n.ok()){
-      if(p_freq_change_)
-      {
-        ROS_INFO("[pandora_move_base] Setting planner frequency to %.2f", planner_frequency_);
-        r = ros::Rate(planner_frequency_);
-        p_freq_change_ = false;
-      }
-
-      //check if we should run the planner (the mutex is locked)
-      while(!runPlanner_){
-        //if we should not be running the planner then suspend this thread
-        ROS_DEBUG_NAMED("move_base_plan_thread","Planner thread is suspending");
-        planner_cond_.wait(lock);
-      }
-      //time to plan! get a copy of the goal and unlock the mutex
-      geometry_msgs::PoseStamped temp_goal = planner_goal_;
-      lock.unlock();
-      ROS_DEBUG_NAMED("move_base_plan_thread","Planning...");
-
-      //run planner
-      planner_plan_->clear();
-      bool gotPlan = n.ok() && makePlan(temp_goal, *planner_plan_);
-
-      if(gotPlan){
-        ROS_DEBUG_NAMED("move_base_plan_thread","Got Plan with %zu points!", planner_plan_->size());
-        //pointer swap the plans under mutex (the controller will pull from latest_plan_)
-        std::vector<geometry_msgs::PoseStamped>* temp_plan = planner_plan_;
-
-        lock.lock();
-        planner_plan_ = latest_plan_;
-        latest_plan_ = temp_plan;
-        last_valid_plan_ = ros::Time::now();
-        new_global_plan_ = true;
-
-        ROS_DEBUG_NAMED("move_base_plan_thread","Generated a plan from the base_global_planner");
-
-        //make sure we only start the controller if we still haven't reached the goal
-        if(runPlanner_)
-          state_ = CONTROLLING;
-        if(planner_frequency_ <= 0)
-          runPlanner_ = false;
-        lock.unlock();
-      }
-      //if we didn't get a plan and we are in the planning state (the robot isn't moving)
-      else if(state_==PLANNING){
-        ROS_DEBUG_NAMED("move_base_plan_thread","No Plan...");
-        ros::Time attempt_end = last_valid_plan_ + ros::Duration(planner_patience_);
-
-        //check if we've tried to make a plan for over our time limit
-        if(ros::Time::now() > attempt_end){
-          //we'll move into our obstacle clearing mode
-          state_ = CLEARING;
-          publishZeroVelocity();
-          recovery_trigger_ = PLANNING_R;
-        }
-      }
-
-      if(!p_freq_change_ && planner_frequency_ > 0)
-        r.sleep();
-
-      //take the mutex for the next iteration
-      lock.lock();
-    }
-  }
-
-  void MoveBase::executeCb(const move_base_msgs::MoveBaseGoalConstPtr& move_base_goal)
-  {
-    if(!isQuaternionValid(move_base_goal->target_pose.pose.orientation)){
-      as_->setAborted(move_base_msgs::MoveBaseResult(), "Aborting on goal because it was sent with an invalid quaternion");
-      return;
-    }
-
-    geometry_msgs::PoseStamped goal = goalToGlobalFrame(move_base_goal->target_pose);
-
-    //we will try our best to find a valid plan, by moving the given goal 
-    findValidGoalApproximate(&goal);
-    
-    //we have a goal so start the planner
-    boost::unique_lock<boost::mutex> lock(planner_mutex_);
-    planner_goal_ = goal;
-    runPlanner_ = true;
-    planner_cond_.notify_one();
-    lock.unlock();
-
-    current_goal_pub_.publish(goal);
-    std::vector<geometry_msgs::PoseStamped> global_plan;
-
-    ros::Rate r(controller_frequency_);
-    if(shutdown_costmaps_){
-      ROS_DEBUG_NAMED("move_base","Starting up costmaps that were shut down previously");
-      planner_costmap_ros_->start();
-      controller_costmap_ros_->start();
-    }
-
-    //we want to make sure that we reset the last time we had a valid plan and control
-    last_valid_control_ = ros::Time::now();
-    last_valid_plan_ = ros::Time::now();
-    last_oscillation_reset_ = ros::Time::now();
-
-    ros::NodeHandle n;
-    while(n.ok())
-    {
-      if(c_freq_change_)
-      {
-        ROS_INFO("[pandora_move_base] Setting controller frequency to %.2f", controller_frequency_);
-        r = ros::Rate(controller_frequency_);
-        c_freq_change_ = false;
-      }
-
-      if(as_->isPreemptRequested()){
-        if(as_->isNewGoalAvailable()){
-          //if we're active and a new goal is available, we'll accept it, but we won't shut anything down
-          move_base_msgs::MoveBaseGoal new_goal = *as_->acceptNewGoal();
-
-          if(!isQuaternionValid(new_goal.target_pose.pose.orientation)){
-            as_->setAborted(move_base_msgs::MoveBaseResult(), "Aborting on goal because it was sent with an invalid quaternion");
-            return;
-          }
-
-          goal = goalToGlobalFrame(new_goal.target_pose);
-
-          //we will try our best to find a valid plan, by moving the given goal 
-          findValidGoalApproximate(&goal);
-
-          //we'll make sure that we reset our state for the next execution cycle
-          recovery_index_ = 0;
-          state_ = PLANNING;
-
-          //we have a new goal so make sure the planner is awake
-          lock.lock();
-          planner_goal_ = goal;
-          runPlanner_ = true;
-          planner_cond_.notify_one();
-          lock.unlock();
-
-          //publish the goal point to the visualizer
-          ROS_DEBUG_NAMED("move_base","move_base has received a goal of x: %.2f, y: %.2f", goal.pose.position.x, goal.pose.position.y);
-          current_goal_pub_.publish(goal);
-
-          //make sure to reset our timeouts
-          last_valid_control_ = ros::Time::now();
-          last_valid_plan_ = ros::Time::now();
-          last_oscillation_reset_ = ros::Time::now();
-        }
-        else {
-          //if we've been preempted explicitly we need to shut things down
-          resetState();
-
-          //notify the ActionServer that we've successfully preempted
-          ROS_DEBUG_NAMED("move_base","Move base preempting the current goal");
-          as_->setPreempted();
-
-          //we'll actually return from execute after preempting
-          return;
-        }
-      }
-
-      //we also want to check if we've changed global frames because we need to transform our goal pose
-      if(goal.header.frame_id != planner_costmap_ros_->getGlobalFrameID()){
-        goal = goalToGlobalFrame(goal);
-
-        //we want to go back to the planning state for the next execution cycle
-        recovery_index_ = 0;
-        state_ = PLANNING;
-
-        //we have a new goal so make sure the planner is awake
-        lock.lock();
-        planner_goal_ = goal;
-        runPlanner_ = true;
-        planner_cond_.notify_one();
-        lock.unlock();
-
-        //publish the goal point to the visualizer
-        ROS_DEBUG_NAMED("move_base","The global frame for move_base has changed, new frame: %s, new goal position x: %.2f, y: %.2f", goal.header.frame_id.c_str(), goal.pose.position.x, goal.pose.position.y);
-        current_goal_pub_.publish(goal);
-
-        //make sure to reset our timeouts
-        last_valid_control_ = ros::Time::now();
-        last_valid_plan_ = ros::Time::now();
-        last_oscillation_reset_ = ros::Time::now();
-      }
-
-      //for timing that gives real time even in simulation
-      ros::WallTime start = ros::WallTime::now();
-
-      //the real work on pursuing a goal is done here
-      bool done = executeCycle(goal, global_plan);
-
-      //if we're done, then we'll return from execute
-      if(done)
-        return;
-
-      //check if execution of the goal has completed in some way
-
-      ros::WallDuration t_diff = ros::WallTime::now() - start;
-      ROS_DEBUG_NAMED("move_base","Full control cycle time: %.9f\n", t_diff.toSec());
-
-      r.sleep();
-      //make sure to sleep for the remainder of our cycle time
-      if(r.cycleTime() > ros::Duration(1 / controller_frequency_) && state_ == CONTROLLING)
-        ROS_WARN("[pandora_move_base] Control loop missed its desired rate of %.4fHz... the loop actually took %.4f seconds", controller_frequency_, r.cycleTime().toSec());
-    }
-
-    //wake up the planner thread so that it can exit cleanly
-    lock.lock();
-    runPlanner_ = true;
-    planner_cond_.notify_one();
-    lock.unlock();
-
-    //if the node is killed then we'll abort and return
-    as_->setAborted(move_base_msgs::MoveBaseResult(), "Aborting on the goal because the node has been killed");
-    return;
-  }
-
-  double MoveBase::distance(const geometry_msgs::PoseStamped& p1, const geometry_msgs::PoseStamped& p2)
-  {
-    return sqrt((p1.pose.position.x - p2.pose.position.x) * (p1.pose.position.x - p2.pose.position.x)
-        + (p1.pose.position.y - p2.pose.position.y) * (p1.pose.position.y - p2.pose.position.y));
   }
 
   bool MoveBase::executeCycle(geometry_msgs::PoseStamped& goal, std::vector<geometry_msgs::PoseStamped>& global_plan){
@@ -1007,6 +548,477 @@ namespace move_base {
     //we aren't done yet
     return false;
   }
+
+  // Not used inside move_base
+  bool MoveBase::clearCostmapsService(std_srvs::Empty::Request &req, std_srvs::Empty::Response &resp){
+    //clear the costmaps
+    planner_costmap_ros_->resetLayers();
+    controller_costmap_ros_->resetLayers();
+    return true;
+  }
+
+  // Not used inside move_base
+  bool MoveBase::planService(nav_msgs::GetPlan::Request &req, nav_msgs::GetPlan::Response &resp){
+    if(as_->isActive()){
+      ROS_ERROR("[pandora_move_base] move_base must be in an inactive state to make a plan for an external user");
+      return false;
+    }
+
+    //make sure we have a costmap for our planner
+    if(planner_costmap_ros_ == NULL){
+      ROS_ERROR("[pandora_move_base] move_base cannot make a plan for you because it doesn't have a costmap");
+      return false;
+    }
+
+    tf::Stamped<tf::Pose> global_pose;
+    if(!planner_costmap_ros_->getRobotPose(global_pose)){
+      ROS_ERROR("[pandora_move_base] move_base cannot make a plan for you because it could not get the start pose of the robot");
+      return false;
+    }
+
+    geometry_msgs::PoseStamped start;
+    //if the user does not specify a start pose, identified by an empty frame id, then use the robot's pose
+    if(req.start.header.frame_id == "")
+      tf::poseStampedTFToMsg(global_pose, start);
+    else
+      start = req.start;
+
+    //update the copy of the costmap the planner uses
+    clearCostmapWindows(2 * clearing_radius_, 2 * clearing_radius_);
+
+    //if we have a tolerance on the goal point that is greater
+    //than the resolution of the map... compute the full potential function
+    double resolution = planner_costmap_ros_->getCostmap()->getResolution();
+    std::vector<geometry_msgs::PoseStamped> global_plan;
+    geometry_msgs::PoseStamped p;
+    p = req.goal;
+    p.pose.position.y = req.goal.pose.position.y - req.tolerance;
+    bool found_legal = false;
+    while(!found_legal && p.pose.position.y <= req.goal.pose.position.y + req.tolerance){
+      p.pose.position.x = req.goal.pose.position.x - req.tolerance;
+      while(!found_legal && p.pose.position.x <= req.goal.pose.position.x + req.tolerance){
+        if(planner_->makePlan(start, p, global_plan)){
+          if(!global_plan.empty()){
+            global_plan.push_back(p);
+            found_legal = true;
+          }
+          else
+            ROS_DEBUG_NAMED("move_base","Failed to find a  plan to point (%.2f, %.2f)", p.pose.position.x, p.pose.position.y);
+        }
+        p.pose.position.x += resolution*3.0;
+      }
+      p.pose.position.y += resolution*3.0;
+    }
+
+    //copy the plan into a message to send out
+    resp.plan.poses.resize(global_plan.size());
+    for(unsigned int i = 0; i < global_plan.size(); ++i){
+      resp.plan.poses[i] = global_plan[i];
+    }
+
+
+
+    return true;
+  }
+
+  // This is used for nav_view and rviz
+  void MoveBase::goalCB(const geometry_msgs::PoseStamped::ConstPtr& goal){
+    ROS_DEBUG_NAMED("move_base","In ROS goal callback, wrapping the PoseStamped in the action message and re-sending to the server.");
+    move_base_msgs::MoveBaseActionGoal action_goal;
+    action_goal.header.stamp = ros::Time::now();
+    action_goal.goal.target_pose = *goal;
+
+    action_goal_pub_.publish(action_goal);
+  }
+
+  void MoveBase::clearCostmapWindows(double size_x, double size_y){
+    tf::Stamped<tf::Pose> global_pose;
+
+    //clear the planner's costmap
+    planner_costmap_ros_->getRobotPose(global_pose);
+
+    std::vector<geometry_msgs::Point> clear_poly;
+    double x = global_pose.getOrigin().x();
+    double y = global_pose.getOrigin().y();
+    geometry_msgs::Point pt;
+
+    pt.x = x - size_x / 2;
+    pt.y = y - size_x / 2;
+    clear_poly.push_back(pt);
+
+    pt.x = x + size_x / 2;
+    pt.y = y - size_x / 2;
+    clear_poly.push_back(pt);
+
+    pt.x = x + size_x / 2;
+    pt.y = y + size_x / 2;
+    clear_poly.push_back(pt);
+
+    pt.x = x - size_x / 2;
+    pt.y = y + size_x / 2;
+    clear_poly.push_back(pt);
+
+    planner_costmap_ros_->getCostmap()->setConvexPolygonCost(clear_poly, costmap_2d::FREE_SPACE);
+
+    //clear the controller's costmap
+    controller_costmap_ros_->getRobotPose(global_pose);
+
+    clear_poly.clear();
+    x = global_pose.getOrigin().x();
+    y = global_pose.getOrigin().y();
+
+    pt.x = x - size_x / 2;
+    pt.y = y - size_x / 2;
+    clear_poly.push_back(pt);
+
+    pt.x = x + size_x / 2;
+    pt.y = y - size_x / 2;
+    clear_poly.push_back(pt);
+
+    pt.x = x + size_x / 2;
+    pt.y = y + size_x / 2;
+    clear_poly.push_back(pt);
+
+    pt.x = x - size_x / 2;
+    pt.y = y + size_x / 2;
+    clear_poly.push_back(pt);
+
+    controller_costmap_ros_->getCostmap()->setConvexPolygonCost(clear_poly, costmap_2d::FREE_SPACE);
+  }
+
+
+  bool MoveBase::makePlan(const geometry_msgs::PoseStamped& goal, std::vector<geometry_msgs::PoseStamped>& plan){
+    boost::unique_lock< boost::shared_mutex > lock(*(planner_costmap_ros_->getCostmap()->getLock()));
+
+    //make sure to set the plan to be empty initially
+    plan.clear();
+
+    //since this gets called on handle activate
+    if(planner_costmap_ros_ == NULL) {
+      ROS_ERROR("[pandora_move_base] Planner costmap ROS is NULL, unable to create global plan");
+      return false;
+    }
+
+    //get the starting pose of the robot
+    tf::Stamped<tf::Pose> global_pose;
+
+    if(!planner_costmap_ros_->getRobotPose(global_pose)) {
+      ROS_WARN("[pandora_move_base] Unable to get starting pose of robot, unable to create global plan");
+      return false;
+    }
+
+    geometry_msgs::PoseStamped start;
+    tf::poseStampedTFToMsg(global_pose, start);
+
+    // planner_ is ptr to a GlobalPlanner object
+    //if the planner fails or returns a zero length plan, planning failed
+    // plan will be filled with the calculated 
+    if(!planner_->makePlan(start, goal, plan) || plan.empty()){
+      ROS_DEBUG_NAMED("move_base","Failed to find a  plan to point (%.2f, %.2f)", goal.pose.position.x, goal.pose.position.y);
+      return false;
+    }
+
+    return true;
+  }
+
+  void MoveBase::publishZeroVelocity(){
+    geometry_msgs::Twist cmd_vel;
+    cmd_vel.linear.x = 0.0;
+    cmd_vel.linear.y = 0.0;
+    cmd_vel.angular.z = 0.0;
+    vel_pub_.publish(cmd_vel);
+
+  }
+
+  double MoveBase::distance(const geometry_msgs::PoseStamped& p1, const geometry_msgs::PoseStamped& p2)
+  {
+    return sqrt((p1.pose.position.x - p2.pose.position.x) * (p1.pose.position.x - p2.pose.position.x)
+        + (p1.pose.position.y - p2.pose.position.y) * (p1.pose.position.y - p2.pose.position.y));
+  }
+
+  bool MoveBase::isQuaternionValid(const geometry_msgs::Quaternion& q){
+    //first we need to check if the quaternion has nan's or infs
+    if(!std::isfinite(q.x) || !std::isfinite(q.y) || !std::isfinite(q.z) || !std::isfinite(q.w)){
+      ROS_ERROR("[pandora_move_base] Quaternion has nans or infs... discarding as a navigation goal");
+      return false;
+    }
+
+    tf::Quaternion tf_q(q.x, q.y, q.z, q.w);
+
+    //next, we need to check if the length of the quaternion is close to zero
+    if(tf_q.length2() < 1e-6){
+      ROS_ERROR("[pandora_move_base] Quaternion has length close to zero... discarding as navigation goal");
+      return false;
+    }
+
+    //next, we'll normalize the quaternion and check that it transforms the vertical vector correctly
+    tf_q.normalize();
+
+    tf::Vector3 up(0, 0, 1);
+
+    double dot = up.dot(up.rotate(tf_q.getAxis(), tf_q.getAngle()));
+
+    if(fabs(dot - 1) > 1e-3){
+      ROS_ERROR("[pandora_move_base] Quaternion is invalid... for navigation the z-axis of the quaternion must be close to vertical.");
+      return false;
+    }
+
+    return true;
+  }
+
+  geometry_msgs::PoseStamped MoveBase::goalToGlobalFrame(const geometry_msgs::PoseStamped& goal_pose_msg){
+    std::string global_frame = planner_costmap_ros_->getGlobalFrameID();
+    tf::Stamped<tf::Pose> goal_pose, global_pose;
+
+    // takes the goal msg pose data and set them to the goal pose
+    tf::poseStampedMsgToTF(goal_pose_msg, goal_pose);
+
+    //just get the latest available transform... for accuracy they should send
+    //goals in the frame of the planner
+    goal_pose.stamp_ = ros::Time();
+
+    // Can throw InvalidArgument if quaternion is malformed or LookupException
+    // (Lookup exception) The most common reason for this is that the frame is not being published, 
+    // or a parent frame was not set correctly causing the tree to be broken.
+    try{
+      tf_.transformPose(global_frame, goal_pose, global_pose);
+    }
+    catch(tf::TransformException& ex){
+      ROS_WARN("[pandora_move_base] Exception! Failed to transform the goal pose from %s into the %s frame: %s",
+          goal_pose.frame_id_.c_str(), global_frame.c_str(), ex.what());
+      return goal_pose_msg;
+    }
+
+    geometry_msgs::PoseStamped global_pose_msg;
+    tf::poseStampedTFToMsg(global_pose, global_pose_msg);
+    return global_pose_msg;
+
+  }
+
+  void MoveBase::planThread(){
+    ROS_DEBUG_NAMED("move_base_plan_thread","Starting planner thread...");
+    ros::NodeHandle n;
+    ros::Rate r(planner_frequency_);
+    boost::unique_lock<boost::mutex> lock(planner_mutex_);
+    while(n.ok()){
+      if(p_freq_change_)
+      {
+        ROS_INFO("[pandora_move_base] Setting planner frequency to %.2f", planner_frequency_);
+        r = ros::Rate(planner_frequency_);
+        p_freq_change_ = false;
+      }
+
+      //check if we should run the planner (the mutex is locked)
+      while(!runPlanner_){
+        //if we should not be running the planner then suspend this thread
+        ROS_DEBUG_NAMED("move_base_plan_thread","Planner thread is suspending");
+        planner_cond_.wait(lock);
+      }
+      //time to plan! get a copy of the goal and unlock the mutex
+      // planner_goal_ is a poseStamped message
+      geometry_msgs::PoseStamped temp_goal = planner_goal_;
+      lock.unlock();
+      ROS_DEBUG_NAMED("move_base_plan_thread","Planning...");
+
+      //run planner
+      // planner_plan is a ptr to a vector of poseStamped messages(each vector is a plan)
+      planner_plan_->clear();
+      bool gotPlan = n.ok() && makePlan(temp_goal, *planner_plan_);
+
+      if(gotPlan){
+        ROS_DEBUG_NAMED("move_base_plan_thread","Got Plan with %zu points!", planner_plan_->size());
+        //pointer swap the plans under mutex (the controller will pull from latest_plan_)
+        std::vector<geometry_msgs::PoseStamped>* temp_plan = planner_plan_;
+
+        lock.lock();
+        planner_plan_ = latest_plan_;
+        latest_plan_ = temp_plan;
+        last_valid_plan_ = ros::Time::now();
+        new_global_plan_ = true;
+
+        ROS_DEBUG_NAMED("move_base_plan_thread","Generated a plan from the base_global_planner");
+
+        //make sure we only start the controller if we still haven't reached the goal
+        if(runPlanner_)
+          state_ = CONTROLLING;
+        if(planner_frequency_ <= 0)
+          runPlanner_ = false;
+        lock.unlock();
+      }
+      //if we didn't get a plan and we are in the planning state (the robot isn't moving)
+      else if(state_==PLANNING){
+        ROS_DEBUG_NAMED("move_base_plan_thread","No Plan...");
+        ros::Time attempt_end = last_valid_plan_ + ros::Duration(planner_patience_);
+
+        //check if we've tried to make a plan for over our time limit
+        if(ros::Time::now() > attempt_end){
+          //we'll move into our obstacle clearing mode
+          state_ = CLEARING;
+          publishZeroVelocity();
+          recovery_trigger_ = PLANNING_R;
+        }
+      }
+
+      if(!p_freq_change_ && planner_frequency_ > 0)
+        r.sleep();
+
+      //take the mutex for the next iteration
+      lock.lock();
+    }
+  }
+
+  void MoveBase::executeCb(const move_base_msgs::MoveBaseGoalConstPtr& move_base_goal)
+  {
+    if(!isQuaternionValid(move_base_goal->target_pose.pose.orientation)){
+      as_->setAborted(move_base_msgs::MoveBaseResult(), "Aborting on goal because it was sent with an invalid quaternion");
+      return;
+    }
+
+    geometry_msgs::PoseStamped goal = goalToGlobalFrame(move_base_goal->target_pose);
+
+    //we will try our best to find a valid plan, by moving the given goal 
+    findValidGoalApproximate(&goal);
+    
+    //we have a goal so start the planner
+    boost::unique_lock<boost::mutex> lock(planner_mutex_);
+    planner_goal_ = goal;
+    runPlanner_ = true;
+    planner_cond_.notify_one();
+    lock.unlock();
+
+    current_goal_pub_.publish(goal);
+    std::vector<geometry_msgs::PoseStamped> global_plan;
+
+    ros::Rate r(controller_frequency_);
+    if(shutdown_costmaps_){
+      ROS_DEBUG_NAMED("move_base","Starting up costmaps that were shut down previously");
+      planner_costmap_ros_->start();
+      controller_costmap_ros_->start();
+    }
+
+    //we want to make sure that we reset the last time we had a valid plan and control
+    last_valid_control_ = ros::Time::now();
+    last_valid_plan_ = ros::Time::now();
+    last_oscillation_reset_ = ros::Time::now();
+
+    ros::NodeHandle n;
+    while(n.ok())
+    {
+      if(c_freq_change_)
+      {
+        ROS_INFO("[pandora_move_base] Setting controller frequency to %.2f", controller_frequency_);
+        r = ros::Rate(controller_frequency_);
+        c_freq_change_ = false;
+      }
+
+      if(as_->isPreemptRequested()){
+        if(as_->isNewGoalAvailable()){
+          //if we're active and a new goal is available, we'll accept it, but we won't shut anything down
+          move_base_msgs::MoveBaseGoal new_goal = *as_->acceptNewGoal();
+
+          if(!isQuaternionValid(new_goal.target_pose.pose.orientation)){
+            as_->setAborted(move_base_msgs::MoveBaseResult(), "Aborting on goal because it was sent with an invalid quaternion");
+            return;
+          }
+
+          goal = goalToGlobalFrame(new_goal.target_pose);
+
+          //we will try our best to find a valid plan, by moving the given goal 
+          findValidGoalApproximate(&goal);
+
+          //we'll make sure that we reset our state for the next execution cycle
+          recovery_index_ = 0;
+          state_ = PLANNING;
+
+          //we have a new goal so make sure the planner is awake
+          lock.lock();
+          planner_goal_ = goal;
+          runPlanner_ = true;
+          planner_cond_.notify_one();
+          lock.unlock();
+
+          //publish the goal point to the visualizer
+          ROS_DEBUG_NAMED("move_base","move_base has received a goal of x: %.2f, y: %.2f", goal.pose.position.x, goal.pose.position.y);
+          current_goal_pub_.publish(goal);
+
+          //make sure to reset our timeouts
+          last_valid_control_ = ros::Time::now();
+          last_valid_plan_ = ros::Time::now();
+          last_oscillation_reset_ = ros::Time::now();
+        }
+        else {
+          //if we've been preempted explicitly we need to shut things down
+          resetState();
+
+          //notify the ActionServer that we've successfully preempted
+          ROS_DEBUG_NAMED("move_base","Move base preempting the current goal");
+          as_->setPreempted();
+
+          //we'll actually return from execute after preempting
+          return;
+        }
+      }
+
+      //we also want to check if we've changed global frames because we need to transform our goal pose
+      if(goal.header.frame_id != planner_costmap_ros_->getGlobalFrameID()){
+        goal = goalToGlobalFrame(goal);
+
+        //we want to go back to the planning state for the next execution cycle
+        recovery_index_ = 0;
+        state_ = PLANNING;
+
+        //we have a new goal so make sure the planner is awake
+        lock.lock();
+        planner_goal_ = goal;
+        runPlanner_ = true;
+        planner_cond_.notify_one();
+        lock.unlock();
+
+        //publish the goal point to the visualizer
+        ROS_DEBUG_NAMED("move_base","The global frame for move_base has changed, new frame: %s, new goal position x: %.2f, y: %.2f", goal.header.frame_id.c_str(), goal.pose.position.x, goal.pose.position.y);
+        current_goal_pub_.publish(goal);
+
+        //make sure to reset our timeouts
+        last_valid_control_ = ros::Time::now();
+        last_valid_plan_ = ros::Time::now();
+        last_oscillation_reset_ = ros::Time::now();
+      }
+
+      //for timing that gives real time even in simulation
+      ros::WallTime start = ros::WallTime::now();
+
+      //the real work on pursuing a goal is done here
+      bool done = executeCycle(goal, global_plan);
+
+      //if we're done, then we'll return from execute
+      if(done)
+        return;
+
+      //check if execution of the goal has completed in some way
+
+      ros::WallDuration t_diff = ros::WallTime::now() - start;
+      ROS_DEBUG_NAMED("move_base","Full control cycle time: %.9f\n", t_diff.toSec());
+
+      r.sleep();
+      //make sure to sleep for the remainder of our cycle time
+      if(r.cycleTime() > ros::Duration(1 / controller_frequency_) && state_ == CONTROLLING)
+        ROS_WARN("[pandora_move_base] Control loop missed its desired rate of %.4fHz... the loop actually took %.4f seconds", controller_frequency_, r.cycleTime().toSec());
+    }
+
+    //wake up the planner thread so that it can exit cleanly
+    lock.lock();
+    runPlanner_ = true;
+    planner_cond_.notify_one();
+    lock.unlock();
+
+    //if the node is killed then we'll abort and return
+    as_->setAborted(move_base_msgs::MoveBaseResult(), "Aborting on the goal because the node has been killed");
+    return;
+  }
+
+  
+
+  
 
   bool MoveBase::loadRecoveryBehaviors(ros::NodeHandle node){
     XmlRpc::XmlRpcValue behavior_list;

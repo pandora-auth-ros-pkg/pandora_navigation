@@ -120,12 +120,58 @@ namespace move_base {
       bool planService(nav_msgs::GetPlan::Request &req, nav_msgs::GetPlan::Response &resp);
 
       /**
+       * @brief
+       *
+       */
+      void goalCB(const geometry_msgs::PoseStamped::ConstPtr& goal);
+
+
+      /**
+       * @brief  Clears obstacles within a window around the robot
+       * @param size_x The x size of the window
+       * @param size_y The y size of the window
+       */
+      void clearCostmapWindows(double size_x, double size_y);
+
+      /**
        * @brief  Make a new global plan
        * @param  goal The goal to plan to
        * @param  plan Will be filled in with the plan made by the planner
        * @return  True if planning succeeds, false otherwise
        */
       bool makePlan(const geometry_msgs::PoseStamped& goal, std::vector<geometry_msgs::PoseStamped>& plan);
+
+      /**
+       * @brief  Publishes a velocity command of zero to the base
+       */
+      void publishZeroVelocity();
+
+      /**
+       * @brief Calculates the euclidean distance between two points
+       * @param p1 first point
+       * @param p2 second point
+       * @return A double that is the distance of the two points
+       */
+      double distance(const geometry_msgs::PoseStamped& p1, const geometry_msgs::PoseStamped& p2);
+
+      /**
+       * @brief Check if the given quaternion is valid
+       * @param q The quaternion to check if valid
+       * @return True if quaternion is valid false otherwise
+       */
+      bool isQuaternionValid(const geometry_msgs::Quaternion& q);
+
+      /**
+       * @brief Takes the goal message and transforms it to the global frame which is the frame of
+       * the global planner.
+       * @param goal_pose_msg The stamped pose that will transform to the global frame
+       * @return The stamped pose in the global frame
+       */
+      geometry_msgs::PoseStamped goalToGlobalFrame(const geometry_msgs::PoseStamped& goal_pose_msg);
+
+      void planThread();
+
+      void executeCb(const move_base_msgs::MoveBaseGoalConstPtr& move_base_goal);
 
       /**
        * @brief  Load the recovery behaviors for the navigation stack from the parameter server
@@ -139,39 +185,20 @@ namespace move_base {
        */
       void loadDefaultRecoveryBehaviors();
 
-      /**
-       * @brief  Clears obstacles within a window around the robot
-       * @param size_x The x size of the window
-       * @param size_y The y size of the window
-       */
-      void clearCostmapWindows(double size_x, double size_y);
-
-      /**
-       * @brief  Publishes a velocity command of zero to the base
-       */
-      void publishZeroVelocity();
 
       /**
        * @brief  Reset the state of the move_base action and send a zero velocity command to the base
        */
       void resetState();
 
-      void goalCB(const geometry_msgs::PoseStamped::ConstPtr& goal);
-
-      void planThread();
-
-      void executeCb(const move_base_msgs::MoveBaseGoalConstPtr& move_base_goal);
-
-      bool isQuaternionValid(const geometry_msgs::Quaternion& q);
-
-      double distance(const geometry_msgs::PoseStamped& p1, const geometry_msgs::PoseStamped& p2);
-
       /**
-        * @brief Takes the goal message and transforms it to the global frame which is the frame of
-        * the global planner.
-        */
-      geometry_msgs::PoseStamped goalToGlobalFrame(const geometry_msgs::PoseStamped& goal_pose_msg);
-
+       * @brief Takes the goal that is passed to move_base and updates it to a valid new goal
+       * @param goal The goal that was initially given to move_base and is going to be updated
+       *
+       * This function calculates the orientation of the initial goal and then using the 
+       * same orientation it moves back the goal arrow in small steps until it is at a pose that
+       * the robot is able to use as an approach point.
+       */
       void findValidGoalApproximate(geometry_msgs::PoseStamped* goal);
 
       tf::TransformListener& tf_;
