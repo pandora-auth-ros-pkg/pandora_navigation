@@ -255,7 +255,7 @@ namespace move_base {
       pandora_move_base::MoveBaseConfig default_config_;
       bool setup_, p_freq_change_, c_freq_change_;
       bool new_global_plan_;
-
+      bool oscillation_check_;  // added by dimkirt
       
   };
 };

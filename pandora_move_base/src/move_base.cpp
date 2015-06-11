@@ -53,7 +53,9 @@ namespace move_base {
     blp_loader_("nav_core", "nav_core::BaseLocalPlanner"), 
     recovery_loader_("nav_core", "nav_core::RecoveryBehavior"),
     planner_plan_(NULL), latest_plan_(NULL), controller_plan_(NULL),
-    runPlanner_(false), setup_(false), p_freq_change_(false), c_freq_change_(false), new_global_plan_(false) {
+    runPlanner_(false), setup_(false), p_freq_change_(false), c_freq_change_(false), new_global_plan_(false),
+    oscillation_check_(true)
+    {
 
     as_ = new MoveBaseActionServer(ros::NodeHandle(), "move_base", boost::bind(&MoveBase::executeCb, this, _1), false);
 
@@ -183,6 +185,7 @@ namespace move_base {
 
     //load any user specified recovery behaviors, and if that fails load the defaults
     if(!loadRecoveryBehaviors(private_nh)){
+      ROS_ERROR("Bitch fortwnw ta default recoveries!!!");
       loadDefaultRecoveryBehaviors();
     }
 
@@ -360,14 +363,18 @@ namespace move_base {
     as_->publishFeedback(feedback);
 
     //check to see if we've moved far enough to reset our oscillation timeout
-    if(distance(current_position, oscillation_pose_) >= oscillation_distance_)
+    if(distance(current_position, oscillation_pose_) >= oscillation_distance_ )//|| oscillation_check_ == true
     {
       last_oscillation_reset_ = ros::Time::now();
       oscillation_pose_ = current_position;
-
+      ROS_ERROR("ELAAAAAAAAAAAAAA  BITCHHHHHHHHHHH");
       //if our last recovery was caused by oscillation, we want to reset the recovery index 
       if(recovery_trigger_ == OSCILLATION_R)
+      {
+        ROS_ERROR("ELAAAAAAAAAAAAAA  BITCHHHHHHHHHHH MOUUUUUUUUUUUUUUUUUUUUUUU");
         recovery_index_ = 0;
+        //oscillation_check_ = false;
+      }
     }
 
     //check that the observation buffers for the costmap are current, we don't want to drive blind
@@ -454,6 +461,7 @@ namespace move_base {
         {
          boost::unique_lock< boost::shared_mutex > lock(*(controller_costmap_ros_->getCostmap()->getLock()));
         
+        // TRY TO COMPUTE VELOCITIES
         if(tc_->computeVelocityCommands(cmd_vel)){
           ROS_DEBUG_NAMED( "move_base", "Got a valid command from the local planner: %.3lf, %.3lf, %.3lf",
                            cmd_vel.linear.x, cmd_vel.linear.y, cmd_vel.angular.z );
@@ -463,8 +471,10 @@ namespace move_base {
           if(recovery_trigger_ == CONTROLLING_R)
             recovery_index_ = 0;
         }
+        // IF WE FAIL TO COMPUTE VELOCITIES
         else {
           ROS_DEBUG_NAMED("move_base", "The local planner could not find a valid plan.");
+
           ros::Time attempt_end = last_valid_control_ + ros::Duration(controller_patience_);
 
           //check if we've tried to find a valid control for longer than our time limit
@@ -475,12 +485,12 @@ namespace move_base {
             recovery_trigger_ = CONTROLLING_R;
           }
           else{
-            //otherwise, if we can't find a valid control, we'll go back to planning
+            // IF WE CAN'T FIND A VALID CONTROL, WE GO BACK TO PLANNING
             last_valid_plan_ = ros::Time::now();
             state_ = PLANNING;
             publishZeroVelocity();
 
-            //enable the planner thread in case it isn't running on a clock
+            // enable the planner thread in case it isn't running on a clock
             boost::unique_lock<boost::mutex> lock(planner_mutex_);
             runPlanner_ = true;
             planner_cond_.notify_one();
@@ -490,12 +500,16 @@ namespace move_base {
         }
 
         break;
-
+//  STA SIMULATIONS OTAN KOLLOUSE POTE DEN MPHKE SE CLEARING, ALLA POSTARE SYNEXEIA TRAJETORIES
       //we'll try to clear out space with any user-provided recovery behaviors
       case CLEARING:
         ROS_DEBUG_NAMED("move_base","In clearing/recovery state");
         //we'll invoke whatever recovery behavior we're currently on if they're enabled
+        ROS_ERROR("move_base In clearing/recovery state !!!");
         if(recovery_behavior_enabled_ && recovery_index_ < recovery_behaviors_.size()){
+          
+          // Den emfanizetai!!!
+          ROS_ERROR("PAME RE BITCH MOU RIKSE KANA RECOVERY!");
           ROS_DEBUG_NAMED("move_base_recovery","Executing behavior %u of %zu", recovery_index_, recovery_behaviors_.size());
           recovery_behaviors_[recovery_index_]->runBehavior();
 
@@ -841,6 +855,7 @@ namespace move_base {
         //make sure we only start the controller if we still haven't reached the goal
         if(runPlanner_)
           state_ = CONTROLLING;
+        // what's the point of this?
         if(planner_frequency_ <= 0)
           runPlanner_ = false;
         lock.unlock();
@@ -885,7 +900,8 @@ namespace move_base {
     runPlanner_ = true;
     planner_cond_.notify_one();
     lock.unlock();
-
+    
+    //publish the goal point to the visualizer
     current_goal_pub_.publish(goal);
     std::vector<geometry_msgs::PoseStamped> global_plan;
 
@@ -913,6 +929,8 @@ namespace move_base {
 
       if(as_->isPreemptRequested()){
         if(as_->isNewGoalAvailable()){
+          // s auto to block kanoume ta idia me parapanw apla prwta kanoume acceptNewGoal kai ginetai preempt o
+          // prohgoumenos goal kai meta kanoume oti kai prin gia ton neo goal
           //if we're active and a new goal is available, we'll accept it, but we won't shut anything down
           move_base_msgs::MoveBaseGoal new_goal = *as_->acceptNewGoal();
 
@@ -983,7 +1001,7 @@ namespace move_base {
         last_valid_plan_ = ros::Time::now();
         last_oscillation_reset_ = ros::Time::now();
       }
-
+      
       //for timing that gives real time even in simulation
       ros::WallTime start = ros::WallTime::now();
 
