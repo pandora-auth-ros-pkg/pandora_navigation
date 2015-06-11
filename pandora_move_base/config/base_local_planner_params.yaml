@@ -30,7 +30,9 @@ DWAPlannerROS:
   vy_samples: 1
   vth_samples: 20
 
+  penalize_negative_x: true
   path_distance_bias: 100.0
+  occdist_scale: 10.0 # def:0.01, how much the controller should attempt to avoid obstacles
   use_dwa: true
   publish_cost_grid_pc: true
   publish_traj_pc: true
