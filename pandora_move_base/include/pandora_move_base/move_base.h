@@ -201,6 +201,11 @@ namespace move_base {
        */
       void findValidGoalApproximate(geometry_msgs::PoseStamped* goal);
 
+      /**
+       * Returns true if the two cmd_vels are equal
+       */
+      bool areTwistsEqual(geometry_msgs::Twist cmd_vel_last, geometry_msgs::Twist cmd_vel_new);
+
       tf::TransformListener& tf_;
 
       MoveBaseActionServer* as_;
@@ -256,6 +261,8 @@ namespace move_base {
       bool setup_, p_freq_change_, c_freq_change_;
       bool new_global_plan_;
       bool oscillation_check_;  // added by dimkirt
+      geometry_msgs::Twist last_cmd_vel_;
+      int stuck_counter_;
       
   };
 };

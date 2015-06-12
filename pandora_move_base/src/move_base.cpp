@@ -54,7 +54,7 @@ namespace move_base {
     recovery_loader_("nav_core", "nav_core::RecoveryBehavior"),
     planner_plan_(NULL), latest_plan_(NULL), controller_plan_(NULL),
     runPlanner_(false), setup_(false), p_freq_change_(false), c_freq_change_(false), new_global_plan_(false),
-    oscillation_check_(true)
+    oscillation_check_(true), stuck_counter_(0)
     {
 
     as_ = new MoveBaseActionServer(ros::NodeHandle(), "move_base", boost::bind(&MoveBase::executeCb, this, _1), false);
@@ -466,6 +466,16 @@ namespace move_base {
           ROS_DEBUG_NAMED( "move_base", "Got a valid command from the local planner: %.3lf, %.3lf, %.3lf",
                            cmd_vel.linear.x, cmd_vel.linear.y, cmd_vel.angular.z );
           last_valid_control_ = ros::Time::now();
+          
+          if(areTwistsEqual(last_cmd_vel_, cmd_vel))
+          {
+            if(stuck_counter_)
+            stuck_counter_++
+          }
+
+          // YOOOOOOOOOOOOOOOOOOOOOOOO PEIRAMAAAAAAAAAAAAAAAAAAAAAA
+          last_cmd_vel_ = cmd_vel;
+          
           //make sure that we send the velocity command to the base
           vel_pub_.publish(cmd_vel);
           if(recovery_trigger_ == CONTROLLING_R)
@@ -744,6 +754,11 @@ namespace move_base {
 
   }
 
+  bool MoveBase::areTwistsEqual(geometry_msgs::Twist cmd_vel_last, geometry_msgs::Twist cmd_vel_new)
+  {
+    return cmd_vel_last.linear.x == cmd_vel_new.linear.x && cmd_vel_last.linear.y == cmd_vel_new.linear.y && cmd_vel_last.angular.z == cmd_vel_new.angular.z;
+  }
+
   double MoveBase::distance(const geometry_msgs::PoseStamped& p1, const geometry_msgs::PoseStamped& p2)
   {
     return sqrt((p1.pose.position.x - p2.pose.position.x) * (p1.pose.position.x - p2.pose.position.x)
@@ -1008,6 +1023,12 @@ namespace move_base {
       //the real work on pursuing a goal is done here
       bool done = executeCycle(goal, global_plan);
 
+      // AFTER RUNNING A CONTROL WE CATCH THE ROBOT POSITION
+      /*tf::Stamped<tf::Pose> robot_pose;
+      planner_costmap_ros_->getRobotPose(robot_pose);
+      geometry_msgs::PoseStamped oscil_position;
+      tf::poseStampedTFToMsg(robot_pose, oscil_position);
+      if distance()*/
       //if we're done, then we'll return from execute
       if(done)
         return;
