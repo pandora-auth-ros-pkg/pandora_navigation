@@ -20,5 +20,5 @@ global_costmap:
     #trinary_costmap: false
 
   inflation_layer:
-    inflation_radius: 0.5
+    inflation_radius: 0.6
     cost_scaling_factor: 7.0

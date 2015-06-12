@@ -29,5 +29,5 @@ local_costmap:
     publish_voxel_map: false
 
   inflation_layer:
-    inflation_radius: 0.45
+    inflation_radius: 0.3
 
