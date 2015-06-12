@@ -26,11 +26,11 @@ DWAPlannerROS:
   yaw_goal_tolerance: 0.4
   latch_xy_goal_tolerance: true
   #DWA cfg
-  vx_samples: 30
+  vx_samples: 25
   vy_samples: 1
   vth_samples: 20
 
-  #penalize_negative_x: true
+  penalize_negative_x: true
   path_distance_bias: 100.0
   #occdist_scale: 0.01 # def:0.01, how much the controller should attempt to avoid obstacles
   use_dwa: true
