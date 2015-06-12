@@ -469,8 +469,10 @@ namespace move_base {
           
           if(areTwistsEqual(last_cmd_vel_, cmd_vel))
           {
-            if(stuck_counter_)
-            stuck_counter_++
+            if(stuck_counter_ > 30){
+              as_->setAborted(move_base_msgs::MoveBaseResult(), "Robot Stuck.");
+            }
+            stuck_counter_++;
           }
 
           // YOOOOOOOOOOOOOOOOOOOOOOOO PEIRAMAAAAAAAAAAAAAAAAAAAAAA
