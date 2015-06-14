@@ -17,7 +17,11 @@ global_costmap:
     map_topic: /slam/map
     unknown_cost_value: 51
     lethal_cost_threshold: 61
-    #trinary_costmap: false
+    # true to enable the patches
+    subscribe_to_updates: true
+    # The topics for the soft and hard obstacle patches to the static map
+    soft_obstacles_topic: /data_fusion/soft_obstacles_patch
+    hard_obstacles_topic: /data_fusion/hard_obstacles_patch
 
   inflation_layer:
     inflation_radius: 0.6
