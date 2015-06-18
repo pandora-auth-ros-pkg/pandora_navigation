@@ -10,6 +10,9 @@ global_costmap:
       name: static_layer
       type: costmap_2d::StaticLayer
     -
+      name: hard_layer
+      type: costmap_2d::HardLayer
+    -
       name: inflation_layer
       type: costmap_2d::InflationLayer
 
@@ -20,8 +23,13 @@ global_costmap:
     # true to enable the patches
     subscribe_to_updates: true
     # The topics for the soft and hard obstacle patches to the static map
-    soft_obstacles_topic: /data_fusion/soft_obstacles_patch
-    hard_obstacles_topic: /data_fusion/hard_obstacles_patch
+    #soft_obstacles_topic: /data_fusion/soft_obstacles_patch
+    #hard_obstacles_topic: /data_fusion/hard_obstacles_patch
+
+  hard_layer:
+    map_topic: /data_fusion/soft_obstacles_patch
+    unknown_cost_value: 51
+    lethal_cost_threshold: 61
 
   inflation_layer:
     inflation_radius: 0.6
