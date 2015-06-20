@@ -21,7 +21,7 @@ global_costmap:
     unknown_cost_value: 51
     lethal_cost_threshold: 61
     # true to enable the patches
-    subscribe_to_updates: true
+    subscribe_to_updates: false
     # The topics for the soft and hard obstacle patches to the static map
     #soft_obstacles_topic: /data_fusion/soft_obstacles_patch
     #hard_obstacles_topic: /data_fusion/hard_obstacles_patch
