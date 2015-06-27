@@ -55,68 +55,73 @@ class MockMapPatcher():
   # Constructor
   def __init__(self):
 
-    self.mock_map = OccupancyGrid()
-    # Subscriber to SLAM to get the map info
-    self.sub_slam_ = rospy.Subscriber(params.slamMapTopic, OccupancyGrid, self.slamCb)
+    self.rate = float(params.localRate)
 
-    # Subscriber to Vision to get the bounding box of the patch
-    #self.sub_vision_ = rospy.Subscriber(params.visionTopic, OccupancyGrid, self.slamCb)
-    #self.sub_vision_ = rospy.Subscriber(params.visionTopic, self.visionCb)
+    self.mock_map = OccupancyGrid()
+    
     # Publisher to the HardLayer
-    self.pub_ = rospy.Publisher(params.hardLayerTopic, OccupancyGrid)
+    self.pub_ = rospy.Publisher(params.localPatchTopic, OccupancyGrid)
+
+    self.localPatchTalker()
     
 
   def metersToCels(self, meters, res):
     return round( (meters/res), 3)
 
 
-  def slamCb(self, slamMap):
-    """ Callback from the slam topic. It copies all the map info and then adds the patch
-    and publishes the new map to the HardLayer """
+  def localPatchTalker(self):
+    """ Posts the local patch to the obstacle cover layer """
     # Copy data from slam map
     
+    while not rospy.is_shutdown():
 
-    self.mock_map.header.frame_id = slamMap.header.frame_id
-    self.mock_map.info.resolution = slamMap.info.resolution
-    self.mock_map.info.origin.position.x = slamMap.info.origin.position.x
-    self.mock_map.info.origin.position.y = slamMap.info.origin.position.y
-    self.mock_map.info.origin.position.z = slamMap.info.origin.position.z
-    self.mock_map.info.width = slamMap.info.width
-    self.mock_map.info.height = slamMap.info.height
+      self.mock_map.header.frame_id = "/map"
+      self.mock_map.info.resolution = 0.02
+      self.mock_map.info.origin.position.x = 0.0
+      self.mock_map.info.origin.position.y = 0.0
+      self.mock_map.info.origin.position.z = 0.0
+      self.mock_map.info.width = 200
+      self.mock_map.info.height = 200
     
-    # Fill origin orientation
-    quat = quaternion_from_euler(0, 0, 0) # (roll, pitch, yaw), in rads
-    self.mock_map.info.origin.orientation.x = quat[0]
-    self.mock_map.info.origin.orientation.y = quat[1]
-    self.mock_map.info.origin.orientation.z = quat[2]
-    self.mock_map.info.origin.orientation.w = quat[3]
+      # Fill origin orientation
+      quat = quaternion_from_euler(0, 0, 0) # (roll, pitch, yaw), in rads
+      self.mock_map.info.origin.orientation.x = quat[0]
+      self.mock_map.info.origin.orientation.y = quat[1]
+      self.mock_map.info.origin.orientation.z = quat[2]
+      self.mock_map.info.origin.orientation.w = quat[3]
 
-    # initialize the map with NO_INFORMATION cells
-    temp_array = [51] * self.mock_map.info.width * self.mock_map.info.height
-    self.mock_map.data = temp_array
+      # initialize the map with NO_INFORMATION cells
+      temp_array = [51] * self.mock_map.info.width * self.mock_map.info.height
+      self.mock_map.data = temp_array
     
-    # Set the patch
-    minX_ = 7
-    maxX_ = 8
-    minY_ = 7
-    maxY_ = 8
-    cost = 90
+      # Set the patch
+      minX_ = 0
+      maxX_ = 1
+      minY_ = 0
+      maxY_ = 1
+      cost = 90
 
-    minX_ = self.metersToCels(minX_, self.mock_map.info.resolution)
-    maxX_ = self.metersToCels(maxX_, self.mock_map.info.resolution)
-    minY_ = self.metersToCels(minY_, self.mock_map.info.resolution)
-    maxY_ = self.metersToCels(maxY_, self.mock_map.info.resolution)
+      minX_ = self.metersToCels(minX_, self.mock_map.info.resolution)
+      maxX_ = self.metersToCels(maxX_, self.mock_map.info.resolution)
+      minY_ = self.metersToCels(minY_, self.mock_map.info.resolution)
+      maxY_ = self.metersToCels(maxY_, self.mock_map.info.resolution)
 
-    for i in range(0, self.mock_map.info.width):
-      if i >= minX_ and i <= maxX_:
-        for j in range(0, self.mock_map.info.height):
-          if j >= minY_ and j <= maxY_:
-            self.mock_map.data[i + self.mock_map.info.width * j] = cost
+      for i in range(0, self.mock_map.info.width):
+        if i >= minX_ and i <= maxX_:
+          for j in range(0, self.mock_map.info.height):
+            if j >= minY_ and j <= maxY_:
+              self.mock_map.data[i + self.mock_map.info.width * j] = cost
 
-    # Set the timestamp
-    self.mock_map.header.stamp = rospy.Time.now()
+      # Set the timestamp
+      self.mock_map.header.stamp = rospy.Time.now()
 
-    self.pub_.publish(self.mock_map)
+      self.pub_.publish(self.mock_map)
+
+      if self.rate:
+        rospy.sleep(1/self.rate)
+      else:
+        rospy.sleep(8.0)
+
 
 def main(args):
   ''' Initializes and cleanup ros node '''
