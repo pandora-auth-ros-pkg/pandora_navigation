@@ -45,12 +45,12 @@ import sys
 import rospy
 import numpy
 import math
-import mock_map_patcher_params as params
+import map_patch_params as params
 
 from numpy import *
 from math import *
 from nav_msgs.msg import OccupancyGrid
-from pandora_data_fusion_msgs import ObstacleInfo
+from pandora_data_fusion_msgs.msg import ObstacleInfo
 from tf.transformations import quaternion_from_euler
 
 class Obstacle():

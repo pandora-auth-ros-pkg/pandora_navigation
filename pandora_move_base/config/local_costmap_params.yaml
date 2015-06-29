@@ -32,7 +32,7 @@ local_costmap:
     publish_voxel_map: false
 
   obstacle_patch_layer:
-    map_topic: /data_fusion/obstacle_info
+    map_topic: /map_patch/obstacles
     unknown_cost_value: 51
     lethal_cost_threshold: 61
 

@@ -2,7 +2,7 @@
 slamMapTopic = '/slam/map'
 
 # The topic that sends the obstacle messages
-obstacleTopic = '/data_fusion/obstacle_info'
+obstacleTopic = '/mock/data_fusion/obstacle_info'
 
 # The topic where we post the new map with obstacle on it
 patchTopic = '/map_patch/obstacles'
