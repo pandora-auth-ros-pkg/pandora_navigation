@@ -12,7 +12,7 @@
 
   <build_depend>cmake_modules</build_depend>
   <depend>rospy</depend>
-  <depend>numpy</depend>
+  <depend>python-numpy</depend>
   <depend>pandora_data_fusion_msgs</depend>
   <depend>nav_msgs</depend>
 
