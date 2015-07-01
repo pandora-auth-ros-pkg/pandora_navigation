@@ -11,6 +11,10 @@
   <buildtool_depend>catkin</buildtool_depend>
 
   <build_depend>cmake_modules</build_depend>
+  <depend>rospy</depend>
+  <depend>numpy</depend>
+  <depend>pandora_data_fusion_msgs</depend>
+  <depend>nav_msgs</depend>
 
   <depend>roscpp</depend>
   <depend>sensor_msgs</depend>

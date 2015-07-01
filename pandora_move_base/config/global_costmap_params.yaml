@@ -10,6 +10,9 @@ global_costmap:
       name: static_layer
       type: costmap_2d::StaticLayer
     -
+      name: global_patch_layer
+      type: costmap_2d::GlobalPatchLayer
+    -
       name: inflation_layer
       type: costmap_2d::InflationLayer
 
@@ -17,7 +20,12 @@ global_costmap:
     map_topic: /slam/map
     unknown_cost_value: 51
     lethal_cost_threshold: 61
-    #trinary_costmap: false
+    subscribe_to_updates: false
+
+  global_patch_layer:
+    map_topic: /map_patch/obstacles
+    unknown_cost_value: 51
+    lethal_cost_threshold: 61
 
   inflation_layer:
     inflation_radius: 0.6
