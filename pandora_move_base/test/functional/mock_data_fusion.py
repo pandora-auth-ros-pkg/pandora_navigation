@@ -52,6 +52,38 @@ def talker():
   rate = rospy.Rate(1) # 1Hz
   while not rospy.is_shutdown():
       # Do message stuff
+      obs = ObstacleInfo()
+      obs.id = 1
+      obs.obstacleFrameId = "base_link" 
+      obs.timeFound = rospy.get_rostime()
+      obs.obstaclePose.pose.position.x = 9
+      obs.obstaclePose.pose.position.y = 9
+      obs.obstaclePose.pose.position.z = 0
+      obs.obstaclePose.pose.orientation.x = 0
+      obs.obstaclePose.pose.orientation.y = 0
+      obs.obstaclePose.pose.orientation.z = 0
+      obs.obstaclePose.pose.orientation.w = 1
+      obs.length = 1
+      obs.width = 1
+      obs.type = 1 
+      # publish message
+      pub.publish(obs)
+
+      obs = ObstacleInfo()
+      obs.id = 2
+      obs.obstacleFrameId = "base_link" 
+      obs.timeFound = rospy.get_rostime()
+      obs.obstaclePose.pose.position.x = 9
+      obs.obstaclePose.pose.position.y = 9
+      obs.obstaclePose.pose.position.z = 0
+      obs.obstaclePose.pose.orientation.x = 0
+      obs.obstaclePose.pose.orientation.y = 0
+      obs.obstaclePose.pose.orientation.z = 0
+      obs.obstaclePose.pose.orientation.w = 1
+      obs.length = 1
+      obs.width = 1
+      obs.type = 2 
+      # publish message
       pub.publish(obs)
       rate.sleep()
 

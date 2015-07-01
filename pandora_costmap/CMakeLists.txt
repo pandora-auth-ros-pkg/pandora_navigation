@@ -9,6 +9,8 @@ find_package(catkin REQUIRED COMPONENTS
   pcl_ros
 )
 
+catkin_python_setup()
+
 find_package(Eigen REQUIRED)
 
 include_directories(
@@ -22,6 +24,7 @@ catkin_package(
 #    include
   LIBRARIES
   CATKIN_DEPENDS
+    rospy
     roscpp
     sensor_msgs
     tf

@@ -52,6 +52,7 @@ from math import *
 from nav_msgs.msg import OccupancyGrid
 from pandora_data_fusion_msgs.msg import ObstacleInfo
 from tf.transformations import quaternion_from_euler
+from tf.transformations import euler_from_quaternion
 
 class Obstacle():
   """ A class that implements an obstacle. It holds all the necessary data that define an obstacle """
@@ -81,18 +82,18 @@ class Obstacle():
 
     # Create the quaternion to pass it
     quat = [
-      obstacleMsg.obstaclePose.orientation.x,
-      obstacleMsg.obstaclePose.orientation.y,
-      obstacleMsg.obstaclePose.orientation.z,
-      obstacleMsg.obstaclePose.orientation.w
+      obstacleMsg.obstaclePose.pose.orientation.x,
+      obstacleMsg.obstaclePose.pose.orientation.y,
+      obstacleMsg.obstaclePose.pose.orientation.z,
+      obstacleMsg.obstaclePose.pose.orientation.w
     ]
 
     (roll,pitch,yaw) = euler_from_quaternion(quat)
 
     self.th_ = yaw
 
-    self.x_ = obstacleMsg.obstaclePose.position.x
-    self.y_ = obstacleMsg.obstaclePose.position.y
+    self.x_ = obstacleMsg.obstaclePose.pose.position.x
+    self.y_ = obstacleMsg.obstaclePose.pose.position.y
 
     self.length_ = obstacleMsg.length
     self.width_ = obstacleMsg.width
@@ -134,16 +135,16 @@ class MockMapPatcher():
   def obstacleCB(self, obstacleMsg):
     """ Callback to the data_fusion obstacle topic. """
     # Check type of obstacle and quaternion
-    if obstacleMsg.type != (softObstacleType or hardObstacleType):
-      print "You send me either a barrel or an invalid type. Type: "+str(obstacleMsg.type)
+    if (obstacleMsg.type != params.softObstacleType) and (obstacleMsg.type != params.hardObstacleType):
+      rospy.logerr("You send me either a barrel or an invalid type. Type: %d", obstacleMsg.type)
       return
 
-    if not self.isQuaternionValid(obstacleMsg.obstaclePose.orientation):
-      print "An invalid quaternion was passed, containing NaNs or Infs"
+    if not self.isQuaternionValid(obstacleMsg.obstaclePose.pose.orientation):
+      rospy.logerr("An invalid quaternion was passed, containing NaNs or Infs")
       return
 
-    if self.quaternionNotInstantiated(obstacleMsg.obstaclePose.orientation):
-      print "An invalid quaternion was passed, containing all zeros"
+    if self.quaternionNotInstantiated(obstacleMsg.obstaclePose.pose.orientation):
+      rospy.logerr("An invalid quaternion was passed, containing all zeros")
       return
 
     # Create an obstacle from the message of the callback
@@ -154,9 +155,9 @@ class MockMapPatcher():
     # If we do, we delete it and then append the new version of this obstacle
     # If we can't find a duplicate obstacle we append it
     for i in xrange(0, len(self._obstacle_list) ):
-      if self._obstacle_list[i].id == obs.id:
-          print "Received new version of obstacle with id: "+str(self._obstacle_list[i].id)
-          print "Replacing it in the obstacle list"
+      if self._obstacle_list[i].id_ == obs.id_:
+          rospy.logwarn("Received new version of obstacle with id: %d", self._obstacle_list[i].id_)
+          rospy.loginfo("Replacing it in the obstacle list")
           del self._obstacle_list[i]
     self._obstacle_list.append(obs)
 
@@ -203,25 +204,25 @@ class MockMapPatcher():
       # 1.57 rad = 90 deg, 0.785 rad = 45 deg
       for obs in self._obstacle_list:
         minX_ = 0.0
-        maxX_ = obs.length
+        maxX_ = obs.length_
         minY_ = 0.0
-        maxY_ = obs.width
-        if obs.type == 1:
+        maxY_ = obs.width_
+        if obs.type_ == 1:
             cost = params.freeCost
-        elif obs.type == 2:
+        elif obs.type_ == 2:
             cost = params.lethalCost
-        elif obs.type == -1:
-            print "Obstacle message type -1, not initialized right"
+        elif obs.type_ == -1:
+            rospy.logerr("Obstacle message type -1, not initialized right")
         else:
-            print "Should never reach here"
+            rospy.logerr("Should never reach here")
 
 
         patch_width = maxX_ - minX_
         patch_height = maxY_ - minY_
 
         # The initial patch center
-        x0 = width/2.0
-        y0 = height/2.0
+        x0 = patch_width/2.0
+        y0 = patch_height/2.0
 
         # The new center is the position we get from the obstacle_msg
         # Position is in meters, th in radians, we rotate clockwise so the
@@ -261,7 +262,7 @@ def main(args):
   try:
     rospy.spin()
   except KeyboardInterrupt:
-    print "Shutting down mock_soft_patcher!"
+    rospy.logwarn("Shutting down mock_soft_patcher!")
 
 if __name__ == '__main__':
   main(sys.argv)

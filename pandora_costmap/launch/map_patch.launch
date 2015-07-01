@@ -1,0 +1,10 @@
+<launch>
+
+  <!--Brings up the map_patch.-->
+
+  <node name="map_patcher"
+        pkg="pandora_costmap"
+        type="map_patch.py"
+        output="screen" />
+
+</launch>
