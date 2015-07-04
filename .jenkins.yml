@@ -1,5 +1,5 @@
 # Continuous integration configuration file, used by Jenkins
-# Author: Chris Zalidis
+# Author: Chris Zalidis, Konstantinos Sideris
 install:
   - export ROS_DISTRO=hydro
   - export CI_SOURCE_PATH=$(pwd)
@@ -11,21 +11,26 @@ install:
   - sudo pip install pandoradep
   - sudo rosdep init
   - rosdep update
+
   # Create workspace
   - mkdir -p $BUILD_HOME/catkin_ws/src
+  - cp -r $BUILD_HOME/$REPOSITORY_NAME $BUILD_HOME/catkin_ws/src
   - cd $BUILD_HOME/catkin_ws/src
+
+  # Find and download PANDORA dependencies
+  - pandoradep fetch
+
   - wstool init .
-  # Find and download non-debian dependencies
-  - pandoradep scan $CI_SOURCE_PATH > deps.rosinstall
-  - wstool merge deps.rosinstall
   - wstool update
-  # Delete the .rosinstall version of this repo and use the one of the branch we are testing
-  - rm -rf $REPOSITORY_NAME
-  - ln -s $CI_SOURCE_PATH . # Link the repo we are testing to the new workspace
+
   - cd ..
+
   # Install debian dependencies
   - rosdep install --from-paths src --ignore-src --rosdistro $ROS_DISTRO -q -y
   - source /opt/ros/$ROS_DISTRO/setup.bash
-script: # All commands must exit with code 0 on success. Anything else is considered failure.
+script:
+  # All commands must exit with code 0 on success.
+  # Anything else is considered failure.
   - catkin_make --only-pkg-with-deps $REPOSITORY_NAME
   - source devel/setup.bash
+  - catkin_make roslint_pandora_costmap
