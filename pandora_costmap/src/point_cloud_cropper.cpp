@@ -41,8 +41,8 @@ namespace pandora_costmap {
 
   PointCloudCropper::PointCloudCropper() : nh_(), pnh_("~")
   {
-    std::string inTopic, outTopic; 
-    
+    std::string inTopic, outTopic;
+
     pnh_.param("min_frame_id", minFrame_, std::string("base_stabilized"));
     pnh_.param("max_frame_id", maxFrame_, std::string("kinect_link"));
 
@@ -76,7 +76,7 @@ namespace pandora_costmap {
       ROS_ERROR("[cloud_cropper] %s", ex.what());
       return;
     }
-    
+
     // cloud holders
     PointCloud::Ptr pointCloudMin(new PointCloud);
     PointCloud::Ptr pointCloudOut(new PointCloud);
@@ -96,7 +96,7 @@ namespace pandora_costmap {
       ROS_ERROR("[cloud_cropper] %s", ex.what());
       return;
     }
-    
+
     // remove NaN
     std::vector<int> index;
     pcl::removeNaNFromPointCloud(*pointCloudMin, *pointCloudMin, index);
@@ -115,7 +115,7 @@ namespace pandora_costmap {
     float leafSize = 0.01;
     sor.setLeafSize (leafSize, leafSize, leafSize);
     sor.filter (*pointCloudFiltered);
-    
+
     // apply outlier removal (takes a lot of time)
     pcl::RadiusOutlierRemoval<pcl::PointXYZ> outlier (true);
     outlier.setInputCloud(pointCloudFiltered);
@@ -124,7 +124,7 @@ namespace pandora_costmap {
     outlier.setMinNeighborsInRadius(5);
     outlier.filter(*pointCloudFinal);
 
-    // publish final cloud 
+    // publish final cloud
     pointCloudFinal->header.stamp = cloudMsg->header.stamp;
     pointCloudFinal->header.frame_id = minFrame_;
 
@@ -141,6 +141,6 @@ int main(int argc, char* argv[])
   pandora_costmap::PointCloudCropper cropper;
 
   ros::spin();
-  
+
   return 0;
 }

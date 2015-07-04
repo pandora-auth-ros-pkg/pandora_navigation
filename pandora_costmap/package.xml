@@ -1,10 +1,10 @@
 <?xml version="1.0"?>
 <package format="2">
   <name>pandora_costmap</name>
-  <version>0.0.0</version>
+  <version>0.1.0</version>
   <description>Custom costmap layers, for autonomous navigation</description>
 
-  <maintainer email="zalidis@gmail.com">Chris Zalidis</maintainer>
+  <maintainer email="dimkirts@gmail.com">Dimitrios Kirtsios</maintainer>
 
   <license>BSD</license>
 
@@ -20,6 +20,9 @@
   <depend>sensor_msgs</depend>
   <depend>tf</depend>
   <depend>pcl_ros</depend>
+
+  <test_depend>rostest</test_depend>
+  <test_depend>rosunit</test_depend>
 
   <export>
   </export>

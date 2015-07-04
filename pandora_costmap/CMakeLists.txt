@@ -43,3 +43,8 @@ add_executable(
 target_link_libraries(
   range_to_point_cloud_converter
   ${catkin_LIBRARIES})
+
+if (CATKIN_ENABLE_TESTING)
+  catkin_add_nosetests(test/unit/map_utils_test.py)
+  catkin_add_nosetests(test/unit/obstacle_test.py)
+endif()
