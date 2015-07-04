@@ -33,3 +33,4 @@ script:
   # Anything else is considered failure.
   - catkin_make --only-pkg-with-deps $REPOSITORY_NAME
   - source devel/setup.bash
+  - catkin_make roslint_pandora_costmap
