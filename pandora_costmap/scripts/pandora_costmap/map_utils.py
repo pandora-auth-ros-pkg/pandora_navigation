@@ -137,7 +137,8 @@ def mapResizer(oldMap, newMap):
 
 
 def mapMatchingChecker(currentMap, incomingMap):
-    """ A function that checks if two maps have the same MapMetaData.
+    """
+    @brief A function that checks if two maps have the same MapMetaData.
     Returns True if everything is OK.
     """
     # Check frame_id of incoming OGM
