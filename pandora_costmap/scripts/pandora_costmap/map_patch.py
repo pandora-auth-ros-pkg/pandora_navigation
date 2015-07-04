@@ -74,7 +74,7 @@ class MapPatcher():
     """
 
     def __init__(self):
-        """ Constructor
+        """ Constructor of the MapPatcher class.
         """
         # An occupancy grid to hold the hard obstacles
         self.hard_patch = OccupancyGrid()
@@ -97,8 +97,14 @@ class MapPatcher():
         self._obstacle_list = []
 
     def slamCB(self, slamMap):
-        """ Callback from the slam topic. It copies all the map info and then adds the patch
-        and publishes the new map to the HardLayer
+        """
+        @brief Callback of the slam topic.
+
+        Uses the MapMetaDeta of the SLAM map to initialize the map_patch. Then
+        if the hard_patch map is not empty we update the map_patch with the
+        hard_patch. Finally, we look at the obstacle list which holds all the
+        obstacles coming from data_fusion and we place them upon the map_patch
+        doing the necessary transformations.
         """
 
         # Init soft_obstacle map, using slam MapMetaDeta and set every cell to NO_INFO
@@ -185,7 +191,9 @@ class MapPatcher():
             self.pub_.publish(self.map_patch)
 
     def obstacleOGMCB(self, ogmMsg):
-        """ This is the callback to the OGM incoming from the hard_obstacle
+        """
+        @brief Callback of the hard_obstacle OGM topic
+        This is the callback to the OGM incoming from the hard_obstacle
         detection node. The incoming OGM must adhere to the SLAM map.
         """
         # If the hard layer map is empty create a NO_INFORMATION map with the
@@ -207,21 +215,20 @@ class MapPatcher():
         """ Callback to the data_fusion obstacle topic.
         """
         # Check type of obstacle and quaternion
-        if (obstacleMsg.type != params.softObstacleType) and (
-            obstacleMsg.type != params.hardObstacleType):
+        if (obstacleMsg.type != params.softObstacleType) and
+        (obstacleMsg.type != params.hardObstacleType):
             rospy.logerr(
                 "You send me either a barrel or an invalid type. Type: %d",
                 obstacleMsg.type)
             return
 
-        if not utils.isQuaternionValid(
-            obstacleMsg.obstaclePose.pose.orientation):
+        quat = obstacleMsg.obstaclePose.pose.orientation
+        if not utils.isQuaternionValid(quat):
             rospy.logerr(
                 "An invalid quaternion was passed, containing NaNs or Infs")
             return
 
-        if utils.quaternionNotInstantiated(
-            obstacleMsg.obstaclePose.pose.orientation):
+        if utils.quaternionNotInstantiated(quat):
             rospy.logerr(
                 "An invalid quaternion was passed, containing all zeros")
             return

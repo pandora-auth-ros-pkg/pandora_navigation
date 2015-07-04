@@ -47,10 +47,21 @@ import roslib
 roslib.load_manifest('pandora_costmap')
 
 from pandora_costmap import obstacle
+from pandora_data_fusion_msgs.msg import ObstacleInfo
 
 
 class TestObstacle(unittest.TestCase):
+    def setUp(self):
+        self.obs = Obstacle()
 
-    @unittest.skip("Not yet implemented")
-	def test_createObstacle(self):
-    	pass
+    def tearDown(self):
+        self.obs.dispose()
+        self.obs = None
+
+    def test_createObstacle(self):
+        #obsMsg = ObstacleInfo()
+        self.obs.createObstacle(obsMsg)
+
+        self.assertEqual(self.obs.width, 0)
+        self.assertEqual(self.obs.height, 0)
+        self.assertEqual(self.obs.id, -1)

@@ -7,6 +7,7 @@ find_package(catkin REQUIRED COMPONENTS
   sensor_msgs
   tf
   pcl_ros
+  roslint
 )
 
 catkin_python_setup()
@@ -43,6 +44,13 @@ add_executable(
 target_link_libraries(
   range_to_point_cloud_converter
   ${catkin_LIBRARIES})
+
+FILE(GLOB_RECURSE ${PROJECT_NAME}_LINT_PYTHON
+       ${PROJECT_SOURCE_DIR}
+       scripts/**/*.py
+       test/**/*.py
+    )
+roslint_python(${${PROJECT_NAME}_LINT_PYTHON})
 
 if (CATKIN_ENABLE_TESTING)
   catkin_add_nosetests(test/unit/map_utils_test.py)

@@ -179,12 +179,12 @@ def mapMatchingChecker(currentMap, incomingMap):
         return False
 
     # Check the origin of the OGM
-    if (incomingMap.info.origin.position.x != currentMap.info.origin.position.x) or \
-    (incomingMap.info.origin.position.y != currentMap.info.origin.position.y) or \
-    (incomingMap.info.origin.position.z != currentMap.info.origin.position.z) or \
-    (incomingMap.info.origin.orientation.x != currentMap.info.origin.orientation.x) or \
-    (incomingMap.info.origin.orientation.y != currentMap.info.origin.orientation.y) or \
-    (incomingMap.info.origin.orientation.z != currentMap.info.origin.orientation.z) or \
+    if (incomingMap.info.origin.position.x != currentMap.info.origin.position.x) or
+    (incomingMap.info.origin.position.y != currentMap.info.origin.position.y) or
+    (incomingMap.info.origin.position.z != currentMap.info.origin.position.z) or
+    (incomingMap.info.origin.orientation.x != currentMap.info.origin.orientation.x) or
+    (incomingMap.info.origin.orientation.y != currentMap.info.origin.orientation.y) or
+    (incomingMap.info.origin.orientation.z != currentMap.info.origin.orientation.z) or
     (incomingMap.info.origin.orientation.w != currentMap.info.origin.orientation.w):
         rospy.logerr("The origins are different!")
         return False
@@ -204,7 +204,7 @@ def updateWithOverwrite(mapToUpdate, incomingMap):
     of the incoming OGM. The NO_INFO values of the incomingMap DO NOT OVERWRITE
     the values of the old map.
     """
-    if mapToUpdate.info.width == 0 or mapToUpdate.info.height == 0 or \
+    if mapToUpdate.info.width == 0 or mapToUpdate.info.height == 0 or
     incomingMap.info.width == 0 or incomingMap.info.height == 0:
         rospy.logerr("[MapUtils] One of the maps has not been initialized")
         return False
@@ -250,7 +250,7 @@ def updateWithTrueOverwrite(mapToUpdate, incomingMap):
     of the incoming OGM. The NO_INFO values of the incomingMap DO OVERWRITE
     the values of the old map.
     """
-    if mapToUpdate.info.width == 0 or mapToUpdate.info.height == 0 or \
+    if mapToUpdate.info.width == 0 or mapToUpdate.info.height == 0 or
     incomingMap.info.width == 0 or incomingMap.info.height == 0:
         rospy.logerr("[MapUtils] One of the maps has not been initialized")
         return False
@@ -306,7 +306,7 @@ def isQuaternionValid(quaternion):
 
     A quaternion with all values zero is considered valid in this function
     """
-    if not isfinite(quaternion.x) or not isfinite(quaternion.y) or \
+    if not isfinite(quaternion.x) or not isfinite(quaternion.y) or
     not isfinite(quaternion.z) or not isfinite(quaternion.w):
         return False
     return True
@@ -318,7 +318,7 @@ def quaternionNotInstantiated(quaternion):
     @param quaternion The quaternion to check
     @return True If the quaternion is (x,y,z,w) = (0,0,0,0), else False
     """
-    if quaternion.x == 0.0 and quaternion.y == 0.0 and quaternion.z == 0.0 and \
+    if quaternion.x == 0.0 and quaternion.y == 0.0 and quaternion.z == 0.0 and
     quaternion.w == 0.0:
         return True
     return False

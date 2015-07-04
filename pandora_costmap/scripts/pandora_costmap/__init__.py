@@ -42,3 +42,4 @@ from map_utils import initMap, isQuaternionValid, quaternionNotInstantiated
 from map_utils import mapMatchingChecker, mapResizer
 from map_utils import updateWithOverwrite, updateWithTrueOverwrite
 from map_patch_params import unknownCost
+from obstacle import Obstacle

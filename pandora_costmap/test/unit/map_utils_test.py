@@ -46,9 +46,10 @@ import roslib
 
 roslib.load_manifest('pandora_costmap')
 
-from pandora_costmap import initMap, metersToCells, unknownCost, \
-isQuaternionValid, quaternionNotInstantiated, updateWithOverwrite, \
-updateWithTrueOverwrite, mapResizer, mapMatchingChecker
+from pandora_costmap import initMap, metersToCells, unknownCost
+from pandora_costmap import isQuaternionValid, quaternionNotInstantiated
+from pandora_costmap import updateWithTrueOverwrite, mapResizer
+from pandora_costmap import updateWithOverwrite, mapMatchingChecker
 
 from numpy import isfinite
 from nav_msgs.msg import OccupancyGrid

@@ -20,6 +20,7 @@
   <depend>sensor_msgs</depend>
   <depend>tf</depend>
   <depend>pcl_ros</depend>
+  <depend>roslint</depend>
 
   <test_depend>rostest</test_depend>
   <test_depend>rosunit</test_depend>
