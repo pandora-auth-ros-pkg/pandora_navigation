@@ -215,8 +215,8 @@ class MapPatcher():
         """ Callback to the data_fusion obstacle topic.
         """
         # Check type of obstacle and quaternion
-        if (obstacleMsg.type != params.softObstacleType) and
-        (obstacleMsg.type != params.hardObstacleType):
+        if ((obstacleMsg.type != params.softObstacleType) and  # noqa
+            (obstacleMsg.type != params.hardObstacleType)):  # noqa
             rospy.logerr(
                 "You send me either a barrel or an invalid type. Type: %d",
                 obstacleMsg.type)

@@ -179,14 +179,16 @@ def mapMatchingChecker(currentMap, incomingMap):
         rospy.logerr("An invalid quaternion was passed, containing all zeros")
         return False
 
+    new_orgin = incomingMap.info.origin
+    old_origin = currentMap.info.origin
     # Check the origin of the OGM
-    if (incomingMap.info.origin.position.x != currentMap.info.origin.position.x) or
-    (incomingMap.info.origin.position.y != currentMap.info.origin.position.y) or
-    (incomingMap.info.origin.position.z != currentMap.info.origin.position.z) or
-    (incomingMap.info.origin.orientation.x != currentMap.info.origin.orientation.x) or
-    (incomingMap.info.origin.orientation.y != currentMap.info.origin.orientation.y) or
-    (incomingMap.info.origin.orientation.z != currentMap.info.origin.orientation.z) or
-    (incomingMap.info.origin.orientation.w != currentMap.info.origin.orientation.w):
+    if ((new_origin.position.x != old_origin.position.x) or
+        (new_origin.position.y != old_origin.position.y) or
+        (new_origin.position.z != old_origin.position.z) or
+        (new_origin.orientation.x != old_origin.orientation.x) or
+        (new_origin.orientation.y != old_origin.orientation.y) or
+        (new_origin.orientation.z != old_origin.orientation.z) or
+        (new_origin.orientation.w != old_origin.orientation.w)):  # noqa
         rospy.logerr("The origins are different!")
         return False
     # Maybe check something about the time?
@@ -205,8 +207,8 @@ def updateWithOverwrite(mapToUpdate, incomingMap):
     of the incoming OGM. The NO_INFO values of the incomingMap DO NOT OVERWRITE
     the values of the old map.
     """
-    if mapToUpdate.info.width == 0 or mapToUpdate.info.height == 0 or
-    incomingMap.info.width == 0 or incomingMap.info.height == 0:
+    if (mapToUpdate.info.width == 0 or mapToUpdate.info.height == 0 or
+        incomingMap.info.width == 0 or incomingMap.info.height == 0):  # noqa
         rospy.logerr("[MapUtils] One of the maps has not been initialized")
         return False
 
@@ -251,8 +253,8 @@ def updateWithTrueOverwrite(mapToUpdate, incomingMap):
     of the incoming OGM. The NO_INFO values of the incomingMap DO OVERWRITE
     the values of the old map.
     """
-    if mapToUpdate.info.width == 0 or mapToUpdate.info.height == 0 or
-    incomingMap.info.width == 0 or incomingMap.info.height == 0:
+    if (mapToUpdate.info.width == 0 or mapToUpdate.info.height == 0 or
+        incomingMap.info.width == 0 or incomingMap.info.height == 0):  # noqa
         rospy.logerr("[MapUtils] One of the maps has not been initialized")
         return False
 
@@ -307,8 +309,8 @@ def isQuaternionValid(quaternion):
 
     A quaternion with all values zero is considered valid in this function
     """
-    if not isfinite(quaternion.x) or not isfinite(quaternion.y) or
-    not isfinite(quaternion.z) or not isfinite(quaternion.w):
+    if (not isfinite(quaternion.x) or not isfinite(quaternion.y) or
+        not isfinite(quaternion.z) or not isfinite(quaternion.w)):  # noqa
         return False
     return True
 
@@ -319,7 +321,7 @@ def quaternionNotInstantiated(quaternion):
     @param quaternion The quaternion to check
     @return True If the quaternion is (x,y,z,w) = (0,0,0,0), else False
     """
-    if quaternion.x == 0.0 and quaternion.y == 0.0 and quaternion.z == 0.0 and
-    quaternion.w == 0.0:
+    if (quaternion.x == 0.0 and quaternion.y == 0.0 and quaternion.z == 0.0 and
+        quaternion.w == 0.0):  # noqa
         return True
     return False

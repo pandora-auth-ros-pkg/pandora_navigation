@@ -38,7 +38,7 @@ __maintainer__ = "Dimitrios Kirtsios"
 __email__ = "dimkirts@gmail.com"
 
 PKG = 'pandora_costmap'
-NAME = 'map_utils_test'
+NAME = 'obstacle_test'
 
 import sys
 import unittest
@@ -46,8 +46,9 @@ import roslib
 
 roslib.load_manifest('pandora_costmap')
 
-from pandora_costmap import obstacle
+from pandora_costmap import Obstacle
 from pandora_data_fusion_msgs.msg import ObstacleInfo
+from tf.transformations import euler_from_quaternion
 
 
 class TestObstacle(unittest.TestCase):
@@ -55,13 +56,13 @@ class TestObstacle(unittest.TestCase):
         self.obs = Obstacle()
 
     def tearDown(self):
-        self.obs.dispose()
         self.obs = None
 
     def test_createObstacle(self):
-        #obsMsg = ObstacleInfo()
+        obs = Obstacle()
+        obsMsg = ObstacleInfo()
         self.obs.createObstacle(obsMsg)
 
-        self.assertEqual(self.obs.width, 0)
-        self.assertEqual(self.obs.height, 0)
-        self.assertEqual(self.obs.id, -1)
+        self.assertEqual(self.obs.length_, 0)
+        self.assertEqual(self.obs.width_, 0)
+        self.assertEqual(self.obs.id_, 0)
