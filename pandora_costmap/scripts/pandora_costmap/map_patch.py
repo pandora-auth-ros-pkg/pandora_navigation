@@ -135,9 +135,9 @@ class MapPatcher():
             # 1.57 rad = 90 deg, 0.785 rad = 45 deg
             for obs in self._obstacle_list:
                 # Check if the obstacle is in the right map frame
-                if obs.map_frame_id_ != slamMap.header.frame_id:
+                if obs.map_frame_id_ != "/" + str(slamMap.header.frame_id):
                     rospy.logerr(
-                        "Expected map frame[%s], obstacle map frame[%s]",
+                        "[MapPatcher]Expected map frame[%s], obstacle map frame[%s]",
                         slamMap.header.frame_id, obs.map_frame_id_)
                     return
 
@@ -151,7 +151,7 @@ class MapPatcher():
                     cost = params.lethalCost
                 elif obs.type_ == -1:
                     rospy.logerr(
-                        "Obstacle message type -1, not initialized right")
+                        "[MapPatcher]Obstacle message type -1, not initialized right")
                 else:
                     rospy.logerr("Should never reach here")
 
@@ -212,7 +212,7 @@ class MapPatcher():
         # Check if incoming OGM is the same as the one we hold
         # What should be done in resizing?
         if not utils.mapMatchingChecker(self.hard_patch, ogmMsg):
-            rospy.logerr("Incoming OGM is not valid")
+            rospy.logerr("[MapPatcher]Incoming OGM is not valid")
             return
 
         # Update the hard_patch the class is holding with the incoming OGM using
@@ -226,19 +226,19 @@ class MapPatcher():
         if ((obstacleMsg.type != params.softObstacleType) and  # noqa
             (obstacleMsg.type != params.hardObstacleType)):  # noqa
             rospy.logerr(
-                "You send me either a barrel or an invalid type. Type: %d",
+                "[MapPatcher]You send me either a barrel or an invalid type. Type: %d",
                 obstacleMsg.type)
             return
 
         quat = obstacleMsg.obstaclePose.pose.orientation
         if not utils.isQuaternionValid(quat):
             rospy.logerr(
-                "An invalid quaternion was passed, containing NaNs or Infs")
+                "[MapPatcher]An invalid quaternion was passed, containing NaNs or Infs")
             return
 
         if utils.quaternionNotInstantiated(quat):
             rospy.logerr(
-                "An invalid quaternion was passed, containing all zeros")
+                "[MapPatcher]An invalid quaternion was passed, containing all zeros")
             return
 
         # Create an obstacle from the message of the callback
@@ -250,9 +250,10 @@ class MapPatcher():
         # If we can't find a duplicate obstacle we append it
         for i in xrange(0, len(self._obstacle_list)):
             if self._obstacle_list[i].id_ == obs.id_:
-                rospy.logwarn("Received new version of obstacle with id: %d",
-                              self._obstacle_list[i].id_)
-                rospy.loginfo("Replacing it in the obstacle list")
+                rospy.logwarn(
+                    "[MapPatcher]Received new version of obstacle with id: %d",
+                    self._obstacle_list[i].id_)
+                rospy.loginfo("[MapPatcher]Replacing it in the obstacle list")
                 del self._obstacle_list[i]
         self._obstacle_list.append(obs)
 
