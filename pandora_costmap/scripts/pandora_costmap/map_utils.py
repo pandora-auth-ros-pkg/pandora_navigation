@@ -54,16 +54,23 @@ from tf.transformations import euler_from_quaternion
 
 def initMap(mapToSet, incomigMap):
     """
-    @brief Set the mapToSet MapMetaData to be the same as the incoming map and
-    initializes the mapToSet with NO_INFORMATION values.
+    @brief A function that initializes a map with NO_INFORMATION cells
+    @param mapToSet The map to be initialized
+    @param incomingMap The map which MapMetaData we use to initialize the
+    MapToSet
+
+    The mapToSet MapMetaData is set to be the same as the incoming map and
+    it is initialized with NO_INFORMATION values.
     """
 
     mapToSet.header.frame_id = incomigMap.header.frame_id
     mapToSet.info = incomigMap.info
+
     # initialize the map with NO_INFORMATION cells
     temp_array = [params.unknownCost
                   ] * mapToSet.info.width * mapToSet.info.height
     mapToSet.data = temp_array
+    mapToSet.info.origin.orientation.w = 1.0
 
 
 def mapResizer(oldMap, newMap):
@@ -80,6 +87,10 @@ def mapResizer(oldMap, newMap):
 
     if (old_size == 0) or (new_size == 0):
         rospy.logerr("[Map Resizer] One of the two arrays is empty")
+        return False
+
+    if (oldMap.info.resolution == 0.0) or (newMap.info.resolution == 0.0):
+        rospy.logerr("[Map Resizer] One of the two arrays has zero res")
         return False
 
     # Find x,y,yaw differences
@@ -114,18 +125,20 @@ def mapResizer(oldMap, newMap):
             # new x,y in meters
             xn = math.cos(yaw_diff) * x - math.sin(yaw_diff) * y - x_diff
             yn = math.sin(yaw_diff) * x + math.cos(yaw_diff) * y - y_diff
-
+            print "x_diff: [" + str(x_diff) + "]"
+            print "y_diff: [" + str(y_diff) + "]"
             # new x,y in cells
             xn_cell = int(round((xn / res), 0))
             yn_cell = int(round((yn / res), 0))
 
-            coords = xn_cell + yn_cell * newMap.info.width
+            coords = xn_cell + yn_cell * i - 1
             if (coords < 0) or (coords > new_size):
                 rospy.logerr("[Map Resizer] Error in resizing xn_cell: [%d] \
                 yn_cell: [%d] coords: [%d] new_size[%d]", xn_cell, yn_cell,
                              coords, new_size)
             else:
                 temp = temp_old_map[i + j * oldMap.info.width]
+                print "coords: " + str(coords)
                 oldMap.data[coords] = temp
                 # Dilation ??
 
@@ -179,7 +192,7 @@ def mapMatchingChecker(currentMap, incomingMap):
         rospy.logerr("An invalid quaternion was passed, containing all zeros")
         return False
 
-    new_orgin = incomingMap.info.origin
+    new_origin = incomingMap.info.origin
     old_origin = currentMap.info.origin
     # Check the origin of the OGM
     if ((new_origin.position.x != old_origin.position.x) or

@@ -52,8 +52,11 @@ class Obstacle():
     """
 
     def __init__(self):
+        # We store only the data we use from the message
         self.id_ = -1
-        self.frame_id_ = ""
+        # This is the frame id of the pose that defines the obstacle patch
+        # Not the frame of the obstacle itself.
+        self.map_frame_id_ = ""  # It must be /map
         self.time_found_ = rospy.Time()
 
         # in radians
@@ -75,7 +78,7 @@ class Obstacle():
         generally received from data_fusion.
         """
         self.id_ = obstacleMsg.id
-        self.frame_id = obstacleMsg.obstacleFrameId
+        self.map_frame_id_ = obstacleMsg.obstaclePose.header.frame_id
         self.time_found_ = obstacleMsg.timeFound
 
         # Create the quaternion to pass it

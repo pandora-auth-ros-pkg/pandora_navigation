@@ -37,58 +37,60 @@ __author__ = "Dimitrios Kirtsios"
 __maintainer__ = "Dimitrios Kirtsios"
 __email__ = "dimkirts@gmail.com"
 
-PKG = 'pandora_move_base'
+PKG = 'pandora_costmap'
 
 import roslib
 roslib.load_manifest(PKG)
 import sys
 import rospy
 from pandora_data_fusion_msgs.msg import ObstacleInfo
-import mock_data_fusion_params as params
+import mock_params as params
+
 
 def talker():
-  pub = rospy.Publisher(params.obstacleTopic, ObstacleInfo, queue_size = 1)
-  rospy.init_node('mock_data_fusion', anonymous=True)
-  rate = rospy.Rate(1) # 1Hz
-  while not rospy.is_shutdown():
-      # Do message stuff
-      obs = ObstacleInfo()
-      obs.id = 1
-      obs.obstacleFrameId = "base_link" 
-      obs.timeFound = rospy.get_rostime()
-      obs.obstaclePose.pose.position.x = 9
-      obs.obstaclePose.pose.position.y = 9
-      obs.obstaclePose.pose.position.z = 0
-      obs.obstaclePose.pose.orientation.x = 0
-      obs.obstaclePose.pose.orientation.y = 0
-      obs.obstaclePose.pose.orientation.z = 0
-      obs.obstaclePose.pose.orientation.w = 1
-      obs.length = 1
-      obs.width = 1
-      obs.type = 1 
-      # publish message
-      pub.publish(obs)
+    pub = rospy.Publisher(params.obstacleTopic, ObstacleInfo, queue_size=1)
+    rospy.init_node('mock_data_fusion', anonymous=True)
+    rate = rospy.Rate(1)  # 1Hz
+    while not rospy.is_shutdown():
+        # Do message stuff
+        obs = ObstacleInfo()
+        obs.id = 1
+        obs.obstaclePose.header.frame_id = "map"
+        obs.timeFound = rospy.get_rostime()
+        obs.obstaclePose.pose.position.x = 9
+        obs.obstaclePose.pose.position.y = 9
+        obs.obstaclePose.pose.position.z = 0
+        obs.obstaclePose.pose.orientation.x = 0
+        obs.obstaclePose.pose.orientation.y = 0
+        obs.obstaclePose.pose.orientation.z = 0
+        obs.obstaclePose.pose.orientation.w = 1
+        obs.length = 1
+        obs.width = 1
+        obs.type = 1
+        # publish message
+        pub.publish(obs)
 
-      obs = ObstacleInfo()
-      obs.id = 2
-      obs.obstacleFrameId = "base_link" 
-      obs.timeFound = rospy.get_rostime()
-      obs.obstaclePose.pose.position.x = 9
-      obs.obstaclePose.pose.position.y = 9
-      obs.obstaclePose.pose.position.z = 0
-      obs.obstaclePose.pose.orientation.x = 0
-      obs.obstaclePose.pose.orientation.y = 0
-      obs.obstaclePose.pose.orientation.z = 0
-      obs.obstaclePose.pose.orientation.w = 1
-      obs.length = 1
-      obs.width = 1
-      obs.type = 2 
-      # publish message
-      pub.publish(obs)
-      rate.sleep()
+        obs = ObstacleInfo()
+        obs.id = 2
+        obs.obstaclePose.header.frame_id = "map"
+        obs.timeFound = rospy.get_rostime()
+        obs.obstaclePose.pose.position.x = 9
+        obs.obstaclePose.pose.position.y = 9
+        obs.obstaclePose.pose.position.z = 0
+        obs.obstaclePose.pose.orientation.x = 0
+        obs.obstaclePose.pose.orientation.y = 0
+        obs.obstaclePose.pose.orientation.z = 0
+        obs.obstaclePose.pose.orientation.w = 1
+        obs.length = 1
+        obs.width = 1
+        obs.type = 2
+        # publish message
+        pub.publish(obs)
+        rate.sleep()
+
 
 if __name__ == '__main__':
-  try:
-    talker()
-  except rospy.ROSInterruptException:
-    pass
+    try:
+        talker()
+    except rospy.ROSInterruptException:
+        pass

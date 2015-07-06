@@ -307,6 +307,53 @@ class TestMapUtils(unittest.TestCase):
     def test_mapMatchingChecker(self):
         pass
 
-    @unittest.skip("Not yet implemented")
+    def mapPrint(self, mapToPrint):
+        # We print the map in row major order
+        width = mapToPrint.info.width
+        height = mapToPrint.info.height
+        sys.stdout.write("\n")
+        for i in xrange(height):
+            for j in xrange(width):
+                it = j + i * width
+                sys.stdout.write(str(mapToPrint.data[it]) + "|")
+            sys.stdout.write("\n")
+        sys.stdout.write("\n")
+
     def test_mapResizer(self):
-        pass
+        old = OccupancyGrid()
+        new = OccupancyGrid()
+        # Both maps are empty
+        self.assertFalse(mapResizer(old, new))
+        old.data = [1, 2, 3, 4]
+
+        # Only new map is empty
+        self.assertFalse(mapResizer(old, new))
+
+        # Only old map is empty
+        old.data = []
+        new.data = [1, 2, 3, 4]
+        self.assertFalse(mapResizer(old, new))
+
+        # One of the two maps has zero resolution
+        old.data = [11, 12, 13, 21, 22, 23]
+        old.info.width = 3
+        old.info.height = 2
+        old.info.resolution = 0.02
+        new.info.width = 5
+        new.info.height = 5
+        new.data = [0] * new.info.width * new.info.height
+        self.assertFalse(mapResizer(old, new))
+
+        # Normal case with no origin difference, just resizing
+        old.data = [11, 12, 13, 21, 22, 23]
+        old.info.width = 3
+        old.info.height = 2
+        old.info.resolution = 0.02
+
+        new.info.width = 5
+        new.info.height = 5
+        new.data = [0] * new.info.width * new.info.height
+        new.info.resolution = 0.02
+        self.mapPrint(old)
+        self.assertTrue(mapResizer(old, new))
+        self.mapPrint(old)

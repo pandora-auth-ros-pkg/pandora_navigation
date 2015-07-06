@@ -116,7 +116,8 @@ class MapPatcher():
             pass
         # Else
         else:
-            pass
+            #utils.mapResizer(self.map_patch, self.hard_patch)
+            utils.updateWithOverwrite(self.map_patch, self.hard_patch)
 
         # If obstacle list is empty then we just fill the map layer with no information
         # and then we post it.
@@ -133,6 +134,13 @@ class MapPatcher():
             # Set the patch, in meters to the bottom left corner, yaw in radians
             # 1.57 rad = 90 deg, 0.785 rad = 45 deg
             for obs in self._obstacle_list:
+                # Check if the obstacle is in the right map frame
+                if obs.map_frame_id_ != slamMap.header.frame_id:
+                    rospy.logerr(
+                        "Expected map frame[%s], obstacle map frame[%s]",
+                        slamMap.header.frame_id, obs.map_frame_id_)
+                    return
+
                 minX_ = 0.0
                 maxX_ = obs.length_
                 minY_ = 0.0
