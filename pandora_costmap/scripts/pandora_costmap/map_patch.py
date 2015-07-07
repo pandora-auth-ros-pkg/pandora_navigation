@@ -258,7 +258,7 @@ class MapPatcher():
                 rospy.loginfo("[MapPatcher]Replacing it in the obstacle list")
                 self._obstacle_list[i] = obs
                 duplicate = True
-        if duplicate == False:
+        if not duplicate:
             self._obstacle_list.append(obs)
 
 
