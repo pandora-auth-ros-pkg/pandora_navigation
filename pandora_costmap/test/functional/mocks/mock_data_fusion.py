@@ -50,40 +50,40 @@ import mock_params as params
 def talker():
     pub = rospy.Publisher(params.obstacleTopic, ObstacleInfo, queue_size=1)
     rospy.init_node('mock_data_fusion', anonymous=True)
-    rate = rospy.Rate(1)  # 1Hz
+    rate = rospy.Rate(3)  # 1Hz
     while not rospy.is_shutdown():
         # Do message stuff
         obs = ObstacleInfo()
         obs.id = 1
         obs.obstaclePose.header.frame_id = "map"
         obs.timeFound = rospy.get_rostime()
-        obs.obstaclePose.pose.position.x = 9
-        obs.obstaclePose.pose.position.y = 9
+        obs.obstaclePose.pose.position.x = 0.943540
+        obs.obstaclePose.pose.position.y = -0.10643
         obs.obstaclePose.pose.position.z = 0
         obs.obstaclePose.pose.orientation.x = 0
         obs.obstaclePose.pose.orientation.y = 0
-        obs.obstaclePose.pose.orientation.z = 0
-        obs.obstaclePose.pose.orientation.w = 1
-        obs.length = 1
-        obs.width = 1
-        obs.type = 1
+        obs.obstaclePose.pose.orientation.z = -0.6003
+        obs.obstaclePose.pose.orientation.w = 0.7997
+        obs.length = 0.9013425
+        obs.width = 0.5
+        obs.type = 2
         # publish message
         pub.publish(obs)
 
-        obs = ObstacleInfo()
-        obs.id = 2
-        obs.obstaclePose.header.frame_id = "map"
-        obs.timeFound = rospy.get_rostime()
-        obs.obstaclePose.pose.position.x = 9
-        obs.obstaclePose.pose.position.y = 9
-        obs.obstaclePose.pose.position.z = 0
-        obs.obstaclePose.pose.orientation.x = 0
-        obs.obstaclePose.pose.orientation.y = 0
-        obs.obstaclePose.pose.orientation.z = 0
-        obs.obstaclePose.pose.orientation.w = 1
-        obs.length = 1
-        obs.width = 1
-        obs.type = 2
+        # obs = ObstacleInfo()
+        # obs.id = 2
+        # obs.obstaclePose.header.frame_id = "map"
+        # obs.timeFound = rospy.get_rostime()
+        # obs.obstaclePose.pose.position.x = 9
+        # obs.obstaclePose.pose.position.y = 9
+        # obs.obstaclePose.pose.position.z = 0
+        # obs.obstaclePose.pose.orientation.x = 0
+        # obs.obstaclePose.pose.orientation.y = 0
+        # obs.obstaclePose.pose.orientation.z = 0
+        # obs.obstaclePose.pose.orientation.w = 1
+        # obs.length = 1
+        # obs.width = 1
+        # obs.type = 2
         # publish message
         pub.publish(obs)
         rate.sleep()

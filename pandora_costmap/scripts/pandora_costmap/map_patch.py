@@ -165,10 +165,10 @@ class MapPatcher():
                 # The new center is the position we get from the obstacle_msg
                 # Position is in meters, th in radians, we rotate clockwise so the
                 # angle th is negative
-
+                # PLUS the position of the slam map
                 th = obs.th_
-                xn = obs.x_
-                yn = obs.y_
+                xn = obs.x_ - slamMap.info.origin.position.x
+                yn = obs.y_ - slamMap.info.origin.position.y
 
                 dx = xn
                 dy = yn
@@ -176,7 +176,8 @@ class MapPatcher():
 
                 iterX = numpy.linspace(0.0, maxX_, maxX_ / 0.01)
                 iterY = numpy.linspace(0.0, maxY_, maxY_ / 0.01)
-
+                #numCellsX = utils.metersToCells(maxX_, 0.02)
+                #numCellsY = utils.metersToCells(maxY_, 0.02)
                 # Transformation (Rotation and Translation)
                 for i in iterX:
                     for j in iterY:
@@ -248,14 +249,17 @@ class MapPatcher():
         # Search inside the list if we have an obstacle with the same id
         # If we do, we delete it and then append the new version of this obstacle
         # If we can't find a duplicate obstacle we append it
+        duplicate = False
         for i in xrange(0, len(self._obstacle_list)):
             if self._obstacle_list[i].id_ == obs.id_:
                 rospy.logwarn(
                     "[MapPatcher]Received new version of obstacle with id: %d",
                     self._obstacle_list[i].id_)
                 rospy.loginfo("[MapPatcher]Replacing it in the obstacle list")
-                del self._obstacle_list[i]
-        self._obstacle_list.append(obs)
+                self._obstacle_list[i] = obs
+                duplicate = True
+        if duplicate == False:
+            self._obstacle_list.append(obs)
 
 
 def main(args):
