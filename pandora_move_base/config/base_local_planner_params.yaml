@@ -1,44 +1,87 @@
 controller_frequency: 5.0
 
-base_local_planner: dwa_local_planner/DWAPlannerROS
+base_local_planner: base_local_planner/TrajectoryPlannerROS
 
-DWAPlannerROS:
-  # velocities
+TrajectoryPlannerROS:
+
+  # The absolute value of the max/min translational velocity for the robot in m/s
   max_trans_vel: 0.3
   min_trans_vel: 0.0
-
   max_vel_x: 0.3
   min_vel_x: 0.0
 
+  # The max/min y velocity for the robot in m/s
   max_vel_y: 0.0
   min_vel_y: 0.0
 
-  max_rot_vel: 0.4
+  # The absolute value of the max/min rotational velocity for the robot in rad/s
+  max_rot_vel: 0.40
   min_rot_vel: 0.15
+  min_in_place_vel_theta: 0.15
+  max_vel_theta: 0.40
+  min_vel_theta: -0.15
 
-  # accel
+  # The acceleration limit of the robot in the x/y/theta direction [0.0, 20.0]
   acc_lim_x: 1.3
   acc_lim_y: 0.0
   acc_lim_theta: 3.2
+  # The absolute value of the maximum translational acceleration for the robot in m/s^2
   acc_limit_trans: 1.3
 
-  xy_goal_tolerance: 0.3
-  yaw_goal_tolerance: 0.3
-  latch_xy_goal_tolerance: true
-  #DWA cfg
-  vx_samples: 10
-  vy_samples: 1
-  vth_samples: 30
+  # Start following closest point of global plan, not first point (if different)
+  prune_plan: true
 
-  penalize_negative_x: true
-  path_distance_bias: 100.0
-  goal_distance_bias: 50.0
+  # Within what maximum distance we consider the robot to be in goal
+  xy_goal_tolerance: 0.3
+  # Within what maximum angle difference we consider the robot to face goal direction
+  yaw_goal_tolerance: 0.3
+
+  # Below what maximum velocity we consider the robot to be stopped in translation/rotation
+  trans_stopped_vel: 0.01
+  rot_stopped_vel: 0.05
+
+  # The amount of time to roll trajectories out for in seconds
+  sim_time: 1.7
+  # The granularity with which to check for collisions along each trajectory in meters
+  sim_granularity: 0.025
+  # The distance between simulation points for angular velocity should be small enough that the robot doesn't hit things
+  angular_sim_granularity: 0.025
+
+  # The weight for the path/goal/obstacle distance part of the cost function [0.0, 5.0]
+  pdist_scale: 1.35
+  gdist_scale: 0.1
   occdist_scale: 0.1
-  scaling_speed: 0.15
-  prefer_forward_penalty: 60
-  prefer_forward_scale: 40
-  # def:0.01, how much the controller should attempt to avoid obstacles
-  use_dwa: true
-  publish_cost_grid_pc: true
-  publish_traj_pc: true
-  cheat_factor: 2
+
+  # The distance the robot must travel before oscillation flags are reset, in meters [0.0, 5.0]
+  oscillation_reset_dist: 0.05
+  escape_reset_dist: 0.10
+  escape_reset_theta: 1.57
+
+  # The number of samples to use when exploring the x/theta velocity space [1, 300]
+  vx_samples: 10
+  vtheta_samples: 30
+
+  # How far the robot should look ahead of itself when differentiating between different rotational velocities [0.0 , 5.0]
+  heading_lookahead: 0.325
+
+  # Set this to true if the robot being controlled can take y velocities and false otherwise
+  holonomic_robot: false
+
+  # The velocity to use while backing up [-2.0, 2.0]
+  escape_vel: -0.1
+
+  # Set these to true to use the Dynamic Window Approach, false to use acceleration limits
+  dwa: false
+  heading_scoring: false
+
+  # How far to look ahead in time when we score heading based trajectories [0.0, 1.0]
+  heading_scoring_timestep: 0.1
+
+  # Set this to true to allow simple attraction to a goal point instead of intelligent cost propagation
+  simple_attractor: false
+
+  # A comma delimited list of the y velocities the controller will explore
+  y_vels: "-0.3,-0.1,0.1,-0.3"
+
+  # Restore to the default configuration
+  restore_defaults: false
