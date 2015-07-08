@@ -80,8 +80,11 @@ def mapResizer(oldMap, newMap):
     """
     old_size = len(oldMap.data)
     new_size = len(newMap.data)
-    temp_old_map = oldMap.data
+    # Save the old map
+    tempOldMap = oldMap
 
+    # Set the MetaData of the old map to the new map
+    oldMap.info = newMap.info
     oldMap.data = []  # clear old map
     oldMap.data = [params.unknownCost] * new_size  # resize the old map
 
@@ -94,65 +97,89 @@ def mapResizer(oldMap, newMap):
         return False
 
     # Find x,y,yaw differences
-    x_diff = newMap.info.origin.position.x - oldMap.info.origin.position.x
-    y_diff = newMap.info.origin.position.y - oldMap.info.origin.position.y
-
+    x_diff = oldMap.info.origin.position.x - newMap.info.origin.position.x
+    y_diff = oldMap.info.origin.position.y - newMap.info.origin.position.y
+    # print str(x_diff) + "," + str(y_diff)
     # Find old and new yaw to find yaw_diff
-    old_quat = [
-        oldMap.info.origin.orientation.x, oldMap.info.origin.orientation.y,
-        oldMap.info.origin.orientation.z, oldMap.info.origin.orientation.w
-    ]
+    # This would never happen because we get the orientation from SLAM
+    # old_quat = [
+    #     oldMap.info.origin.orientation.x, oldMap.info.origin.orientation.y,
+    #     oldMap.info.origin.orientation.z, oldMap.info.origin.orientation.w
+    # ]
+    #
+    # (old_roll, old_pitch, old_yaw) = euler_from_quaternion(old_quat)
+    #
+    # new_quat = [
+    #     newMap.info.origin.orientation.x, newMap.info.origin.orientation.y,
+    #     newMap.info.origin.orientation.z, newMap.info.origin.orientation.w
+    # ]
 
-    (old_roll, old_pitch, old_yaw) = euler_from_quaternion(old_quat)
-
-    new_quat = [
-        newMap.info.origin.orientation.x, newMap.info.origin.orientation.y,
-        newMap.info.origin.orientation.z, newMap.info.origin.orientation.w
-    ]
-
-    (new_roll, new_pitch, new_yaw) = euler_from_quaternion(new_quat)
-
-    yaw_diff = new_yaw - old_yaw
+    # (new_roll, new_pitch, new_yaw) = euler_from_quaternion(new_quat)
+    #
+    # yaw_diff = new_yaw - old_yaw
+    #print "Yaw diff: " + str(yaw_diff)
     res = newMap.info.resolution
+    x_diff = metersToCells(x_diff, res)
+    y_diff = metersToCells(y_diff, res)
+    # print "xdiff:" + str(x_diff) + "," + "ydiff:" + str(y_diff)
+    # print "width old:" + str(oldMap.info.width) + "," + "height old:" + str(
+    #     oldMap.info.height)
+    #
+    # print "width new:" + str(newMap.info.width) + "," + "height new:" + str(
+    #     newMap.info.height)
+
+    for i in xrange(0, tempOldMap.info.width):
+        for j in xrange(0, tempOldMap.info.height):
+            it_x = i + x_diff
+            it_y = j + y_diff
+            it_old = i + j * tempOldMap.info.width
+            it_new = it_x + it_y * newMap.info.width
+            oldMap.data[it_new] = tempOldMap.data[it_old]
 
     # Transform the old map to the new size
-    for i in xrange(0, oldMap.info.width):
-        for j in xrange(0, oldMap.info.height):
-            # old x,y in meters
-            x = i * oldMap.info.resolution
-            y = j * oldMap.info.resolution
+    # for i in xrange(0, oldMap.info.width):
+    #     for j in xrange(0, oldMap.info.height):
+    #         # old x,y in meters
+    #         x = i * oldMap.info.resolution
+    #         y = j * oldMap.info.resolution
+    #
+    #         # new x,y in meters
+    #         xn = math.cos(yaw_diff) * x - math.sin(yaw_diff) * y - x_diff
+    #         yn = math.sin(yaw_diff) * x + math.cos(yaw_diff) * y - y_diff
+    #         #print "x_diff: [" + str(x_diff) + "]"
+    #         #print "y_diff: [" + str(y_diff) + "]"
+    #         # new x,y in cells
+    #         xn_cell = int(round((xn / res), 0))
+    #         yn_cell = int(round((yn / res), 0))
+    #
+    #         coords = xn_cell + yn_cell * i - 1
+    #         if (coords < 0) or (coords > new_size):
+    #             rospy.logerr("[Map Resizer] Error in resizing xn_cell: [%d] \
+    #             yn_cell: [%d] coords: [%d] new_size[%d]", xn_cell, yn_cell,
+    #                          coords, new_size)
+    #         else:
+    #             temp = temp_old_map[i + j * oldMap.info.width]
+    #             #print "coords: " + str(coords)
+    #             oldMap.data[coords] = temp
+    #             # Dilation ??
+    #
+    #             # Copy the MapMetaData of the new map
 
-            # new x,y in meters
-            xn = math.cos(yaw_diff) * x - math.sin(yaw_diff) * y - x_diff
-            yn = math.sin(yaw_diff) * x + math.cos(yaw_diff) * y - y_diff
-            print "x_diff: [" + str(x_diff) + "]"
-            print "y_diff: [" + str(y_diff) + "]"
-            # new x,y in cells
-            xn_cell = int(round((xn / res), 0))
-            yn_cell = int(round((yn / res), 0))
-
-            coords = xn_cell + yn_cell * i - 1
-            if (coords < 0) or (coords > new_size):
-                rospy.logerr("[Map Resizer] Error in resizing xn_cell: [%d] \
-                yn_cell: [%d] coords: [%d] new_size[%d]", xn_cell, yn_cell,
-                             coords, new_size)
-            else:
-                temp = temp_old_map[i + j * oldMap.info.width]
-                print "coords: " + str(coords)
-                oldMap.data[coords] = temp
-                # Dilation ??
-
-                # Copy the MapMetaDeta of the new map
-    oldMap.info = newMap.info
     # Copy the header (problems with the stamp?)
-    oldMap.header = newMap.header
+
     return True
 
 
 def mapMatchingChecker(currentMap, incomingMap):
     """
     @brief A function that checks if two maps have the same MapMetaData.
-    Returns True if everything is OK.
+    @param currentMap One of the two maps we want to compare
+    @param currentMap One of the two maps we want to compare
+    @return True if all MapMetaData are the same, False otherwise.
+
+    The data of the two OGMs are left intact. The only meta data we don't
+    compare are the time stamps and the loaded time. We also check if the
+    quaternions of both maps are valid.
     """
     # Check frame_id of incoming OGM
     if (incomingMap.header.frame_id != currentMap.header.frame_id):

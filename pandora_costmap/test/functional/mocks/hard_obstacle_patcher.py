@@ -39,40 +39,99 @@ __email__ = "dimkirts@gmail.com"
 
 PKG = 'pandora_costmap'
 
+import math
+import numpy
 import roslib
 roslib.load_manifest(PKG)
 import sys
 import rospy
 from nav_msgs.msg import OccupancyGrid
 import mock_params as params
+from pandora_costmap import map_utils as utils
 
 
-def talker():
-    pub = rospy.Publisher(params.hardMapTopic, OccupancyGrid, queue_size=1)
-    rospy.init_node('mock_vision_paparis', anonymous=True)
-    #rate = rospy.Rate(1)
-    mapMsg = OccupancyGrid()
-    #while not rospy.is_shutdown():
-    mapMsg.header.frame_id = "/map"
-    mapMsg.info.width = 700
-    mapMsg.info.height = 700
-    mapMsg.info.resolution = 0.02
-    mapMsg.info.origin.position.x = -7.0
-    mapMsg.info.origin.position.y = -7.0
-    mapMsg.info.origin.position.z = 0.0
+class MockHardMap():
+    """
+    This class implements a node that posts a map from SLAM "enhanced"
+    with hard obstacles. It is used for testing purposes.
+    """
 
-    mapMsg.info.origin.orientation.x = 0.0
-    mapMsg.info.origin.orientation.y = 0.0
-    mapMsg.info.origin.orientation.z = 0.0
-    mapMsg.info.origin.orientation.w = 1.0
-    temp = [0] * mapMsg.info.width * mapMsg.info.height
-    mapMsg.data = temp
-    pub.publish(mapMsg)
-    #rate.sleep()
+    def __init__(self):
+        # Publisher of the hard obstacle map
+        self.map_pub = rospy.Publisher(params.hardMapTopic, OccupancyGrid,
+                                       queue_size=1)
+        # Subscriber to the SLAM map
+        self.slam_sub = rospy.Subscriber(params.slamMapTopic, OccupancyGrid,
+                                         self.slamCB)
+        self.hard_map = OccupancyGrid()
+
+    def slamCB(self, slamMap):
+        utils.initMap(self.hard_map, slamMap)
+        maxX_ = 2.0
+        maxY_ = 2.0
+        minX_ = 0.0
+        minY_ = 0.0
+        obs_x = 5.0
+        obs_y = 5.0
+
+        patch_width = maxX_ - minX_
+        patch_height = maxY_ - minY_
+
+        # The initial patch center
+        x0 = patch_width / 2.0
+        y0 = patch_height / 2.0
+
+        # The new center is the position we get from the obstacle_msg
+        # Position is in meters, th in radians, we rotate clockwise so the
+        # angle th is negative
+        # PLUS the position of the slam map
+        th = 0.785
+        xn = obs_x - slamMap.info.origin.position.x
+        yn = obs_y - slamMap.info.origin.position.y
+
+        dx = xn
+        dy = yn
+        # print str(dx)+" "+str(dy)
+
+        iterX = numpy.linspace(0.0, maxX_, maxX_ / 0.01)
+        iterY = numpy.linspace(0.0, maxY_, maxY_ / 0.01)
+
+        # Transformation (Rotation and Translation)
+        for i in iterX:
+            for j in iterY:
+                temp_x = (i - x0) * math.cos(th) - (j - y0) * math.sin(th) + dx
+                temp_y = (i - x0) * math.sin(th) + (j - y0) * math.cos(th) + dy
+
+                temp_x = utils.metersToCells(
+                    temp_x, self.hard_map.info.resolution)
+                temp_y = utils.metersToCells(
+                    temp_y, self.hard_map.info.resolution)
+
+                it = temp_x + self.hard_map.info.width * temp_y
+
+                if it < 0 or it >= len(self.hard_map.data):
+                    rospy.logerr(
+                        "[MapPatcher]Index out of bounds dropping \
+                        cell: [%d]!", it)
+                else:
+                    self.hard_map.data[it] = 90
+
+        # Set the timestamp and publish the hard_map
+        self.hard_map.header.stamp = rospy.Time.now()
+        self.map_pub.publish(self.hard_map)
+
+
+def main(args):
+    ''' Initializes and cleanup ros node
+    '''
+
+    rospy.init_node('mock_hard_map')
+    mockHardMap = MockHardMap()
+    try:
+        rospy.spin()
+    except KeyboardInterrupt:
+        rospy.logwarn("Shutting down map_patcher!")
 
 
 if __name__ == '__main__':
-    try:
-        talker()
-    except rospy.ROSInterruptException:
-        pass
+    main(sys.argv)

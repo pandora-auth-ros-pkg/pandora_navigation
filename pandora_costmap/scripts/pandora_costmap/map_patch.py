@@ -85,14 +85,17 @@ class MapPatcher():
 
         # Subscriber to the obstacles posted by data_fusion
         self.sub_soft_obstacle_ = rospy.Subscriber(
-            params.obstacleTopic, ObstacleInfo, self.obstacleCB)
+            params.obstacleTopic, ObstacleInfo, self.obstacleCB,
+            queue_size=1)
 
         # Subscriber to obstacles posted in OGM(OccupancyGridMap) format
         self.sub_hard_obstacle_ = rospy.Subscriber(
-            params.obstacleOGMTopic, OccupancyGrid, self.obstacleOGMCB)
+            params.obstacleOGMTopic, OccupancyGrid, self.obstacleOGMCB,
+            queue_size=1)
 
         # Publisher to the HardLayer
-        self.pub_ = rospy.Publisher(params.patchTopic, OccupancyGrid)
+        self.pub_ = rospy.Publisher(params.patchTopic, OccupancyGrid,
+                                    queue_size=1)
 
         self._obstacle_list = []
 
@@ -110,17 +113,21 @@ class MapPatcher():
         # Init soft_obstacle map, using slam MapMetaDeta and set every cell to NO_INFO
         utils.initMap(self.map_patch, slamMap)
 
-        # If the hard layer map is empty do nothing
-        # TODO (dimkirts) handle hard obstacles
-        if not self.hard_patch.data:
-            pass
-        # Else
-        else:
-            #utils.mapResizer(self.map_patch, self.hard_patch)
+        # If the hard layer map is empty do nothing, else update the map_patch
+        # We also check if the two maps have the same MapMetaData before we
+        # update
+        if self.hard_patch.data:
+            if not utils.mapMatchingChecker(self.map_patch, self.hard_patch):
+                #rospy.logerr("[MapPatcher]Hard obstacle map and map patch have\
+                #different MapMetaData cannot update the patch - Resize")
+                utils.mapResizer(self.map_patch, self.hard_patch)
+
             utils.updateWithOverwrite(self.map_patch, self.hard_patch)
 
-        # If obstacle list is empty then we just fill the map layer with no information
-        # and then we post it.
+        # Resizing?
+
+        # If obstacle list is empty then we just fill the map layer with no
+        # information and then we post it.
         # If we have obstacles in the list we transform each object and publish the map
         # If list is empty
         if not self._obstacle_list:
@@ -176,8 +183,7 @@ class MapPatcher():
 
                 iterX = numpy.linspace(0.0, maxX_, maxX_ / 0.01)
                 iterY = numpy.linspace(0.0, maxY_, maxY_ / 0.01)
-                #numCellsX = utils.metersToCells(maxX_, 0.02)
-                #numCellsY = utils.metersToCells(maxY_, 0.02)
+
                 # Transformation (Rotation and Translation)
                 for i in iterX:
                     for j in iterY:
@@ -190,9 +196,15 @@ class MapPatcher():
                             temp_x, self.map_patch.info.resolution)
                         temp_y = utils.metersToCells(
                             temp_y, self.map_patch.info.resolution)
-                        self.map_patch.data[
-                            temp_x + self.map_patch.info.width * temp_y
-                        ] = cost
+
+                        it = temp_x + self.map_patch.info.width * temp_y
+
+                        if it < 0 or it >= len(self.map_patch.data):
+                            rospy.logerr(
+                                "[MapPatcher]Index out of bounds dropping \
+                                cell: [%d]!", it)
+                        else:
+                            self.map_patch.data[it] = cost
 
             # Set the timestamp and publish the map_patch
             self.map_patch.header.stamp = rospy.Time.now()
@@ -205,23 +217,32 @@ class MapPatcher():
         This is the callback to the OGM incoming from the hard_obstacle
         detection node. The incoming OGM must adhere to the SLAM map.
         """
-        # If the hard layer map is empty create a NO_INFORMATION map with the
-        # same MapMetaData as the incoming map
+        # If the hard obstacle map is empty create a NO_INFORMATION map with the
+        # same MapMetaData as the incoming map. Initial Case
         if not self.hard_patch.data:
             utils.initMap(self.hard_patch, ogmMsg)
 
         # Check if incoming OGM is the same as the one we hold
-        # What should be done in resizing?
+        # If it is not the same we resize the old but keeping its data
         if not utils.mapMatchingChecker(self.hard_patch, ogmMsg):
-            rospy.logerr("[MapPatcher]Incoming OGM is not valid")
-            return
+            rospy.logwarn("Resizing Elevation Map Patch")
+            utils.mapResizer(self.hard_patch, ogmMsg)
 
         # Update the hard_patch the class is holding with the incoming OGM using
         # an update method
         utils.updateWithOverwrite(self.hard_patch, ogmMsg)
 
     def obstacleCB(self, obstacleMsg):
-        """ Callback to the data_fusion obstacle topic.
+        """
+        @brief Callback to the data_fusion obstacle topic.
+        @param obstacleMsg The obstacle info message
+
+        This function receives the obstacle info message fro data fusion, checks
+        if the type of the obstacle is valid and if it's pose has a valid
+        quaternion. Then creates an obstacle object using the obstacleMsg.
+        After creating the new obstacle we check if an obstacle with the same id
+        is already inside the obstacle list. In the case of duplicate obstacle
+        we replace the old obstacle with the new one.
         """
         # Check type of obstacle and quaternion
         if ((obstacleMsg.type != params.softObstacleType) and  # noqa
@@ -242,6 +263,7 @@ class MapPatcher():
                 "[MapPatcher]An invalid quaternion was passed, containing all zeros")
             return
 
+        # TODO (dimkirts) Check if length and width are very big
         # Create an obstacle from the message of the callback
         obs = Obstacle()
         obs.createObstacle(obstacleMsg)

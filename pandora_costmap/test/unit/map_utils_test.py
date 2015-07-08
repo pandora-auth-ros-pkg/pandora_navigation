@@ -303,9 +303,125 @@ class TestMapUtils(unittest.TestCase):
         new_grid = OccupancyGrid()
         self.assertFalse(updateWithTrueOverwrite(old_OGMex, new_OGMex))
 
-    @unittest.skip("Not yet implemented")
     def test_mapMatchingChecker(self):
-        pass
+        # Used to test invalid quaternions
+        nan = float('NaN')
+        negative_inf = -float('Inf')
+        positive_inf = float('Inf')
+
+        mapToSet = OccupancyGrid()
+        incomingMap = OccupancyGrid()
+        # Case where both maps are empty
+        # False because we have initialized quaternions
+        self.assertFalse(mapMatchingChecker(mapToSet, incomingMap))
+
+        # Case where everything is not initialized except the quaternion
+        mapToSet.info.origin.orientation.x = 0.0
+        mapToSet.info.origin.orientation.y = 0.0
+        mapToSet.info.origin.orientation.z = 0.0
+        mapToSet.info.origin.orientation.w = 1.0
+
+        incomingMap.info.origin.orientation.x = 0.0
+        incomingMap.info.origin.orientation.y = 0.0
+        incomingMap.info.origin.orientation.z = 0.0
+        incomingMap.info.origin.orientation.w = 1.0
+
+        self.assertTrue(mapMatchingChecker(mapToSet, incomingMap))
+
+        # Case where we have not valid quaternions in both maps
+        mapToSet.info.origin.orientation.x = nan
+        mapToSet.info.origin.orientation.y = 0.0
+        mapToSet.info.origin.orientation.z = 0.0
+        mapToSet.info.origin.orientation.w = 1.0
+
+        incomingMap.info.origin.orientation.x = nan
+        incomingMap.info.origin.orientation.y = 0.0
+        incomingMap.info.origin.orientation.z = 0.0
+        incomingMap.info.origin.orientation.w = 1.0
+
+        self.assertFalse(mapMatchingChecker(mapToSet, incomingMap))
+
+        mapToSet.info.origin.orientation.x = negative_inf
+        mapToSet.info.origin.orientation.y = 0.0
+        mapToSet.info.origin.orientation.z = 0.0
+        mapToSet.info.origin.orientation.w = 1.0
+
+        incomingMap.info.origin.orientation.x = negative_inf
+        incomingMap.info.origin.orientation.y = 0.0
+        incomingMap.info.origin.orientation.z = 0.0
+        incomingMap.info.origin.orientation.w = 1.0
+
+        self.assertFalse(mapMatchingChecker(mapToSet, incomingMap))
+
+        # Case where we have valid but different quaternions
+        mapToSet.info.origin.orientation.x = 0.0
+        mapToSet.info.origin.orientation.y = 0.0
+        mapToSet.info.origin.orientation.z = 0.0
+        mapToSet.info.origin.orientation.w = 1.0
+
+        incomingMap.info.origin.orientation.x = 1.0
+        incomingMap.info.origin.orientation.y = 0.0
+        incomingMap.info.origin.orientation.z = 0.0
+        incomingMap.info.origin.orientation.w = 0.0
+
+        self.assertFalse(mapMatchingChecker(mapToSet, incomingMap))
+
+        # Case where we have different widths
+        mapToSet.info.origin.orientation.x = 0.0
+        mapToSet.info.origin.orientation.y = 0.0
+        mapToSet.info.origin.orientation.z = 0.0
+        mapToSet.info.origin.orientation.w = 1.0
+
+        incomingMap.info.origin.orientation.x = 0.0
+        incomingMap.info.origin.orientation.y = 0.0
+        incomingMap.info.origin.orientation.z = 0.0
+        incomingMap.info.origin.orientation.w = 1.0
+
+        incomingMap.info.width = 200  # [cells]
+        mapToSet.info.width = 100  # [cells]
+        self.assertFalse(mapMatchingChecker(mapToSet, incomingMap))
+
+        # Case where we have different heights
+        incomingMap.info.width = 200  # [cells]
+        incomingMap.info.height = 200  # [cells]
+
+        mapToSet.info.width = 200  # [cells]
+        mapToSet.info.height = 100  # [cells]
+        self.assertFalse(mapMatchingChecker(mapToSet, incomingMap))
+
+        # Case where we have different resolutions
+        incomingMap.info.width = 200  # [cells]
+        incomingMap.info.height = 200  # [cells]
+        incomingMap.info.resolution = 0.02  # [cell/m]
+
+        mapToSet.info.width = 200  # [cells]
+        mapToSet.info.height = 200  # [cells]
+        mapToSet.info.resolution = 0.01  # [cell/m]
+        self.assertFalse(mapMatchingChecker(mapToSet, incomingMap))
+
+        # Case where we have different frame_id
+        incomingMap.info.width = 200  # [cells]
+        incomingMap.info.height = 200  # [cells]
+        incomingMap.info.resolution = 0.02  # [cell/m]
+        incomingMap.header.frame_id = "/map"
+
+        mapToSet.info.width = 200  # [cells]
+        mapToSet.info.height = 200  # [cells]
+        mapToSet.info.resolution = 0.02  # [cell/m]
+        mapToSet.header.frame_id = "/base"
+        self.assertFalse(mapMatchingChecker(mapToSet, incomingMap))
+
+        # Case where all MapMetaData are the same
+        incomingMap.info.width = 200  # [cells]
+        incomingMap.info.height = 200  # [cells]
+        incomingMap.info.resolution = 0.02  # [cell/m]
+        incomingMap.header.frame_id = "/map"
+
+        mapToSet.info.width = 200  # [cells]
+        mapToSet.info.height = 200  # [cells]
+        mapToSet.info.resolution = 0.02  # [cell/m]
+        mapToSet.header.frame_id = "/map"
+        self.assertTrue(mapMatchingChecker(mapToSet, incomingMap))
 
     def mapPrint(self, mapToPrint):
         # We print the map in row major order
@@ -319,6 +435,7 @@ class TestMapUtils(unittest.TestCase):
             sys.stdout.write("\n")
         sys.stdout.write("\n")
 
+    @unittest.skip("Not implemented yet")
     def test_mapResizer(self):
         old = OccupancyGrid()
         new = OccupancyGrid()
