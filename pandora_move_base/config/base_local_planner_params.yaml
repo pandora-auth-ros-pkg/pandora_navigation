@@ -83,5 +83,8 @@ TrajectoryPlannerROS:
   # A comma delimited list of the y velocities the controller will explore
   y_vels: "-0.3,-0.1,0.1,-0.3"
 
+  # Set it to true to make your settings robust against changes of costmap resolution.
+  meter_scoring: true
+
   # Restore to the default configuration
   restore_defaults: false
