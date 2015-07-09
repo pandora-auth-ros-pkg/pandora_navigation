@@ -9,6 +9,9 @@ global_costmap:
     -
       name: static_layer
       type: costmap_2d::StaticLayer
+    # -
+    #   name: global_hard_layer
+    #   type: costmap_2d::GlobalHardLayer
     -
       name: global_patch_layer
       type: costmap_2d::GlobalPatchLayer
@@ -21,6 +24,12 @@ global_costmap:
     unknown_cost_value: 51
     lethal_cost_threshold: 61
     subscribe_to_updates: false
+
+  # global_hard_layer:
+  #   map_topic: /vision/traversability_map
+  #   unknown_cost_value: 51
+  #   lethal_cost_threshold: 61
+
 
   global_patch_layer:
     map_topic: /map_patch/obstacles

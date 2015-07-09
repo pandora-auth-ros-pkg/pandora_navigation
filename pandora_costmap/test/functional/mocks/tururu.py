@@ -74,8 +74,8 @@ class MockHardMap():
         maxY_ = 2.0
         minX_ = 0.0
         minY_ = 0.0
-        obs_x = 5.0
-        obs_y = 5.0
+        obs_x = 3.0
+        obs_y = 3.0
 
         patch_width = maxX_ - minX_
         patch_height = maxY_ - minY_
@@ -129,7 +129,7 @@ def main(args):
     ''' Initializes and cleanup ros node
     '''
 
-    rospy.init_node('mock_hard_map')
+    rospy.init_node('tururu')
     mockHardMap = MockHardMap()
     try:
         rospy.spin()

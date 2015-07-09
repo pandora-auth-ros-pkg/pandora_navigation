@@ -219,14 +219,14 @@ class MapPatcher():
         """
         # If the hard obstacle map is empty create a NO_INFORMATION map with the
         # same MapMetaData as the incoming map. Initial Case
-        if not self.hard_patch.data:
-            utils.initMap(self.hard_patch, ogmMsg)
+        #if not self.hard_patch.data:
+        utils.initMap(self.hard_patch, ogmMsg)
 
         # Check if incoming OGM is the same as the one we hold
         # If it is not the same we resize the old but keeping its data
-        if not utils.mapMatchingChecker(self.hard_patch, ogmMsg):
-            rospy.logwarn("Resizing Elevation Map Patch")
-            utils.mapResizer(self.hard_patch, ogmMsg)
+        #if not utils.mapMatchingChecker(self.hard_patch, ogmMsg):
+        #    rospy.logwarn("Resizing Elevation Map Patch")
+        #    utils.mapResizer(self.map_patch, ogmMsg)
 
         # Update the hard_patch the class is holding with the incoming OGM using
         # an update method
