@@ -77,7 +77,6 @@ class MapPatcher():
         """ Constructor of the MapPatcher class.
         """
         # An occupancy grid to hold the hard obstacles
-        self.hard_patch = OccupancyGrid()
         self.map_patch = OccupancyGrid()
         # Subscriber to SLAM to get the map info
         self.sub_slam_ = rospy.Subscriber(params.slamMapTopic, OccupancyGrid,
@@ -86,11 +85,6 @@ class MapPatcher():
         # Subscriber to the obstacles posted by data_fusion
         self.sub_soft_obstacle_ = rospy.Subscriber(
             params.obstacleTopic, ObstacleInfo, self.obstacleCB,
-            queue_size=1)
-
-        # Subscriber to obstacles posted in OGM(OccupancyGridMap) format
-        self.sub_hard_obstacle_ = rospy.Subscriber(
-            params.obstacleOGMTopic, OccupancyGrid, self.obstacleOGMCB,
             queue_size=1)
 
         # Publisher to the HardLayer
@@ -112,19 +106,6 @@ class MapPatcher():
 
         # Init soft_obstacle map, using slam MapMetaDeta and set every cell to NO_INFO
         utils.initMap(self.map_patch, slamMap)
-
-        # If the hard layer map is empty do nothing, else update the map_patch
-        # We also check if the two maps have the same MapMetaData before we
-        # update
-        if self.hard_patch.data:
-            if not utils.mapMatchingChecker(self.map_patch, self.hard_patch):
-                #rospy.logerr("[MapPatcher]Hard obstacle map and map patch have\
-                #different MapMetaData cannot update the patch - Resize")
-                utils.mapResizer(self.map_patch, self.hard_patch)
-
-            utils.updateWithOverwrite(self.map_patch, self.hard_patch)
-
-        # Resizing?
 
         # If obstacle list is empty then we just fill the map layer with no
         # information and then we post it.
@@ -210,27 +191,6 @@ class MapPatcher():
             self.map_patch.header.stamp = rospy.Time.now()
 
             self.pub_.publish(self.map_patch)
-
-    def obstacleOGMCB(self, ogmMsg):
-        """
-        @brief Callback of the hard_obstacle OGM topic
-        This is the callback to the OGM incoming from the hard_obstacle
-        detection node. The incoming OGM must adhere to the SLAM map.
-        """
-        # If the hard obstacle map is empty create a NO_INFORMATION map with the
-        # same MapMetaData as the incoming map. Initial Case
-        #if not self.hard_patch.data:
-        utils.initMap(self.hard_patch, ogmMsg)
-
-        # Check if incoming OGM is the same as the one we hold
-        # If it is not the same we resize the old but keeping its data
-        #if not utils.mapMatchingChecker(self.hard_patch, ogmMsg):
-        #    rospy.logwarn("Resizing Elevation Map Patch")
-        #    utils.mapResizer(self.map_patch, ogmMsg)
-
-        # Update the hard_patch the class is holding with the incoming OGM using
-        # an update method
-        utils.updateWithOverwrite(self.hard_patch, ogmMsg)
 
     def obstacleCB(self, obstacleMsg):
         """

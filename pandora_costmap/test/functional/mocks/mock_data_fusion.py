@@ -64,8 +64,8 @@ def talker():
         obs.obstaclePose.pose.orientation.y = 0
         obs.obstaclePose.pose.orientation.z = -0.6003
         obs.obstaclePose.pose.orientation.w = 0.7997
-        obs.length = 10.0  # 0.9013425
-        obs.width = 10.0  # 0.5
+        obs.length = 1.0  # 0.9013425
+        obs.width = 1.0  # 0.5
         obs.type = 2
         # publish message
         pub.publish(obs)

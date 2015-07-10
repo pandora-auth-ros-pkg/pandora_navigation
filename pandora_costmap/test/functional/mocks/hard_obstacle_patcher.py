@@ -60,8 +60,6 @@ class MockHardMap():
         # Publisher of the hard obstacle map
         self.map_pub = rospy.Publisher(params.hardMapTopic, OccupancyGrid,
                                        queue_size=1)
-        self.slam_pub = rospy.Publisher(params.statMapTopic, OccupancyGrid,
-                                        queue_size=1)
         # Subscriber to the SLAM map
         self.slam_sub = rospy.Subscriber(params.slamMapTopic, OccupancyGrid,
                                          self.slamCB)
@@ -69,7 +67,15 @@ class MockHardMap():
 
     def slamCB(self, slamMap):
 
-        utils.initMap(self.hard_map, slamMap)
+        self.hard_map.header.frame_id = slamMap.header.frame_id
+        self.hard_map.info = slamMap.info
+
+        # initialize the map with NO_INFORMATION cells
+        temp_array = [51
+                      ] * self.hard_map.info.width * self.hard_map.info.height
+        self.hard_map.data = temp_array
+        self.hard_map.info.origin.orientation.w = 1.0
+
         maxX_ = 2.0
         maxY_ = 2.0
         minX_ = 0.0
@@ -117,11 +123,10 @@ class MockHardMap():
                         "[MapPatcher]Index out of bounds dropping \
                         cell: [%d]!", it)
                 else:
-                    self.hard_map.data[it] = 90
+                    self.hard_map.data[it] = 99
 
         # Set the timestamp and publish the hard_map
         self.hard_map.header.stamp = rospy.Time.now()
-        self.slam_pub.publish(slamMap)
         self.map_pub.publish(self.hard_map)
 
 

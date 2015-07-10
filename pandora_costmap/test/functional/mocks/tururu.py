@@ -74,8 +74,8 @@ class MockHardMap():
         maxY_ = 2.0
         minX_ = 0.0
         minY_ = 0.0
-        obs_x = 3.0
-        obs_y = 3.0
+        obs_x = 0.0
+        obs_y = 0.0
 
         patch_width = maxX_ - minX_
         patch_height = maxY_ - minY_
@@ -117,7 +117,7 @@ class MockHardMap():
                         "[MapPatcher]Index out of bounds dropping \
                         cell: [%d]!", it)
                 else:
-                    self.hard_map.data[it] = 90
+                    self.hard_map.data[it] = 99
 
         # Set the timestamp and publish the hard_map
         self.hard_map.header.stamp = rospy.Time.now()

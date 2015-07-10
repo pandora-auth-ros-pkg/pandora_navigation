@@ -57,5 +57,3 @@ add_executable(pandora_move_base_node
   src/move_base_node.cpp
 )
 target_link_libraries(pandora_move_base_node pandora_move_base)
-
-

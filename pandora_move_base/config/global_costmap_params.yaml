@@ -5,6 +5,10 @@ global_costmap:
   publish_frequency: 1.0
   static_map: true
   transform_tolerance: 0.5
+  track_unknown_space: true
+  # Static Layer receives the map from SLAM, updateWithTrueOverwrite
+  # Global Hard Layer receives the Hard Obstacle map, updateWithMax
+  # Global Patch Layer receives the soft obstacles, updateWithOverwrite
   plugins:
     -
       name: static_layer
@@ -12,9 +16,9 @@ global_costmap:
     # -
     #   name: global_hard_layer
     #   type: costmap_2d::GlobalHardLayer
-    -
-      name: global_patch_layer
-      type: costmap_2d::GlobalPatchLayer
+    # -
+    #   name: global_patch_layer
+    #   type: costmap_2d::GlobalPatchLayer
     -
       name: inflation_layer
       type: costmap_2d::InflationLayer
@@ -30,11 +34,10 @@ global_costmap:
   #   unknown_cost_value: 51
   #   lethal_cost_threshold: 61
 
-
-  global_patch_layer:
-    map_topic: /map_patch/obstacles
-    unknown_cost_value: 51
-    lethal_cost_threshold: 61
+  # global_patch_layer:
+  #   map_topic: /map_patch/obstacles
+  #   unknown_cost_value: 51
+  #   lethal_cost_threshold: 61
 
   inflation_layer:
     inflation_radius: 0.6

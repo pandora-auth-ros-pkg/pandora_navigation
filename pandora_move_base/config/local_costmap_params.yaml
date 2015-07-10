@@ -9,14 +9,15 @@ local_costmap:
   height: 4.0
   resolution: 0.02
   transform_tolerance: 0.5
+  track_unknown_space: true
   #robot_radius: 0.381
   plugins:
   -
    name: obstacle_layer
    type: costmap_2d::VoxelLayer
-  -
-   name: obstacle_patch_layer
-   type: costmap_2d::ObstaclePatchLayer
+  # -
+  #  name: soft_patch_layer
+  #  type: costmap_2d::SoftPatchLayer
   -
    name: inflation_layer
    type: costmap_2d::InflationLayer
@@ -31,10 +32,10 @@ local_costmap:
     max_obstacle_height: 1.0
     publish_voxel_map: false
 
-  obstacle_patch_layer:
-    map_topic: /map_patch/obstacles
-    unknown_cost_value: 51
-    lethal_cost_threshold: 61
+  # soft_patch_layer:
+  #   map_topic: /map_patch/obstacles
+  #   unknown_cost_value: 51
+  #   lethal_cost_threshold: 61
 
   inflation_layer:
     inflation_radius: 0.3
