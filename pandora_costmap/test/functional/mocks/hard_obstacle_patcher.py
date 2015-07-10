@@ -71,8 +71,7 @@ class MockHardMap():
         self.hard_map.info = slamMap.info
 
         # initialize the map with NO_INFORMATION cells
-        temp_array = [51
-                      ] * self.hard_map.info.width * self.hard_map.info.height
+        temp_array = [0] * self.hard_map.info.width * self.hard_map.info.height
         self.hard_map.data = temp_array
         self.hard_map.info.origin.orientation.w = 1.0
 
@@ -80,8 +79,8 @@ class MockHardMap():
         maxY_ = 2.0
         minX_ = 0.0
         minY_ = 0.0
-        obs_x = 5.0
-        obs_y = 5.0
+        obs_x = 3.0
+        obs_y = 3.0
 
         patch_width = maxX_ - minX_
         patch_height = maxY_ - minY_
@@ -123,7 +122,7 @@ class MockHardMap():
                         "[MapPatcher]Index out of bounds dropping \
                         cell: [%d]!", it)
                 else:
-                    self.hard_map.data[it] = 99
+                    self.hard_map.data[it] = 90
 
         # Set the timestamp and publish the hard_map
         self.hard_map.header.stamp = rospy.Time.now()
