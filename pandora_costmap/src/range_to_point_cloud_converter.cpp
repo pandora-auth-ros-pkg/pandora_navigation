@@ -108,7 +108,7 @@ namespace pandora_navigation
       field.offset = 8;
       cloud.fields.push_back(field);
 
-      float step = fieldOfView * 3.14 / 180.0 / 2;
+      float step = fieldOfView * / 2;
 
       for (float theta = - step;
         theta < step;
