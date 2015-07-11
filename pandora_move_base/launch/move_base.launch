@@ -1,5 +1,6 @@
 <launch>
   <arg name="map_patch" default="true"/>
+  <arg name="sonar" default="true"/>
   <!--  <arg name="voxel" default="true"/> -->
 
   <node pkg="pandora_move_base" type="pandora_move_base_node" respawn="false" name="move_base" output="screen">

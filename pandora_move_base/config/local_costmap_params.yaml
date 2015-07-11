@@ -15,27 +15,28 @@ local_costmap:
   -
    name: obstacle_layer
    type: costmap_2d::VoxelLayer
-  # -
-  #  name: soft_patch_layer
-  #  type: costmap_2d::SoftPatchLayer
+  -
+   name: soft_patch_layer
+   type: costmap_2d::SoftPatchLayer
   -
    name: inflation_layer
    type: costmap_2d::InflationLayer
 
   obstacle_layer:
-    observation_sources: laser kinect
+    observation_sources: laser kinect sonar
     #observation_sources: laser
     laser: {data_type: LaserScan, topic: /laser/scan, marking: true, clearing: true}
     kinect: {data_type: PointCloud2, topic: /costmap/local_cropped_cloud, marking: true, clearing: true}
+    sonar: {data_type: PointCloud2, topic: /sensors/range/point_cloud, marking: true, clearing: true}
     obstacle_range: 2.5
     raytrace_range: 3.0
     max_obstacle_height: 1.0
     publish_voxel_map: false
 
-  # soft_patch_layer:
-  #   map_topic: /map_patch/obstacles
-  #   unknown_cost_value: 51
-  #   lethal_cost_threshold: 61
+  soft_patch_layer:
+    map_topic: /map_patch/obstacles
+    unknown_cost_value: 51
+    lethal_cost_threshold: 61
 
   inflation_layer:
     inflation_radius: 0.3

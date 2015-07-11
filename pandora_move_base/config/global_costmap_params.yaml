@@ -16,9 +16,9 @@ global_costmap:
     # -
     #   name: global_hard_layer
     #   type: costmap_2d::GlobalHardLayer
-    # -
-    #   name: global_patch_layer
-    #   type: costmap_2d::GlobalPatchLayer
+    -
+      name: global_patch_layer
+      type: costmap_2d::GlobalPatchLayer
     -
       name: inflation_layer
       type: costmap_2d::InflationLayer
@@ -34,10 +34,10 @@ global_costmap:
   #   unknown_cost_value: 51
   #   lethal_cost_threshold: 61
 
-  # global_patch_layer:
-  #   map_topic: /map_patch/obstacles
-  #   unknown_cost_value: 51
-  #   lethal_cost_threshold: 61
+  global_patch_layer:
+    map_topic: /map_patch/obstacles
+    unknown_cost_value: 51
+    lethal_cost_threshold: 61
 
   inflation_layer:
     inflation_radius: 0.6
