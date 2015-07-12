@@ -14,7 +14,7 @@ DWAPlannerROS:
   min_vel_y: 0.0
 
   max_rot_vel: 0.5
-  min_rot_vel: 0.1
+  min_rot_vel: 0.01
 
   # accel
   acc_lim_x: 1.3
@@ -33,10 +33,10 @@ DWAPlannerROS:
   penalize_negative_x: true
   path_distance_bias: 100.0
   goal_distance_bias: 50.0
-  occdist_scale: 0.3
+  occdist_scale: 0.35
   scaling_speed: 0.5
-  prefer_forward_penalty: 60
-  prefer_forward_scale: 40
+  prefer_forward_penalty: 80
+  prefer_forward_scale: 60
   # def:0.01, how much the controller should attempt to avoid obstacles
   use_dwa: true
   publish_cost_grid_pc: true
