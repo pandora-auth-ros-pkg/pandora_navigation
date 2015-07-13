@@ -71,16 +71,16 @@ class MockHardMap():
         self.hard_map.info = slamMap.info
 
         # initialize the map with NO_INFORMATION cells
-        temp_array = [0] * self.hard_map.info.width * self.hard_map.info.height
+        temp_array = [51] * self.hard_map.info.width * self.hard_map.info.height
         self.hard_map.data = temp_array
         self.hard_map.info.origin.orientation.w = 1.0
 
-        maxX_ = 2.0
-        maxY_ = 2.0
+        maxX_ = 1.0
+        maxY_ = 1.0
         minX_ = 0.0
         minY_ = 0.0
-        obs_x = 3.0
-        obs_y = 3.0
+        obs_x = 5.0
+        obs_y = 5.0
 
         patch_width = maxX_ - minX_
         patch_height = maxY_ - minY_
@@ -101,8 +101,8 @@ class MockHardMap():
         dy = yn
         # print str(dx)+" "+str(dy)
 
-        iterX = numpy.linspace(0.0, maxX_, maxX_ / 0.1)
-        iterY = numpy.linspace(0.0, maxY_, maxY_ / 0.1)
+        iterX = numpy.linspace(0.0, maxX_, maxX_ / 0.01)
+        iterY = numpy.linspace(0.0, maxY_, maxY_ / 0.01)
 
         # Transformation (Rotation and Translation)
         for i in iterX:

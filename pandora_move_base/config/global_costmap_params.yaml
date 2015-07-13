@@ -28,12 +28,13 @@ global_costmap:
     unknown_cost_value: 51
     lethal_cost_threshold: 61
     subscribe_to_updates: false
+    trinary_costmap: true
 
   # global_hard_layer:
-  #   map_topic: /vision/traversability_map
-  #   unknown_cost_value: 51
-  #   lethal_cost_threshold: 61
-
+  #   slam_topic: /slam/map
+  #   elevation_map_topic: /vision/traversability_map
+  #   unknown_cost: 51
+  #   lethal_cost: 100
   global_patch_layer:
     map_topic: /map_patch/obstacles
     unknown_cost_value: 51

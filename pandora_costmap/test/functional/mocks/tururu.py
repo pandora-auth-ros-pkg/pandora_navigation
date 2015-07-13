@@ -76,8 +76,8 @@ class MockHardMap():
         self.hard_map.data = temp_array
         self.hard_map.info.origin.orientation.w = 1.0
 
-        maxX_ = 2.0
-        maxY_ = 2.0
+        maxX_ = 1.0
+        maxY_ = 1.0
         minX_ = 0.0
         minY_ = 0.0
         obs_x = 4.0
