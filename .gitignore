@@ -1,5 +1,3 @@
-<<<<<<< HEAD
-<<<<<<< HEAD
 # ROS #
 ######################
 build/
@@ -59,4 +57,4 @@ core*
 tags
 cscope.out
 cscope.files
-
+*~
