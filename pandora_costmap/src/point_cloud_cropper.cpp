@@ -106,23 +106,26 @@ namespace pandora_costmap
     outlier.setMinNeighborsInRadius(min_neighbours_num_);
     outlier.filter(*withoutOutliers);
 
-    PointCloud::Ptr voxelized(new PointCloud);
+    // PointCloud::Ptr voxelized(new PointCloud);
     // apply VoxelGrid filter
-    pcl::VoxelGrid <pcl::PointXYZ> sor;
-    sor.setInputCloud(withoutOutliers);
-    sor.setLeafSize(leaf_size_, leaf_size_, leaf_size_);
-    sor.filter(*voxelized);
+    // pcl::VoxelGrid <pcl::PointXYZ> sor;
+    // sor.setInputCloud(withoutOutliers);
+    // sor.setLeafSize(leaf_size_, leaf_size_, leaf_size_);
+    // sor.filter(*voxelized);
 
     PointCloud::Ptr transformed(new PointCloud);
     try
     {
-      // listener_.waitForTransform(
-      //     reference_frame_,
-      //     cloudMsg->header.frame_id,
-      //     cloudMsg->header.stamp,
-      //     ros::Duration(0.1));
-      pcl_ros::transformPointCloud(reference_frame_, *voxelized,
+      listener_.waitForTransform(
+          reference_frame_,
+          cloudMsg->header.frame_id,
+          cloudMsg->header.stamp,
+          ros::Duration(0.1));
+      bool cool;
+      cool = pcl_ros::transformPointCloud(reference_frame_, *withoutOutliers,
           *transformed, listener_);
+      if (!cool)
+        return;
     }
     catch (const tf::TransformException& ex)
     {
