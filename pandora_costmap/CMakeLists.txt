@@ -3,6 +3,7 @@ project(pandora_costmap)
 
 find_package(catkin REQUIRED COMPONENTS
   cmake_modules
+  dynamic_reconfigure
   roscpp
   sensor_msgs
   tf
@@ -11,6 +12,10 @@ find_package(catkin REQUIRED COMPONENTS
 )
 
 catkin_python_setup()
+
+generate_dynamic_reconfigure_options(
+  config/filter.cfg
+  )
 
 find_package(Eigen REQUIRED)
 
@@ -27,6 +32,7 @@ catkin_package(
   CATKIN_DEPENDS
     rospy
     roscpp
+    dynamic_reconfigure
     sensor_msgs
     tf
     pcl_ros

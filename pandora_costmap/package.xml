@@ -17,6 +17,7 @@
   <depend>nav_msgs</depend>
 
   <depend>roscpp</depend>
+  <depend>dynamic_reconfigure</depend>
   <depend>sensor_msgs</depend>
   <depend>tf</depend>
   <depend>pcl_ros</depend>

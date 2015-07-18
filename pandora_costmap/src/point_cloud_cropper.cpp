@@ -35,112 +35,124 @@
 * Author: Chris Zalidis <zalidis@gmail.com>
 *********************************************************************/
 
+#include <boost/algorithm/string.hpp>
+
+#include <sensor_msgs/PointCloud2.h>
+#include <pcl_ros/point_cloud.h>
+#include <pcl_ros/transforms.h>
+#include <pcl/point_types.h>
+#include <pcl_conversions/pcl_conversions.h>
+
+#include "pandora_costmap/FilterConfig.h"
 #include "pandora_costmap/point_cloud_cropper.h"
 
-namespace pandora_costmap {
+namespace pandora_costmap
+{
 
   PointCloudCropper::PointCloudCropper() : nh_(), pnh_("~")
   {
-    std::string inTopic, outTopic;
+    nodeName_ = boost::to_upper_copy<std::string>(pnh_.getNamespace());
+    pnh_.param("reference_frame", reference_frame_, std::string("/base_footprint"));
 
-    pnh_.param("min_frame_id", minFrame_, std::string("base_stabilized"));
-    pnh_.param("max_frame_id", maxFrame_, std::string("kinect_link"));
+    if (!pnh_.getParam("in_topic", in_topic_))
+    {
+      ROS_FATAL("[%s] Could not find in topic!", nodeName_.c_str());
+      ROS_BREAK();
+    }
 
-    pnh_.param("in_topic", inTopic, std::string("kinect/point_cloud"));
-    pnh_.param("out_topic", outTopic, std::string("costmap/cropped_cloud"));
+    if (!pnh_.getParam("out_topic", out_topic_))
+    {
+      ROS_FATAL("[%s] Could not find out topic!", nodeName_.c_str());
+      ROS_BREAK();
+    }
 
     cloudInSubscriber_ =
-        nh_.subscribe(inTopic, 1, &PointCloudCropper::pointCloudCallback, this);
+        nh_.subscribe(in_topic_, 1, &PointCloudCropper::pointCloudCallback, this);
 
     cloudOutPublisher_ =
-        nh_.advertise<PointCloud>(outTopic, 1);
+        nh_.advertise<PointCloud>(out_topic_, 1);
+
+    server_ptr_.reset( new dynamic_reconfigure::Server<FilterConfig>(pnh_) );
+    server_ptr_->setCallback(
+      boost::bind(&PointCloudCropper::filterParamsCb, this, _1, _2));
 
     //stop pcl from spamming
     pcl::console::setVerbosityLevel(pcl::console::L_ALWAYS);
   }
 
+  void PointCloudCropper::filterParamsCb(const FilterConfig& config, uint32_t level)
+  {
+    min_elevation_ = config.min_elevation;
+    max_elevation_ = config.max_elevation;
+
+    inlier_radius_ = config.inlier_radius;
+    min_neighbours_num_ = config.min_neighbours_num;
+
+    leaf_size_ = config.leaf_size;
+  }
+
   void PointCloudCropper::pointCloudCallback(const PointCloud::ConstPtr& cloudMsg)
   {
-    // find elevation between frames
-    tf::StampedTransform tfTransform;
-    float elevation;
-    try {
-      listener_.waitForTransform(minFrame_,
-          maxFrame_, ros::Time(0), ros::Duration(0.1));
-      listener_.lookupTransform(minFrame_,
-          maxFrame_, ros::Time(0), tfTransform);
-
-      elevation = tfTransform.getOrigin()[2];
-    }
-    catch (tf::TransformException ex) {
-      ROS_ERROR("[cloud_cropper] %s", ex.what());
-      return;
-    }
-
-    // cloud holders
-    PointCloud::Ptr pointCloudMin(new PointCloud);
-    PointCloud::Ptr pointCloudOut(new PointCloud);
-    PointCloud::Ptr pointCloudMsgOut(new PointCloud);
-    PointCloud::Ptr pointCloudFiltered(new PointCloud);
-    PointCloud::Ptr pointCloudFinal(new PointCloud);
-
-    // transform cloud
-    try {
-      listener_.waitForTransform(minFrame_,
-          cloudMsg->header.frame_id,
-          ros::Time(cloudMsg->header.stamp),
-          ros::Duration(0.1));
-      pcl_ros::transformPointCloud(minFrame_, *cloudMsg, *pointCloudMin, listener_);
-    }
-    catch (tf::TransformException ex) {
-      ROS_ERROR("[cloud_cropper] %s", ex.what());
-      return;
-    }
-
+    PointCloud::Ptr withoutNan(new PointCloud);
     // remove NaN
-    std::vector<int> index;
-    pcl::removeNaNFromPointCloud(*pointCloudMin, *pointCloudMin, index);
+    std::vector<int> indices;
+    pcl::removeNaNFromPointCloud(*cloudMsg, *withoutNan, indices);
 
-    // filter points
-    BOOST_FOREACH(const pcl::PointXYZ& pt, pointCloudMin->points)
+    PointCloud::Ptr withoutOutliers(new PointCloud);
+    // apply outlier removal (takes a lot of time)
+    pcl::RadiusOutlierRemoval<pcl::PointXYZ> outlier(true);
+    outlier.setInputCloud(withoutNan);
+    outlier.setRadiusSearch(inlier_radius_);
+    outlier.setMinNeighborsInRadius(min_neighbours_num_);
+    outlier.filter(*withoutOutliers);
+
+    PointCloud::Ptr voxelized(new PointCloud);
+    // apply VoxelGrid filter
+    pcl::VoxelGrid <pcl::PointXYZ> sor;
+    sor.setInputCloud(withoutOutliers);
+    sor.setLeafSize(leaf_size_, leaf_size_, leaf_size_);
+    sor.filter(*voxelized);
+
+    PointCloud::Ptr transformed(new PointCloud);
+    try
     {
-      if (pt.z > 0 && pt.z < elevation) {
+      // listener_.waitForTransform(
+      //     reference_frame_,
+      //     cloudMsg->header.frame_id,
+      //     cloudMsg->header.stamp,
+      //     ros::Duration(0.1));
+      pcl_ros::transformPointCloud(reference_frame_, *voxelized,
+          *transformed, listener_);
+    }
+    catch (const tf::TransformException& ex)
+    {
+      ROS_ERROR("[%s] %s", nodeName_.c_str(), ex.what());
+      return;
+    }
+
+    PointCloud::Ptr pointCloudMsgOut(new PointCloud);
+    // filter points
+    BOOST_FOREACH(const pcl::PointXYZ& pt, transformed->points)
+    {
+      if (pt.z > min_elevation_ && pt.z < max_elevation_)
+      {
         pointCloudMsgOut->points.push_back(pt);
       }
     }
 
-    // apply VoxelGrid filter
-    pcl::VoxelGrid <pcl::PointXYZ> sor;
-    sor.setInputCloud (pointCloudMsgOut);
-    float leafSize = 0.01;
-    sor.setLeafSize (leafSize, leafSize, leafSize);
-    sor.filter (*pointCloudFiltered);
-
-    // apply outlier removal (takes a lot of time)
-    pcl::RadiusOutlierRemoval<pcl::PointXYZ> outlier (true);
-    outlier.setInputCloud(pointCloudFiltered);
-    pcl::RadiusOutlierRemoval<pcl::PointXYZ> outlieri(true);
-    outlier.setRadiusSearch(0.3);
-    outlier.setMinNeighborsInRadius(5);
-    outlier.filter(*pointCloudFinal);
-
     // publish final cloud
-    pointCloudFinal->header.stamp = cloudMsg->header.stamp;
-    pointCloudFinal->header.frame_id = minFrame_;
+    pointCloudMsgOut->header.stamp = cloudMsg->header.stamp;
+    pointCloudMsgOut->header.frame_id = reference_frame_;
 
-    cloudOutPublisher_.publish(pointCloudFinal);
+    cloudOutPublisher_.publish(pointCloudMsgOut);
   }
 
 }  // namespace pandora_costmap
 
-
 int main(int argc, char* argv[])
 {
   ros::init(argc, argv, "cloud_cropper", ros::init_options::NoSigintHandler);
-
   pandora_costmap::PointCloudCropper cropper;
-
   ros::spin();
-
   return 0;
 }

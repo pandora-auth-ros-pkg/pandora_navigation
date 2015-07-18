@@ -3,7 +3,7 @@
   <rosparam
     command="load"
     file="$(find pandora_costmap)/config/range_to_point_cloud_converter.yaml"/>
-    
+
   <!-- Launch controller manager with pandora hardware interface-->
   <node
     name="range_to_point_cloud_converter"

@@ -38,6 +38,9 @@
 #ifndef PANDORA_COSTMAP_POINT_CLOUD_CROPPER_H
 #define PANDORA_COSTMAP_POINT_CLOUD_CROPPER_H
 
+#include <boost/shared_ptr.hpp>
+#include <boost/foreach.hpp>
+
 #include <ros/ros.h>
 #include <sensor_msgs/PointCloud2.h>
 #include <tf/transform_listener.h>
@@ -49,9 +52,12 @@
 #include <pcl/filters/voxel_grid.h>
 #include <pcl/filters/filter.h>
 #include <pcl/filters/radius_outlier_removal.h>
-#include <boost/foreach.hpp>
+#include <dynamic_reconfigure/server.h>
 
-namespace pandora_costmap {
+#include "pandora_costmap/FilterConfig.h"
+
+namespace pandora_costmap
+{
 
   typedef pcl::PointCloud<pcl::PointXYZ> PointCloud;
 
@@ -61,19 +67,31 @@ namespace pandora_costmap {
     PointCloudCropper();
     void pointCloudCallback(const PointCloud::ConstPtr& cloudMsg);
 
-   private:
+    void filterParamsCb(const FilterConfig& config, uint32_t level);
 
+   private:
     ros::NodeHandle nh_;
     ros::NodeHandle pnh_;
+    std::string nodeName_;
+
+    // The dynamic reconfigure server for general parameters
+    boost::shared_ptr< dynamic_reconfigure::Server<FilterConfig> > server_ptr_;
+    // The dynamic reconfigure callback type for the above server
+    dynamic_reconfigure::Server<FilterConfig>::CallbackType f_type;
 
     ros::Subscriber cloudInSubscriber_;
+    std::string in_topic_;
     ros::Publisher cloudOutPublisher_;
+    std::string out_topic_;
 
     tf::TransformListener listener_;
 
-    std::string minFrame_;
-    std::string maxFrame_;
-
+    std::string reference_frame_;
+    double min_elevation_;
+    double max_elevation_;
+    double inlier_radius_;
+    int min_neighbours_num_;
+    double leaf_size_;
   };
 
 }  // namespace pandora_costmap
