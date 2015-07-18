@@ -119,7 +119,7 @@ namespace pandora_costmap
       listener_.waitForTransform(
           reference_frame_,
           cloudMsg->header.frame_id,
-          cloudMsg->header.stamp,
+          ros::Time(cloudMsg->header.stamp),
           ros::Duration(0.1));
       bool cool;
       cool = pcl_ros::transformPointCloud(reference_frame_, *withoutOutliers,
