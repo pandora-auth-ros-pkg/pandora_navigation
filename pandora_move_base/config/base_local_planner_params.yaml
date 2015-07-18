@@ -4,16 +4,16 @@ base_local_planner: dwa_local_planner/DWAPlannerROS
 
 DWAPlannerROS:
   # velocities
-  max_trans_vel: 0.2
+  max_trans_vel: 0.15
   min_trans_vel: 0.0
 
-  max_vel_x: 0.2
-  min_vel_x: -0.15
+  max_vel_x: 0.15
+  min_vel_x: -0.1
 
   max_vel_y: 0.0
   min_vel_y: 0.0
 
-  max_rot_vel: 0.5
+  max_rot_vel: 0.3
   min_rot_vel: 0.01
 
   # accel
