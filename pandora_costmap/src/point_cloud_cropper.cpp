@@ -93,25 +93,19 @@ namespace pandora_costmap
 
   void PointCloudCropper::pointCloudCallback(const PointCloud::ConstPtr& cloudMsg)
   {
+    //ROS_INFO("cb");
     PointCloud::Ptr withoutNan(new PointCloud);
     // remove NaN
     std::vector<int> indices;
     pcl::removeNaNFromPointCloud(*cloudMsg, *withoutNan, indices);
+    //ROS_INFO("withoutNan");
 
-    PointCloud::Ptr withoutOutliers(new PointCloud);
-    // apply outlier removal (takes a lot of time)
-    pcl::RadiusOutlierRemoval<pcl::PointXYZ> outlier(true);
-    outlier.setInputCloud(withoutNan);
-    outlier.setRadiusSearch(inlier_radius_);
-    outlier.setMinNeighborsInRadius(min_neighbours_num_);
-    outlier.filter(*withoutOutliers);
-
-    // PointCloud::Ptr voxelized(new PointCloud);
-    // apply VoxelGrid filter
-    // pcl::VoxelGrid <pcl::PointXYZ> sor;
-    // sor.setInputCloud(withoutOutliers);
-    // sor.setLeafSize(leaf_size_, leaf_size_, leaf_size_);
-    // sor.filter(*voxelized);
+     PointCloud::Ptr voxelized(new PointCloud);
+     //apply VoxelGrid filter
+     pcl::VoxelGrid <pcl::PointXYZ> sor;
+     sor.setInputCloud(withoutNan);
+     sor.setLeafSize(leaf_size_, leaf_size_, leaf_size_);
+     sor.filter(*voxelized);
 
     PointCloud::Ptr transformed(new PointCloud);
     try
@@ -122,7 +116,7 @@ namespace pandora_costmap
           ros::Time(cloudMsg->header.stamp),
           ros::Duration(0.1));
       bool cool;
-      cool = pcl_ros::transformPointCloud(reference_frame_, *withoutOutliers,
+      cool = pcl_ros::transformPointCloud(reference_frame_, *voxelized,
           *transformed, listener_);
       if (!cool)
         return;
@@ -132,10 +126,21 @@ namespace pandora_costmap
       ROS_ERROR("[%s] %s", nodeName_.c_str(), ex.what());
       return;
     }
+    //ROS_INFO("transformed");
+
+    PointCloud::Ptr withoutOutliers(new PointCloud);
+    // apply outlier removal (takes a lot of time)
+    pcl::RadiusOutlierRemoval<pcl::PointXYZ> outlier(true);
+    outlier.setInputCloud(transformed);
+    outlier.setRadiusSearch(inlier_radius_);
+    outlier.setMinNeighborsInRadius(min_neighbours_num_);
+    outlier.filter(*withoutOutliers);
+
+    //ROS_INFO("withoutOutliers");
 
     PointCloud::Ptr pointCloudMsgOut(new PointCloud);
     // filter points
-    BOOST_FOREACH(const pcl::PointXYZ& pt, transformed->points)
+    BOOST_FOREACH(const pcl::PointXYZ& pt, withoutOutliers->points)
     {
       if (pt.z > min_elevation_ && pt.z < max_elevation_)
       {
@@ -143,6 +148,7 @@ namespace pandora_costmap
       }
     }
 
+    //ROS_INFO("cropped");
     // publish final cloud
     pointCloudMsgOut->header.stamp = cloudMsg->header.stamp;
     pointCloudMsgOut->header.frame_id = reference_frame_;
