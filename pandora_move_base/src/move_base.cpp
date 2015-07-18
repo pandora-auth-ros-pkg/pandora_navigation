@@ -1129,7 +1129,7 @@ namespace move_base {
 
       //now, we'll load a recovery behavior that will try to move the robot backwards
       boost::shared_ptr<nav_core::RecoveryBehavior> move_back(recovery_loader_.createInstance("move_backwards_recovery/MoveBackwardsRecovery"));
-      ags_clear->initialize("move_backwards_recovery", &tf_, planner_costmap_ros_, controller_costmap_ros_);
+      move_back->initialize("move_backwards_recovery", &tf_, planner_costmap_ros_, controller_costmap_ros_);
       recovery_behaviors_.push_back(move_back);
 
       /*
