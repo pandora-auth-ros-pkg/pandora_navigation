@@ -102,6 +102,7 @@ namespace move_base {
     private_nh.param("local_costmap/circumscribed_radius", circumscribed_radius_, 0.46);
     private_nh.param("clearing_radius", clearing_radius_, circumscribed_radius_);
     private_nh.param("conservative_reset_dist", conservative_reset_dist_, 3.0);
+    private_nh.param("backwards_vel", backwards_vel_, -0.05);
 
     private_nh.param("shutdown_costmaps", shutdown_costmaps_, false);
     private_nh.param("clearing_rotation_allowed", clearing_rotation_allowed_, true);
@@ -1114,27 +1115,35 @@ namespace move_base {
       ros::NodeHandle n("~");
       n.setParam("conservative_reset/reset_distance", conservative_reset_dist_);
       n.setParam("aggressive_reset/reset_distance", circumscribed_radius_ * 10);
+      n.setParam("move_backwards_recovery/backwards_vel", backwards_vel_);
 
       //first, we'll load a recovery behavior to clear the costmap
       boost::shared_ptr<nav_core::RecoveryBehavior> cons_clear(recovery_loader_.createInstance("clear_costmap_recovery/ClearCostmapRecovery"));
       cons_clear->initialize("conservative_reset", &tf_, planner_costmap_ros_, controller_costmap_ros_);
       recovery_behaviors_.push_back(cons_clear);
 
-      //next, we'll load a recovery behavior to rotate in place
-     /* boost::shared_ptr<nav_core::RecoveryBehavior> rotate(recovery_loader_.createInstance("rotate_recovery/RotateRecovery"));
-      if(clearing_rotation_allowed_){
-        rotate->initialize("rotate_recovery", &tf_, planner_costmap_ros_, controller_costmap_ros_);
-        recovery_behaviors_.push_back(rotate);
-      }*/
-
       //next, we'll load a recovery behavior that will do an aggressive reset of the costmap
       boost::shared_ptr<nav_core::RecoveryBehavior> ags_clear(recovery_loader_.createInstance("clear_costmap_recovery/ClearCostmapRecovery"));
       ags_clear->initialize("aggressive_reset", &tf_, planner_costmap_ros_, controller_costmap_ros_);
       recovery_behaviors_.push_back(ags_clear);
 
+      //now, we'll load a recovery behavior that will try to move the robot backwards
+      boost::shared_ptr<nav_core::RecoveryBehavior> move_back(recovery_loader_.createInstance("move_backwards_recovery/MoveBackwardsRecovery"));
+      ags_clear->initialize("move_backwards_recovery", &tf_, planner_costmap_ros_, controller_costmap_ros_);
+      recovery_behaviors_.push_back(move_back);
+
+      /*
+      //next, we'll load a recovery behavior to rotate in place
+      boost::shared_ptr<nav_core::RecoveryBehavior> rotate(recovery_loader_.createInstance("rotate_recovery/RotateRecovery"));
+      if(clearing_rotation_allowed_){
+        rotate->initialize("rotate_recovery", &tf_, planner_costmap_ros_, controller_costmap_ros_);
+        recovery_behaviors_.push_back(rotate);
+      }
+
       //we'll rotate in-place one more time
-      /*if(clearing_rotation_allowed_)
-        recovery_behaviors_.push_back(rotate);*/
+      if(clearing_rotation_allowed_)
+        recovery_behaviors_.push_back(rotate);
+      */
     }
     catch(pluginlib::PluginlibException& ex){
       ROS_FATAL("[pandora_move_base] Failed to load a plugin. This should not happen on default recovery behaviors. Error: %s", ex.what());
