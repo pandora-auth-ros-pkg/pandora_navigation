@@ -50,7 +50,7 @@ namespace move_base {
     as_(NULL),
     planner_costmap_ros_(NULL), controller_costmap_ros_(NULL),
     bgp_loader_("nav_core", "nav_core::BaseGlobalPlanner"),
-    blp_loader_("nav_core", "nav_core::BaseLocalPlanner"), 
+    blp_loader_("nav_core", "nav_core::BaseLocalPlanner"),
     recovery_loader_("nav_core", "nav_core::RecoveryBehavior"),
     planner_plan_(NULL), latest_plan_(NULL), controller_plan_(NULL),
     runPlanner_(false), setup_(false), p_freq_change_(false), c_freq_change_(false), new_global_plan_(false) {
@@ -260,9 +260,9 @@ namespace move_base {
             }
           }
         }
- 
+
         planner_ = bgp_loader_.createInstance(config.base_global_planner);
-        
+
         // wait for the current planner to finish planning
         boost::unique_lock<boost::mutex> lock(planner_mutex_);
 
@@ -365,7 +365,7 @@ namespace move_base {
       last_oscillation_reset_ = ros::Time::now();
       oscillation_pose_ = current_position;
 
-      //if our last recovery was caused by oscillation, we want to reset the recovery index 
+      //if our last recovery was caused by oscillation, we want to reset the recovery index
       if(recovery_trigger_ == OSCILLATION_R)
         recovery_index_ = 0;
     }
@@ -450,10 +450,10 @@ namespace move_base {
           state_ = CLEARING;
           recovery_trigger_ = OSCILLATION_R;
         }
-        
+
         {
          boost::unique_lock< boost::shared_mutex > lock(*(controller_costmap_ros_->getCostmap()->getLock()));
-        
+
         if(tc_->computeVelocityCommands(cmd_vel)){
           ROS_DEBUG_NAMED( "move_base", "Got a valid command from the local planner: %.3lf, %.3lf, %.3lf",
                            cmd_vel.linear.x, cmd_vel.linear.y, cmd_vel.angular.z );
@@ -712,7 +712,7 @@ namespace move_base {
 
     // planner_ is ptr to a GlobalPlanner object
     //if the planner fails or returns a zero length plan, planning failed
-    // plan will be filled with the calculated 
+    // plan will be filled with the calculated
     if(!planner_->makePlan(start, goal, plan) || plan.empty()){
       ROS_DEBUG_NAMED("move_base","Failed to find a  plan to point (%.2f, %.2f)", goal.pose.position.x, goal.pose.position.y);
       return false;
@@ -778,7 +778,7 @@ namespace move_base {
     goal_pose.stamp_ = ros::Time();
 
     // Can throw InvalidArgument if quaternion is malformed or LookupException
-    // (Lookup exception) The most common reason for this is that the frame is not being published, 
+    // (Lookup exception) The most common reason for this is that the frame is not being published,
     // or a parent frame was not set correctly causing the tree to be broken.
     try{
       tf_.transformPose(global_frame, goal_pose, global_pose);
@@ -876,9 +876,9 @@ namespace move_base {
 
     geometry_msgs::PoseStamped goal = goalToGlobalFrame(move_base_goal->target_pose);
 
-    //we will try our best to find a valid plan, by moving the given goal 
+    //we will try our best to find a valid plan, by moving the given goal
     findValidGoalApproximate(&goal);
-    
+
     //we have a goal so start the planner
     boost::unique_lock<boost::mutex> lock(planner_mutex_);
     planner_goal_ = goal;
@@ -923,7 +923,7 @@ namespace move_base {
 
           goal = goalToGlobalFrame(new_goal.target_pose);
 
-          //we will try our best to find a valid plan, by moving the given goal 
+          //we will try our best to find a valid plan, by moving the given goal
           findValidGoalApproximate(&goal);
 
           //we'll make sure that we reset our state for the next execution cycle
@@ -1016,9 +1016,9 @@ namespace move_base {
     return;
   }
 
-  
 
-  
+
+
 
   bool MoveBase::loadRecoveryBehaviors(ros::NodeHandle node){
     XmlRpc::XmlRpcValue behavior_list;
@@ -1034,7 +1034,7 @@ namespace move_base {
                     std::string name_i = behavior_list[i]["name"];
                     std::string name_j = behavior_list[j]["name"];
                     if(name_i == name_j){
-                      ROS_ERROR("[pandora_move_base] A recovery behavior with the name %s already exists, this is not allowed. Using the default recovery behaviors instead.", 
+                      ROS_ERROR("[pandora_move_base] A recovery behavior with the name %s already exists, this is not allowed. Using the default recovery behaviors instead.",
                           name_i.c_str());
                       return false;
                     }
@@ -1090,7 +1090,7 @@ namespace move_base {
         }
       }
       else{
-        ROS_ERROR("[pandora_move_base] The recovery behavior specification must be a list, but is of XmlRpcType %d. We'll use the default recovery behaviors instead.", 
+        ROS_ERROR("[pandora_move_base] The recovery behavior specification must be a list, but is of XmlRpcType %d. We'll use the default recovery behaviors instead.",
             behavior_list.getType());
         return false;
       }
@@ -1111,7 +1111,7 @@ namespace move_base {
       //we need to set some parameters based on what's been passed in to us to maintain backwards compatibility
       ros::NodeHandle n("~");
       n.setParam("conservative_reset/reset_distance", conservative_reset_dist_);
-      n.setParam("aggressive_reset/reset_distance", circumscribed_radius_ * 4);
+      n.setParam("aggressive_reset/reset_distance", circumscribed_radius_ * 10);
 
       //first, we'll load a recovery behavior to clear the costmap
       boost::shared_ptr<nav_core::RecoveryBehavior> cons_clear(recovery_loader_.createInstance("clear_costmap_recovery/ClearCostmapRecovery"));
@@ -1178,7 +1178,7 @@ namespace move_base {
 
     geometry_msgs::Point previous_point = goal->pose.position;
 
-    //try to find a valid cell, we will accept NO_INFORMATION cells also 
+    //try to find a valid cell, we will accept NO_INFORMATION cells also
     while (costmap->getCost(mx, my) > 50)  //costmap_2d::CIRCUMSCRIBED_INFLATED_OBSTACLE
     {
       geometry_msgs::Point new_point;
