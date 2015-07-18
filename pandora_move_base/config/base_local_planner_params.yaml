@@ -8,7 +8,7 @@ DWAPlannerROS:
   min_trans_vel: 0.0
 
   max_vel_x: 0.15
-  min_vel_x: -0.1
+  min_vel_x: 0.0
 
   max_vel_y: 0.0
   min_vel_y: 0.0
