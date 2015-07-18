@@ -123,7 +123,7 @@ class MockHardMap():
                         "[Tururu]Index out of bounds dropping \
                         cell: [%d]!", it)
                 else:
-                    self.hard_map.data[it] = 90
+                    self.hard_map.data[it] = 50
 
         # Set the timestamp and publish the hard_map
         self.hard_map.header.stamp = rospy.Time.now()

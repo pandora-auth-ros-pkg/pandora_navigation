@@ -34,6 +34,7 @@ global_costmap:
     slam_topic: /slam/map
     vision_hard_topic: /vision/traversability_map
     unknown_cost_value: 51
+    mitsos_cost_value: 50
 
   global_patch_layer:
     map_topic: /map_patch/obstacles
