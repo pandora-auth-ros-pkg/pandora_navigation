@@ -17,8 +17,8 @@ global_costmap:
       name: global_hard_layer
       type: costmap_2d::GlobalHardLayer
     -
-      name: global_patch_layer
-      type: costmap_2d::GlobalPatchLayer
+      name: global_soft_layer
+      type: costmap_2d::GlobalSoftLayer
     -
       name: inflation_layer
       type: costmap_2d::InflationLayer
@@ -36,7 +36,7 @@ global_costmap:
     unknown_cost_value: 51
     mitsos_cost_value: 50
 
-  global_patch_layer:
+  global_soft_layer:
     map_topic: /map_patch/obstacles
     unknown_cost_value: 51
     lethal_cost_threshold: 61

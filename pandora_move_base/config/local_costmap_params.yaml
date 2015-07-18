@@ -16,8 +16,11 @@ local_costmap:
    name: obstacle_layer
    type: costmap_2d::VoxelLayer
   -
-   name: soft_patch_layer
-   type: costmap_2d::SoftPatchLayer
+   name: local_hard_layer
+   type: costmap_2d::LocalHardLayer
+  -
+   name: local_soft_layer
+   type: costmap_2d::LocalSoftLayer
   -
    name: inflation_layer
    type: costmap_2d::InflationLayer
@@ -33,7 +36,12 @@ local_costmap:
     max_obstacle_height: 1.0
     publish_voxel_map: false
 
-  soft_patch_layer:
+  local_hard_layer:
+    global_hard_topic: /global_hard_layer/buffer_occupancy_grid
+    unknown_cost_value: 51
+    mitsos_cost_value: 50
+
+  local_soft_layer:
     map_topic: /map_patch/obstacles
     unknown_cost_value: 51
     lethal_cost_threshold: 61
