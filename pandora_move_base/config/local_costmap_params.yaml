@@ -19,6 +19,9 @@ local_costmap:
    name: local_hard_layer
    type: costmap_2d::LocalHardLayer
   -
+   name: voxel_layer
+   type: costmap_2d::VoxelLayer
+  -
    name: local_soft_layer
    type: costmap_2d::LocalSoftLayer
   -
@@ -26,11 +29,17 @@ local_costmap:
    type: costmap_2d::InflationLayer
 
   obstacle_layer:
-    observation_sources: laser kinect sonar
-    #observation_sources: laser
+    observation_sources: laser sonar
     laser: {data_type: LaserScan, topic: /laser/scan, marking: true, clearing: true}
-    kinect: {data_type: PointCloud2, topic: /costmap/local_cropped_cloud, marking: true, clearing: true}
     sonar: {data_type: PointCloud2, topic: /sensors/range/point_cloud, marking: true, clearing: true}
+    obstacle_range: 2.5
+    raytrace_range: 3.0
+    max_obstacle_height: 1.0
+    publish_voxel_map: false
+
+  voxel_layer:
+    observation_sources: kinect
+    kinect: {data_type: PointCloud2, topic: /costmap/local_cropped_cloud, marking: true, clearing: true}
     obstacle_range: 2.5
     raytrace_range: 3.0
     max_obstacle_height: 1.0
