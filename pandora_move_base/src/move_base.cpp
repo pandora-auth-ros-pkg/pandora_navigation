@@ -493,10 +493,12 @@ namespace move_base {
 
       //we'll try to clear out space with any user-provided recovery behaviors
       case CLEARING:
-        ROS_DEBUG_NAMED("move_base","In clearing/recovery state");
+        ROS_INFO("move_base In clearing/recovery state");
+
+        recovery_behavior_enabled_ = true;  // Fix me (tsompania)
         //we'll invoke whatever recovery behavior we're currently on if they're enabled
         if(recovery_behavior_enabled_ && recovery_index_ < recovery_behaviors_.size()){
-          ROS_DEBUG_NAMED("move_base_recovery","Executing behavior %u of %zu", recovery_index_, recovery_behaviors_.size());
+          ROS_WARN("move_base_recovery, Executing behavior %u of %zu", recovery_index_, recovery_behaviors_.size());
           recovery_behaviors_[recovery_index_]->runBehavior();
 
           //we at least want to give the robot some time to stop oscillating after executing the behavior
