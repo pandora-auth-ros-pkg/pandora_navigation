@@ -1,7 +1,7 @@
 <launch>
   <arg name="map_patch" default="true"/>
   <arg name="sonar" default="true"/>
-  <!--<arg name="voxel" default="true"/>-->
+  <arg name="voxel" default="true"/>
 
   <node pkg="pandora_move_base" type="pandora_move_base_node" respawn="false" name="move_base" output="screen">
     <rosparam file="$(find pandora_move_base)/config/costmap_common_params.yaml" command="load" ns="global_costmap" />
@@ -14,7 +14,7 @@
 
   <include if="$(arg map_patch)" file="$(find pandora_costmap)/launch/map_patch.launch" />
   <include if="$(arg sonar)" file="$(find pandora_costmap)/launch/range_to_point_cloud_converter.launch" />
-  <!--<include if="$(arg voxel)" file="$(find pandora_costmap)/launch/voxel_layer.launch" />-->
+  <include if="$(arg voxel)" file="$(find pandora_costmap)/launch/voxel_layer.launch" />
 
   <node pkg="tf" type="static_transform_publisher" name="map2odom" args="0 0 0 0 0 0 map odom 100" />
 
