@@ -73,7 +73,7 @@ namespace move_base {
     private_nh.param("planner_patience", planner_patience_, 5.0);
     private_nh.param("controller_patience", controller_patience_, 15.0);
 
-    private_nh.param("oscillation_timeout", oscillation_timeout_, 0.0);
+    private_nh.param("oscillation_timeout", oscillation_timeout_, 5.0);
     private_nh.param("oscillation_distance", oscillation_distance_, 0.5);
 
     //set up plan triple buffer
@@ -499,7 +499,7 @@ namespace move_base {
         //we'll invoke whatever recovery behavior we're currently on if they're enabled
         recovery_behavior_enabled_ = true;  // FIXME
         if(recovery_behavior_enabled_ && recovery_index_ < recovery_behaviors_.size()){
-          ROS_WARN("Executing behavior %u of %zu", recovery_index_, recovery_behaviors_.size());
+          ROS_WARN("Executing behavior %u of %zu", recovery_index_ + 1, recovery_behaviors_.size());
           recovery_behaviors_[recovery_index_]->runBehavior();
 
           //we at least want to give the robot some time to stop oscillating after executing the behavior
