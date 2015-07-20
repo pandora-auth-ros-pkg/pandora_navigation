@@ -19,7 +19,7 @@ local_costmap:
    name: local_hard_layer
    type: costmap_2d::LocalHardLayer
   -
-   name: voxel_layer
+   name: voxel_obstacle_layer
    type: costmap_2d::VoxelLayer
   -
    name: local_soft_layer
