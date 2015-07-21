@@ -79,10 +79,10 @@ namespace move_base {
     private_nh.param("planner_patience", planner_patience_, 5.0);
     private_nh.param("controller_patience", controller_patience_, 15.0);
 
-    private_nh.param("oscillation_timeout", oscillation_timeout_, 7.0);  // seconds
-    private_nh.param("oscillation_recovery_time", oscillation_recovery_time_, 2.0);  // seconds
-    private_nh.param("oscillation_distance", oscillation_distance_, 0.20);  // meters
-    private_nh.param("oscillation_angle", oscillation_angle_, 0.10);  // rad
+    private_nh.param("oscillation_timeout", oscillation_timeout_, 2.0);  // seconds
+    private_nh.param("oscillation_recovery_time", oscillation_recovery_time_, 1.0);  // seconds
+    private_nh.param("oscillation_distance", oscillation_distance_, 0.30);  // meters
+    private_nh.param("oscillation_angle", oscillation_angle_, 0.50);  // rad (absolute)
 
     // Recovery behaviors
     private_nh.param("recovery_behavior_enabled", recovery_behavior_enabled_, true);
@@ -98,6 +98,9 @@ namespace move_base {
     private_nh.param("rotate_angle", rotate_angle_, 6.0);  // rad
 
     private_nh.param("shutdown_costmaps", shutdown_costmaps_, false);
+
+    // Initialize the quaternion
+    oscillation_pose_.pose.orientation.z  = 1;
 
     //set up plan triple buffer
     planner_plan_ = new std::vector<geometry_msgs::PoseStamped>();
@@ -371,8 +374,10 @@ namespace move_base {
     feedback.base_position = current_position;
     as_->publishFeedback(feedback);
 
-    //check to see if we've moved far enough to reset our oscillation timeout
-    if(distance(current_position, oscillation_pose_) >= oscillation_distance_)
+    //check to see if we've moved/rotated far enough to reset our oscillation timeout
+    // FIXME: The first time we are here, oscillation_pose_ has zero values
+    if(distance(current_position, oscillation_pose_) >= oscillation_distance_ ||
+        angle(current_position, oscillation_pose_) >= oscillation_angle_)
     {
       last_oscillation_reset_ = ros::Time::now();
       oscillation_pose_ = current_position;
@@ -458,6 +463,7 @@ namespace move_base {
         if(oscillation_timeout_ > 0.0 &&
             last_oscillation_reset_ + ros::Duration(oscillation_timeout_) < ros::Time::now())
         {
+          ROS_WARN("[pandora_move_base] The robot is oscillating, changing to clearing state!");
           publishZeroVelocity();
           state_ = CLEARING;
           recovery_trigger_ = OSCILLATION_R;
@@ -505,12 +511,9 @@ namespace move_base {
 
       //we'll try to clear out space with any user-provided recovery behaviors
       case CLEARING:
-        ROS_WARN("In clearing/recovery state");
-
         //we'll invoke whatever recovery behavior we're currently on if they're enabled
-        recovery_behavior_enabled_ = true;  // FIXME
         if(recovery_behavior_enabled_ && recovery_index_ < recovery_behaviors_.size()){
-          ROS_WARN("Executing behavior %u of %zu", recovery_index_ + 1, recovery_behaviors_.size());
+          ROS_INFO("[pandora_move_base] Executing behavior %u of %zu", recovery_index_ + 1, recovery_behaviors_.size());
           recovery_behaviors_[recovery_index_]->runBehavior();
 
           //we at least want to give the robot some time to stop oscillating after executing the behavior
@@ -718,7 +721,7 @@ namespace move_base {
     tf::Stamped<tf::Pose> global_pose;
 
     if(!planner_costmap_ros_->getRobotPose(global_pose)) {
-      ROS_WARN("[pandora_move_base] Unable to get starting pose of robot, unable to create global plan");
+      ROS_WARN_THROTTLE(10, "[pandora_move_base] Unable to get starting pose of robot, unable to create global plan");
       return false;
     }
 
@@ -749,6 +752,14 @@ namespace move_base {
   {
     return sqrt((p1.pose.position.x - p2.pose.position.x) * (p1.pose.position.x - p2.pose.position.x)
         + (p1.pose.position.y - p2.pose.position.y) * (p1.pose.position.y - p2.pose.position.y));
+  }
+
+  double MoveBase::angle(const geometry_msgs::PoseStamped& p1, const geometry_msgs::PoseStamped& p2)
+  {
+    tf::Quaternion q1, q2;
+    quaternionMsgToTF(p1.pose.orientation, q1);
+    quaternionMsgToTF(p2.pose.orientation, q2);
+    return fabs(tf::getYaw(q1) - tf::getYaw(q2));
   }
 
   bool MoveBase::isQuaternionValid(const geometry_msgs::Quaternion& q){
@@ -1031,10 +1042,6 @@ namespace move_base {
     return;
   }
 
-
-
-
-
   bool MoveBase::loadRecoveryBehaviors(ros::NodeHandle node){
     XmlRpc::XmlRpcValue behavior_list;
     if(node.getParam("recovery_behaviors", behavior_list)){
@@ -1159,17 +1166,24 @@ namespace move_base {
       // Recovery strategy
       if (clear_recovery_allowed_)
         recovery_behaviors_.push_back(conservative_clear);
-      if (collision_recovery_allowed_)
-        recovery_behaviors_.push_back(conservative_collision);
-      if (clear_recovery_allowed_)
-        recovery_behaviors_.push_back(conservative_clear);
-      if (collision_recovery_allowed_)
-        recovery_behaviors_.push_back(aggressive_collision);
-      if (clear_recovery_allowed_)
-        recovery_behaviors_.push_back(aggressive_clear);
-      if (rotate_recovery_allowed_)
-        recovery_behaviors_.push_back(rotate);
 
+      if (collision_recovery_allowed_)
+      {
+        recovery_behaviors_.push_back(conservative_collision);
+        if (clear_recovery_allowed_)
+          recovery_behaviors_.push_back(conservative_clear);
+
+        recovery_behaviors_.push_back(aggressive_collision);
+        if (clear_recovery_allowed_)
+          recovery_behaviors_.push_back(aggressive_clear);
+      }
+
+      if (rotate_recovery_allowed_)
+      {
+        recovery_behaviors_.push_back(rotate);
+        if (clear_recovery_allowed_)
+          recovery_behaviors_.push_back(conservative_clear);
+      }
     }
     catch(pluginlib::PluginlibException& ex){
       ROS_FATAL("[pandora_move_base] Failed to load a plugin. This should not happen on default recovery behaviors. Error: %s", ex.what());

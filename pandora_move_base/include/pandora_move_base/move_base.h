@@ -155,6 +155,14 @@ namespace move_base {
       double distance(const geometry_msgs::PoseStamped& p1, const geometry_msgs::PoseStamped& p2);
 
       /**
+       * @brief Calculates the yaw difference between two points
+       * @param p1 first point
+       * @param p2 second point
+       * @return A double that is the angle difference of the two points
+       */
+      double angle(const geometry_msgs::PoseStamped& p1, const geometry_msgs::PoseStamped& p2);
+
+      /**
        * @brief Check if the given quaternion is valid
        * @param q The quaternion to check if valid
        * @return True if quaternion is valid false otherwise
