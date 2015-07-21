@@ -81,8 +81,8 @@ namespace move_base {
 
     private_nh.param("oscillation_timeout", oscillation_timeout_, 2.0);  // seconds
     private_nh.param("oscillation_recovery_time", oscillation_recovery_time_, 1.0);  // seconds
-    private_nh.param("oscillation_distance", oscillation_distance_, 0.30);  // meters
-    private_nh.param("oscillation_angle", oscillation_angle_, 0.50);  // rad (absolute)
+    private_nh.param("oscillation_distance", oscillation_distance_, 0.20);  // meters
+    private_nh.param("oscillation_angle", oscillation_angle_, 0.40);  // rad (absolute)
 
     // Recovery behaviors
     private_nh.param("recovery_behavior_enabled", recovery_behavior_enabled_, true);
@@ -95,7 +95,7 @@ namespace move_base {
     private_nh.param("aggressive_reset_dist", aggressive_reset_dist_, circumscribed_radius_ * 10);
     private_nh.param("linear_escape_vel", linear_escape_vel_, 0.20);  // absolute
     private_nh.param("angular_escape_vel", angular_escape_vel_, 0.20);  // absolute
-    private_nh.param("rotate_angle", rotate_angle_, 6.0);  // rad
+    private_nh.param("rotate_angle", rotate_angle_, 2 * M_PI);  // rad
 
     private_nh.param("shutdown_costmaps", shutdown_costmaps_, false);
 
@@ -1138,7 +1138,7 @@ namespace move_base {
       n.setParam("conservative_collision_recovery/angular_escape_vel", angular_escape_vel_);
       n.setParam("aggressive_collision_recovery/linear_escape_vel", linear_escape_vel_ * 2);
       n.setParam("aggressive_collision_recovery/angular_escape_vel", angular_escape_vel_ * 2);
-      // n.setParam("rotate_recovery/rotate_angle", rotate_angle_);  // TODO
+      n.setParam("rotate_recovery/rotate_angle", rotate_angle_);
 
       boost::shared_ptr<nav_core::RecoveryBehavior> conservative_clear(recovery_loader_.createInstance("clear_costmap_recovery/ClearCostmapRecovery"));
       boost::shared_ptr<nav_core::RecoveryBehavior> aggressive_clear(recovery_loader_.createInstance("clear_costmap_recovery/ClearCostmapRecovery"));
