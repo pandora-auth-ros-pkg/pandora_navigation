@@ -68,13 +68,36 @@ namespace move_base {
     private_nh.param("base_local_planner", local_planner, std::string("base_local_planner/TrajectoryPlannerROS"));
     private_nh.param("global_costmap/robot_base_frame", robot_base_frame_, std::string("base_link"));
     private_nh.param("global_costmap/global_frame", global_frame_, std::string("/map"));
+
+    //we'll assume the radius of the robot to be consistent with what's specified for the costmaps
+    private_nh.param("local_costmap/inscribed_radius", inscribed_radius_, 0.325);
+    private_nh.param("local_costmap/circumscribed_radius", circumscribed_radius_, 0.46);
+    private_nh.param("clearing_radius", clearing_radius_, circumscribed_radius_);
+
     private_nh.param("planner_frequency", planner_frequency_, 0.0);
     private_nh.param("controller_frequency", controller_frequency_, 20.0);
     private_nh.param("planner_patience", planner_patience_, 5.0);
     private_nh.param("controller_patience", controller_patience_, 15.0);
 
-    private_nh.param("oscillation_timeout", oscillation_timeout_, 5.0);
-    private_nh.param("oscillation_distance", oscillation_distance_, 0.5);
+    private_nh.param("oscillation_timeout", oscillation_timeout_, 7.0);  // seconds
+    private_nh.param("oscillation_recovery_time", oscillation_recovery_time_, 2.0);  // seconds
+    private_nh.param("oscillation_distance", oscillation_distance_, 0.20);  // meters
+    private_nh.param("oscillation_angle", oscillation_angle_, 0.10);  // rad
+
+    // Recovery behaviors
+    private_nh.param("recovery_behavior_enabled", recovery_behavior_enabled_, true);
+    private_nh.param("clear_recovery_allowed", clear_recovery_allowed_, true);
+    private_nh.param("collision_recovery_allowed", collision_recovery_allowed_, true);
+    private_nh.param("rotation_recovery_allowed", rotate_recovery_allowed_, false);
+
+    // Recovery params
+    private_nh.param("conservative_reset_dist", conservative_reset_dist_, 3.0);
+    private_nh.param("aggressive_reset_dist", aggressive_reset_dist_, circumscribed_radius_ * 10);
+    private_nh.param("linear_escape_vel", linear_escape_vel_, 0.20);  // absolute
+    private_nh.param("angular_escape_vel", angular_escape_vel_, 0.20);  // absolute
+    private_nh.param("rotate_angle", rotate_angle_, 6.0);  // rad
+
+    private_nh.param("shutdown_costmaps", shutdown_costmaps_, false);
 
     //set up plan triple buffer
     planner_plan_ = new std::vector<geometry_msgs::PoseStamped>();
@@ -96,17 +119,6 @@ namespace move_base {
     //like nav_view and rviz
     ros::NodeHandle simple_nh("move_base_simple");
     goal_sub_ = simple_nh.subscribe<geometry_msgs::PoseStamped>("goal", 1, boost::bind(&MoveBase::goalCB, this, _1));
-
-    //we'll assume the radius of the robot to be consistent with what's specified for the costmaps
-    private_nh.param("local_costmap/inscribed_radius", inscribed_radius_, 0.325);
-    private_nh.param("local_costmap/circumscribed_radius", circumscribed_radius_, 0.46);
-    private_nh.param("clearing_radius", clearing_radius_, circumscribed_radius_);
-    private_nh.param("conservative_reset_dist", conservative_reset_dist_, 3.0);
-    private_nh.param("backwards_vel", backwards_vel_, -0.05);
-
-    private_nh.param("shutdown_costmaps", shutdown_costmaps_, false);
-    private_nh.param("clearing_rotation_allowed", clearing_rotation_allowed_, true);
-    private_nh.param("recovery_behavior_enabled", recovery_behavior_enabled_, true);
 
     //create the ros wrapper for the planner's costmap... and initializer a pointer we'll use with the underlying map
     planner_costmap_ros_ = new costmap_2d::Costmap2DROS("global_costmap", tf_);
@@ -238,7 +250,6 @@ namespace move_base {
     conservative_reset_dist_ = config.conservative_reset_dist;
 
     recovery_behavior_enabled_ = config.recovery_behavior_enabled;
-    clearing_rotation_allowed_ = config.clearing_rotation_allowed;
     shutdown_costmaps_ = config.shutdown_costmaps;
 
     oscillation_timeout_ = config.oscillation_timeout;
@@ -503,7 +514,8 @@ namespace move_base {
           recovery_behaviors_[recovery_index_]->runBehavior();
 
           //we at least want to give the robot some time to stop oscillating after executing the behavior
-          last_oscillation_reset_ = ros::Time::now();
+          //so we give it some more time (oscillation_recovery_time_) to recover and not enter oscillation mode instantly
+          last_oscillation_reset_ = ros::Time::now() - ros::Duration(oscillation_recovery_time_);
 
           //we'll check if the recovery behavior actually worked
           ROS_DEBUG_NAMED("move_base_recovery","Going back to planning state");
@@ -1113,26 +1125,50 @@ namespace move_base {
     try{
       //we need to set some parameters based on what's been passed in to us to maintain backwards compatibility
       ros::NodeHandle n("~");
-      n.setParam("conservative_reset/reset_distance", conservative_reset_dist_);
-      n.setParam("aggressive_reset/reset_distance", circumscribed_radius_ * 10);
-      n.setParam("move_backwards_recovery/backwards_vel", backwards_vel_);
+      n.setParam("conservative_clear_costmap_recovery/reset_distance", conservative_reset_dist_);
+      n.setParam("aggressive_clear_costmap_recovery/reset_distance", aggressive_reset_dist_);
+      n.setParam("conservative_collision_recovery/linear_escape_vel", linear_escape_vel_);
+      n.setParam("conservative_collision_recovery/angular_escape_vel", angular_escape_vel_);
+      n.setParam("aggressive_collision_recovery/linear_escape_vel", linear_escape_vel_ * 2);
+      n.setParam("aggressive_collision_recovery/angular_escape_vel", angular_escape_vel_ * 2);
+      // n.setParam("rotate_recovery/rotate_angle", rotate_angle_);  // TODO
 
       boost::shared_ptr<nav_core::RecoveryBehavior> conservative_clear(recovery_loader_.createInstance("clear_costmap_recovery/ClearCostmapRecovery"));
-      conservative_clear->initialize("conservative_reset", &tf_, planner_costmap_ros_, controller_costmap_ros_);
       boost::shared_ptr<nav_core::RecoveryBehavior> aggressive_clear(recovery_loader_.createInstance("clear_costmap_recovery/ClearCostmapRecovery"));
-      aggressive_clear->initialize("aggressive_reset", &tf_, planner_costmap_ros_, controller_costmap_ros_);
-      boost::shared_ptr<nav_core::RecoveryBehavior> move_backwards(recovery_loader_.createInstance("move_backwards_recovery/MoveBackwardsRecovery"));
-      move_backwards->initialize("move_backwards_recovery", &tf_, planner_costmap_ros_, controller_costmap_ros_);
+      boost::shared_ptr<nav_core::RecoveryBehavior> conservative_collision(recovery_loader_.createInstance("collision_recovery/CollisionRecovery"));
+      boost::shared_ptr<nav_core::RecoveryBehavior> aggressive_collision(recovery_loader_.createInstance("collision_recovery/CollisionRecovery"));
       boost::shared_ptr<nav_core::RecoveryBehavior> rotate(recovery_loader_.createInstance("rotate_recovery/RotateRecovery"));
-      rotate->initialize("rotate_recovery", &tf_, planner_costmap_ros_, controller_costmap_ros_);
 
-      recovery_behaviors_.push_back(conservative_clear);
-      recovery_behaviors_.push_back(move_backwards);
-      recovery_behaviors_.push_back(conservative_clear);
-      recovery_behaviors_.push_back(move_backwards);
-      recovery_behaviors_.push_back(aggressive_clear);
-      //recovery_behaviors_.push_back(rotate);
-      //recovery_behaviors_.push_back(rotate);
+      if (clear_recovery_allowed_)
+      {
+        conservative_clear->initialize("conservative_clear_costmap_recovery", &tf_, planner_costmap_ros_, controller_costmap_ros_);
+        aggressive_clear->initialize("aggressive_clear_costmap_recovery", &tf_, planner_costmap_ros_, controller_costmap_ros_);
+      }
+
+      if (collision_recovery_allowed_)
+      {
+        conservative_collision->initialize("conservative_collision_recovery", &tf_, planner_costmap_ros_, controller_costmap_ros_);
+        aggressive_collision->initialize("aggressive_collision_recovery", &tf_, planner_costmap_ros_, controller_costmap_ros_);
+      }
+
+      if (rotate_recovery_allowed_)
+      {
+        rotate->initialize("rotate_recovery", &tf_, planner_costmap_ros_, controller_costmap_ros_);
+      }
+
+      // Recovery strategy
+      if (clear_recovery_allowed_)
+        recovery_behaviors_.push_back(conservative_clear);
+      if (collision_recovery_allowed_)
+        recovery_behaviors_.push_back(conservative_collision);
+      if (clear_recovery_allowed_)
+        recovery_behaviors_.push_back(conservative_clear);
+      if (collision_recovery_allowed_)
+        recovery_behaviors_.push_back(aggressive_collision);
+      if (clear_recovery_allowed_)
+        recovery_behaviors_.push_back(aggressive_clear);
+      if (rotate_recovery_allowed_)
+        recovery_behaviors_.push_back(rotate);
 
     }
     catch(pluginlib::PluginlibException& ex){
