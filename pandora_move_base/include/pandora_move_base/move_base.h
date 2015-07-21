@@ -226,12 +226,11 @@ namespace move_base {
       double planner_frequency_, controller_frequency_, inscribed_radius_, circumscribed_radius_;
       double planner_patience_, controller_patience_;
       double clearing_radius_;
-      double backwards_vel_;
       ros::Publisher current_goal_pub_, vel_pub_, action_goal_pub_;
       ros::Subscriber goal_sub_;
       ros::ServiceServer make_plan_srv_, clear_costmaps_srv_;
-      double oscillation_timeout_, oscillation_distance_, oscillation_angle_, oscillation_recovery_time_;
-      bool shutdown_costmaps_, recovery_behavior_enabled_, clear_recovery_allowed_, collision_recovery_allowed_, rotate_recovery_allowed_;
+      double oscillation_timeout_, oscillation_recovery_time_, oscillation_distance_, oscillation_angle_;
+      bool shutdown_costmaps_, recovery_behavior_enabled_, clear_costmap_recovery_allowed_, collision_recovery_allowed_, rotate_recovery_allowed_;
       double conservative_reset_dist_, aggressive_reset_dist_, linear_escape_vel_, angular_escape_vel_, rotate_angle_;
 
       MoveBaseState state_;
@@ -254,7 +253,6 @@ namespace move_base {
       boost::condition_variable planner_cond_;
       geometry_msgs::PoseStamped planner_goal_;
       boost::thread* planner_thread_;
-
 
       boost::recursive_mutex configuration_mutex_;
       dynamic_reconfigure::Server<pandora_move_base::MoveBaseConfig> *dsrv_;

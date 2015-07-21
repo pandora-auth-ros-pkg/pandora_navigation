@@ -79,16 +79,16 @@ namespace move_base {
     private_nh.param("planner_patience", planner_patience_, 5.0);
     private_nh.param("controller_patience", controller_patience_, 15.0);
 
-    private_nh.param("oscillation_timeout", oscillation_timeout_, 2.0);  // seconds
-    private_nh.param("oscillation_recovery_time", oscillation_recovery_time_, 1.0);  // seconds
+    private_nh.param("oscillation_timeout", oscillation_timeout_, 7.5);  // seconds
+    private_nh.param("oscillation_recovery_time", oscillation_recovery_time_, 2.5);  // seconds
     private_nh.param("oscillation_distance", oscillation_distance_, 0.20);  // meters
     private_nh.param("oscillation_angle", oscillation_angle_, 0.40);  // rad (absolute)
 
     // Recovery behaviors
     private_nh.param("recovery_behavior_enabled", recovery_behavior_enabled_, true);
-    private_nh.param("clear_recovery_allowed", clear_recovery_allowed_, true);
+    private_nh.param("clear_costmap_recovery_allowed", clear_costmap_recovery_allowed_, true);
     private_nh.param("collision_recovery_allowed", collision_recovery_allowed_, true);
-    private_nh.param("rotation_recovery_allowed", rotate_recovery_allowed_, false);
+    private_nh.param("rotate_recovery_allowed", rotate_recovery_allowed_, false);
 
     // Recovery params
     private_nh.param("conservative_reset_dist", conservative_reset_dist_, 3.0);
@@ -123,7 +123,7 @@ namespace move_base {
     ros::NodeHandle simple_nh("move_base_simple");
     goal_sub_ = simple_nh.subscribe<geometry_msgs::PoseStamped>("goal", 1, boost::bind(&MoveBase::goalCB, this, _1));
 
-    //create the ros wrapper for the planner's costmap... and initializer a pointer we'll use with the underlying map
+    //create the ros wrapper for the planner's costmap... and initializer a pointer we'll shutdown_costmapsuse with the underlying map
     planner_costmap_ros_ = new costmap_2d::Costmap2DROS("global_costmap", tf_);
     planner_costmap_ros_->pause();
 
@@ -215,6 +215,7 @@ namespace move_base {
     dynamic_reconfigure::Server<pandora_move_base::MoveBaseConfig>::CallbackType cb = boost::bind(&MoveBase::reconfigureCB, this, _1, _2);
     dsrv_->setCallback(cb);
 
+    ROS_INFO("[pandora_move_base] Node initialized.");
   }
 
   void MoveBase::reconfigureCB(pandora_move_base::MoveBaseConfig &config, uint32_t level){
@@ -250,13 +251,25 @@ namespace move_base {
 
     planner_patience_ = config.planner_patience;
     controller_patience_ = config.controller_patience;
-    conservative_reset_dist_ = config.conservative_reset_dist;
-
-    recovery_behavior_enabled_ = config.recovery_behavior_enabled;
-    shutdown_costmaps_ = config.shutdown_costmaps;
 
     oscillation_timeout_ = config.oscillation_timeout;
+    oscillation_recovery_time_ = config.oscillation_recovery_time;
     oscillation_distance_ = config.oscillation_distance;
+    oscillation_angle_ = config.oscillation_angle;
+
+    recovery_behavior_enabled_ = config.recovery_behavior_enabled;
+    clear_costmap_recovery_allowed_ = config.clear_costmap_recovery_allowed;
+    collision_recovery_allowed_ = config.collision_recovery_allowed;
+    rotate_recovery_allowed_ = config.rotate_recovery_allowed;
+
+    conservative_reset_dist_ = config.conservative_reset_dist;
+    aggressive_reset_dist_ = config.aggressive_reset_dist;
+    linear_escape_vel_ = config.linear_escape_vel;
+    angular_escape_vel_ = config.angular_escape_vel;
+    rotate_angle_ = config.rotate_angle;
+
+    shutdown_costmaps_ = config.shutdown_costmaps;
+
     if(config.base_global_planner != last_config_.base_global_planner) {
       boost::shared_ptr<nav_core::BaseGlobalPlanner> old_planner = planner_;
       //initialize the global planner
@@ -1146,7 +1159,7 @@ namespace move_base {
       boost::shared_ptr<nav_core::RecoveryBehavior> aggressive_collision(recovery_loader_.createInstance("collision_recovery/CollisionRecovery"));
       boost::shared_ptr<nav_core::RecoveryBehavior> rotate(recovery_loader_.createInstance("rotate_recovery/RotateRecovery"));
 
-      if (clear_recovery_allowed_)
+      if (clear_costmap_recovery_allowed_)
       {
         conservative_clear->initialize("conservative_clear_costmap_recovery", &tf_, planner_costmap_ros_, controller_costmap_ros_);
         aggressive_clear->initialize("aggressive_clear_costmap_recovery", &tf_, planner_costmap_ros_, controller_costmap_ros_);
@@ -1164,24 +1177,24 @@ namespace move_base {
       }
 
       // Recovery strategy
-      if (clear_recovery_allowed_)
+      if (clear_costmap_recovery_allowed_)
         recovery_behaviors_.push_back(conservative_clear);
 
       if (collision_recovery_allowed_)
       {
         recovery_behaviors_.push_back(conservative_collision);
-        if (clear_recovery_allowed_)
+        if (clear_costmap_recovery_allowed_)
           recovery_behaviors_.push_back(conservative_clear);
 
         recovery_behaviors_.push_back(aggressive_collision);
-        if (clear_recovery_allowed_)
+        if (clear_costmap_recovery_allowed_)
           recovery_behaviors_.push_back(aggressive_clear);
       }
 
       if (rotate_recovery_allowed_)
       {
         recovery_behaviors_.push_back(rotate);
-        if (clear_recovery_allowed_)
+        if (clear_costmap_recovery_allowed_)
           recovery_behaviors_.push_back(conservative_clear);
       }
     }
