@@ -60,7 +60,8 @@ namespace move_base {
     ros::NodeHandle private_nh("~");
     ros::NodeHandle nh;
 
-    recovery_trigger_ = PLANNING_R;
+    private_nh.param("DWAPlannerROS/max_trans_vel", max_trans_vel_, 0.15);
+    private_nh.param("DWAPlannerROS/max_rot_vel", max_rot_vel_, 0.30);
 
     //get some parameters that will be global to the move base node
     std::string global_planner, local_planner;
@@ -79,10 +80,10 @@ namespace move_base {
     private_nh.param("planner_patience", planner_patience_, 5.0);
     private_nh.param("controller_patience", controller_patience_, 15.0);
 
-    private_nh.param("oscillation_timeout", oscillation_timeout_, 7.5);  // seconds
-    private_nh.param("oscillation_recovery_time", oscillation_recovery_time_, 2.5);  // seconds
-    private_nh.param("oscillation_distance", oscillation_distance_, 0.20);  // meters
-    private_nh.param("oscillation_angle", oscillation_angle_, 0.40);  // rad (absolute)
+    private_nh.param("oscillation_timeout", oscillation_timeout_, 10 * max_trans_vel_ + 5 * max_rot_vel_);
+    private_nh.param("oscillation_recovery_time", oscillation_recovery_time_, 1.0);
+    private_nh.param("oscillation_distance", oscillation_distance_, 0.20);
+    private_nh.param("oscillation_angle", oscillation_angle_, 0.40);
 
     // Recovery behaviors
     private_nh.param("recovery_behavior_enabled", recovery_behavior_enabled_, true);
@@ -93,9 +94,9 @@ namespace move_base {
     // Recovery params
     private_nh.param("conservative_reset_dist", conservative_reset_dist_, 3.0);
     private_nh.param("aggressive_reset_dist", aggressive_reset_dist_, circumscribed_radius_ * 10);
-    private_nh.param("linear_escape_vel", linear_escape_vel_, 0.20);  // absolute
-    private_nh.param("angular_escape_vel", angular_escape_vel_, 0.20);  // absolute
-    private_nh.param("rotate_angle", rotate_angle_, 2 * M_PI);  // rad
+    private_nh.param("linear_escape_vel", linear_escape_vel_, 0.20);
+    private_nh.param("angular_escape_vel", angular_escape_vel_, 0.20);
+    private_nh.param("rotate_angle", rotate_angle_, 2 * M_PI);
 
     private_nh.param("shutdown_costmaps", shutdown_costmaps_, false);
 
@@ -206,6 +207,7 @@ namespace move_base {
     state_ = PLANNING;
 
     //we'll start executing recovery behaviors at the beginning of our list
+    recovery_trigger_ = PLANNING_R;
     recovery_index_ = 0;
 
     //we're all set up now so we can start the action server
@@ -1149,8 +1151,8 @@ namespace move_base {
       n.setParam("aggressive_clear_costmap_recovery/reset_distance", aggressive_reset_dist_);
       n.setParam("conservative_collision_recovery/linear_escape_vel", linear_escape_vel_);
       n.setParam("conservative_collision_recovery/angular_escape_vel", angular_escape_vel_);
-      n.setParam("aggressive_collision_recovery/linear_escape_vel", linear_escape_vel_ * 2);
-      n.setParam("aggressive_collision_recovery/angular_escape_vel", angular_escape_vel_ * 2);
+      n.setParam("aggressive_collision_recovery/linear_escape_vel", 2 * linear_escape_vel_);
+      n.setParam("aggressive_collision_recovery/angular_escape_vel", 2 * angular_escape_vel_);
       n.setParam("rotate_recovery/rotate_angle", rotate_angle_);
 
       boost::shared_ptr<nav_core::RecoveryBehavior> conservative_clear(recovery_loader_.createInstance("clear_costmap_recovery/ClearCostmapRecovery"));
@@ -1178,24 +1180,17 @@ namespace move_base {
 
       // Recovery strategy
       if (clear_costmap_recovery_allowed_)
-        recovery_behaviors_.push_back(conservative_clear);
+        recovery_behaviors_.push_back(aggressive_clear);
 
       if (collision_recovery_allowed_)
       {
         recovery_behaviors_.push_back(conservative_collision);
-        if (clear_costmap_recovery_allowed_)
-          recovery_behaviors_.push_back(conservative_clear);
-
         recovery_behaviors_.push_back(aggressive_collision);
-        if (clear_costmap_recovery_allowed_)
-          recovery_behaviors_.push_back(aggressive_clear);
       }
 
       if (rotate_recovery_allowed_)
       {
         recovery_behaviors_.push_back(rotate);
-        if (clear_costmap_recovery_allowed_)
-          recovery_behaviors_.push_back(conservative_clear);
       }
     }
     catch(pluginlib::PluginlibException& ex){
