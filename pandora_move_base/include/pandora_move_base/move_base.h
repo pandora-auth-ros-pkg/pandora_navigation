@@ -105,7 +105,7 @@ namespace move_base {
     private:
       /**
        * @brief  A service call that clears the costmaps of obstacles
-       * @param req The service request 
+       * @param req The service request
        * @param resp The service response
        * @return True if the service call succeeds, false otherwise
        */
@@ -155,6 +155,14 @@ namespace move_base {
       double distance(const geometry_msgs::PoseStamped& p1, const geometry_msgs::PoseStamped& p2);
 
       /**
+       * @brief Calculates the yaw difference between two points
+       * @param p1 first point
+       * @param p2 second point
+       * @return A double that is the angle difference of the two points
+       */
+      double angle(const geometry_msgs::PoseStamped& p1, const geometry_msgs::PoseStamped& p2);
+
+      /**
        * @brief Check if the given quaternion is valid
        * @param q The quaternion to check if valid
        * @return True if quaternion is valid false otherwise
@@ -175,7 +183,7 @@ namespace move_base {
 
       /**
        * @brief  Load the recovery behaviors for the navigation stack from the parameter server
-       * @param node The ros::NodeHandle to be used for loading parameters 
+       * @param node The ros::NodeHandle to be used for loading parameters
        * @return True if the recovery behaviors were loaded successfully, false otherwise
        */
       bool loadRecoveryBehaviors(ros::NodeHandle node);
@@ -195,7 +203,7 @@ namespace move_base {
        * @brief Takes the goal that is passed to move_base and updates it to a valid new goal
        * @param goal The goal that was initially given to move_base and is going to be updated
        *
-       * This function calculates the orientation of the initial goal and then using the 
+       * This function calculates the orientation of the initial goal and then using the
        * same orientation it moves back the goal arrow in small steps until it is at a pose that
        * the robot is able to use as an approach point.
        */
@@ -217,12 +225,14 @@ namespace move_base {
       tf::Stamped<tf::Pose> global_pose_;
       double planner_frequency_, controller_frequency_, inscribed_radius_, circumscribed_radius_;
       double planner_patience_, controller_patience_;
-      double conservative_reset_dist_, clearing_radius_;
+      double clearing_radius_;
       ros::Publisher current_goal_pub_, vel_pub_, action_goal_pub_;
       ros::Subscriber goal_sub_;
       ros::ServiceServer make_plan_srv_, clear_costmaps_srv_;
-      bool shutdown_costmaps_, clearing_rotation_allowed_, recovery_behavior_enabled_;
-      double oscillation_timeout_, oscillation_distance_;
+      double max_trans_vel_, max_rot_vel_;
+      double oscillation_timeout_, oscillation_recovery_time_, oscillation_distance_, oscillation_angle_;
+      bool shutdown_costmaps_, recovery_behavior_enabled_, clear_costmap_recovery_allowed_, collision_recovery_allowed_, rotate_recovery_allowed_;
+      double conservative_reset_dist_, aggressive_reset_dist_, linear_escape_vel_, angular_escape_vel_, rotate_angle_;
 
       MoveBaseState state_;
       RecoveryTrigger recovery_trigger_;
@@ -245,10 +255,9 @@ namespace move_base {
       geometry_msgs::PoseStamped planner_goal_;
       boost::thread* planner_thread_;
 
-
       boost::recursive_mutex configuration_mutex_;
       dynamic_reconfigure::Server<pandora_move_base::MoveBaseConfig> *dsrv_;
-      
+
       void reconfigureCB(pandora_move_base::MoveBaseConfig &config, uint32_t level);
 
       pandora_move_base::MoveBaseConfig last_config_;
@@ -256,8 +265,7 @@ namespace move_base {
       bool setup_, p_freq_change_, c_freq_change_;
       bool new_global_plan_;
 
-      
+
   };
 };
 #endif
-

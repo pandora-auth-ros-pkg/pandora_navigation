@@ -36,6 +36,7 @@
   <depend>dwa_local_planner</depend>
   <depend>navfn</depend>
   <depend>clear_costmap_recovery</depend>
+  <depend>collision_recovery</depend>
   <depend>rotate_recovery</depend>
 
   <export>
