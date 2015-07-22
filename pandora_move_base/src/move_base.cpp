@@ -80,7 +80,7 @@ namespace move_base {
     private_nh.param("planner_patience", planner_patience_, 5.0);
     private_nh.param("controller_patience", controller_patience_, 15.0);
 
-    private_nh.param("oscillation_timeout", oscillation_timeout_, 10 * max_trans_vel_ + 5 * max_rot_vel_);
+    private_nh.param("oscillation_timeout", oscillation_timeout_, 4.0);
     private_nh.param("oscillation_recovery_time", oscillation_recovery_time_, 1.0);
     private_nh.param("oscillation_distance", oscillation_distance_, 0.20);
     private_nh.param("oscillation_angle", oscillation_angle_, 0.40);
@@ -94,8 +94,8 @@ namespace move_base {
     // Recovery params
     private_nh.param("conservative_reset_dist", conservative_reset_dist_, 3.0);
     private_nh.param("aggressive_reset_dist", aggressive_reset_dist_, circumscribed_radius_ * 10);
-    private_nh.param("linear_escape_vel", linear_escape_vel_, 0.20);
-    private_nh.param("angular_escape_vel", angular_escape_vel_, 0.20);
+    private_nh.param("linear_escape_vel", linear_escape_vel_, 0.05);
+    private_nh.param("angular_escape_vel", angular_escape_vel_, 0.1);
     private_nh.param("rotate_angle", rotate_angle_, 2 * M_PI);
 
     private_nh.param("shutdown_costmaps", shutdown_costmaps_, false);
@@ -1155,22 +1155,22 @@ namespace move_base {
       n.setParam("aggressive_collision_recovery/angular_escape_vel", 2 * angular_escape_vel_);
       n.setParam("rotate_recovery/rotate_angle", rotate_angle_);
 
-      boost::shared_ptr<nav_core::RecoveryBehavior> conservative_clear(recovery_loader_.createInstance("clear_costmap_recovery/ClearCostmapRecovery"));
+      //boost::shared_ptr<nav_core::RecoveryBehavior> conservative_clear(recovery_loader_.createInstance("clear_costmap_recovery/ClearCostmapRecovery"));
       boost::shared_ptr<nav_core::RecoveryBehavior> aggressive_clear(recovery_loader_.createInstance("clear_costmap_recovery/ClearCostmapRecovery"));
       boost::shared_ptr<nav_core::RecoveryBehavior> conservative_collision(recovery_loader_.createInstance("collision_recovery/CollisionRecovery"));
-      boost::shared_ptr<nav_core::RecoveryBehavior> aggressive_collision(recovery_loader_.createInstance("collision_recovery/CollisionRecovery"));
+      //boost::shared_ptr<nav_core::RecoveryBehavior> aggressive_collision(recovery_loader_.createInstance("collision_recovery/CollisionRecovery"));
       boost::shared_ptr<nav_core::RecoveryBehavior> rotate(recovery_loader_.createInstance("rotate_recovery/RotateRecovery"));
 
       if (clear_costmap_recovery_allowed_)
       {
-        conservative_clear->initialize("conservative_clear_costmap_recovery", &tf_, planner_costmap_ros_, controller_costmap_ros_);
+        //conservative_clear->initialize("conservative_clear_costmap_recovery", &tf_, planner_costmap_ros_, controller_costmap_ros_);
         aggressive_clear->initialize("aggressive_clear_costmap_recovery", &tf_, planner_costmap_ros_, controller_costmap_ros_);
       }
 
       if (collision_recovery_allowed_)
       {
         conservative_collision->initialize("conservative_collision_recovery", &tf_, planner_costmap_ros_, controller_costmap_ros_);
-        aggressive_collision->initialize("aggressive_collision_recovery", &tf_, planner_costmap_ros_, controller_costmap_ros_);
+        //aggressive_collision->initialize("aggressive_collision_recovery", &tf_, planner_costmap_ros_, controller_costmap_ros_);
       }
 
       if (rotate_recovery_allowed_)
@@ -1185,7 +1185,7 @@ namespace move_base {
       if (collision_recovery_allowed_)
       {
         recovery_behaviors_.push_back(conservative_collision);
-        recovery_behaviors_.push_back(aggressive_collision);
+        //recovery_behaviors_.push_back(aggressive_collision);
       }
 
       if (rotate_recovery_allowed_)
