@@ -218,6 +218,7 @@ namespace move_base {
     dsrv_->setCallback(cb);
 
     ROS_INFO("[pandora_move_base] Node initialized.");
+    //recovery_behavior_enabled_ =  false;
   }
 
   void MoveBase::reconfigureCB(pandora_move_base::MoveBaseConfig &config, uint32_t level){
