@@ -1,0 +1,16 @@
+<launch>
+  <arg name="publish_ackermann" default="true" />
+  <arg name="publish_twist" default="true" />
+  <arg name="wheelbase" default="0.32" />
+
+  <node
+    name="ackermann_to_twist"
+    pkg="pandora_monstertruck_2dnav"
+    type="ackermann_to_twist_node"
+    output="screen">
+
+    <param name="publish_ackermann" type="bool" value="$(arg publish_ackermann)" />
+    <param name="publish_twist" type="bool" value="$(arg publish_twist)" />
+    <param name="wheelbase" type="double" value="$(arg wheelbase)" />
+  </node>
+</launch>

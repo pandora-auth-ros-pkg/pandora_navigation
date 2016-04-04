@@ -1,0 +1,27 @@
+<?xml version="1.0"?>
+<package format="2">
+  <name>pandora_monstertruck_2dnav</name>
+  <version>0.0.0</version>
+  <description>The pandora_monstertruck_2dnav package</description>
+
+  <maintainer email="gkourosg@yahoo.gr">George Kouros</maintainer>
+
+  <license>BSD</license>
+
+  <author email="gkourosg@yahoo.gr">George Kouros</author>
+
+  <buildtool_depend>catkin</buildtool_depend>
+
+  <depend>roscpp</depend>
+  <depend>ackermann_msgs</depend>
+  <depend>geometry_msgs</depend>
+  <depend>roslint</depend>
+
+  <exec_depend>pandora_robots_description</exec_depend>
+  <exec_depend>pandora_move_base</exec_depend>
+  <exec_depend>pandora_costmap</exec_depend>
+  <exec_depend>stdr_launchers</exec_depend>
+
+  <export>
+  </export>
+</package>

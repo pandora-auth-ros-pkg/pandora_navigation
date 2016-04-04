@@ -1,0 +1,14 @@
+<launch>
+
+  <!-- Launch stdr simulator with map and gui -->
+  <include file="$(find stdr_launchers)/launch/server_with_map_and_gui.launch" />
+
+  <!-- relay simulator topics to match real robot -->
+  <node pkg="topic_tools" type="relay"
+        name="laser_relay_node" args="/robot0/laser_0 /laser/scan" />
+  <node pkg="topic_tools" type="relay"
+        name="odom_relay_node" args="/robot0/odom /odom" />
+  <node pkg="topic_tools" type="relay"
+        name="cmd_vel_relay_node" args="/cmd_vel /robot0/cmd_vel" />
+
+</launch>
