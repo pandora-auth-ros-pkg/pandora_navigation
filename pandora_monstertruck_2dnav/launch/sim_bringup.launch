@@ -1,0 +1,20 @@
+<launch>
+
+  <!-- stdr related launchers -->
+  <include file="$(find pandora_monstertruck_2dnav)/launch/stdr.launch" />
+  <include file="$(find pandora_monstertruck_2dnav)/launch/robot.launch" />
+
+  <!-- state manager launcher -->
+  <include file="$(find state_manager)/launch/stateManager.launch" />
+
+  <!-- Slam related launchers -->
+  <include file="$(find pandora_slam_2d)/launch/pandora_slam_2d.launch" />
+  <include file="$(find pandora_pose_estimation)/launch/pose_estimation_5_dof.launch" />
+
+  <!-- navigation related launchers -->
+  <include file="$(find pandora_monstertruck_2dnav)/launch/move_base.launch" />
+  <include file="$(find pandora_monstertruck_2dnav)/launch/ackermann_to_twist.launch" />
+
+  <!-- visualization launcher -->
+  <include file="$(find pandora_monstertruck_2dnav)/launch/rviz.launch" />
+</launch>
