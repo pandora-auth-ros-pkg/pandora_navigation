@@ -5,6 +5,6 @@
     file="$(find pandora_robots_description)/monstertruck/launch/monstertruck_description.launch" />
 
   <!-- Launch stdr robot spawner -->
-  <node pkg="stdr_robot" type="robot_handler" name="$(anon robot_spawn)" args="add $(find pandora_monstertruck_2dnav)/config/monstertruck_stdr.yaml 1 2 0" />
+  <node pkg="stdr_robot" type="robot_handler" name="$(anon robot_spawn)" args="add $(find pandora_monstertruck_2dnav)/config/monstertruck_stdr_robot_description.yaml 1 2 0" />
 
 </launch>
