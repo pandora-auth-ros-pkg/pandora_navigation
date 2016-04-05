@@ -12,8 +12,8 @@
   <include file="$(find pandora_pose_estimation)/launch/pose_estimation_5_dof.launch" />
 
   <!-- navigation related launchers -->
-  <include file="$(find pandora_monstertruck_2dnav)/launch/move_base.launch" />
-  <include file="$(find pandora_monstertruck_2dnav)/launch/ackermann_to_twist.launch" />
+  <!-- <include file="$(find pandora_monstertruck_2dnav)/launch/move_base.launch" /> -->
+  <!-- <include file="$(find pandora_monstertruck_2dnav)/launch/ackermann_to_twist.launch" /> -->
 
   <!-- visualization launcher -->
   <include file="$(find pandora_monstertruck_2dnav)/launch/rviz.launch" />

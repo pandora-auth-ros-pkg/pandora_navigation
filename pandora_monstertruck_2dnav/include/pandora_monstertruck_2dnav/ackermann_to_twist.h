@@ -44,44 +44,45 @@
 
 namespace monstertruck_2dnav
 {
-  class Ackermann2Twist
-  {
-    public:
-      /**
-      @brief Default Constructor
-       **/
-      Ackermann2Twist();
 
-      /**
-      @brief Default Destructor
-      **/
-      ~Ackermann2Twist();
+class Ackermann2Twist
+{
+  public:
+    /**
+    @brief Default Constructor
+     **/
+    Ackermann2Twist();
 
-      /**
-      @brief AckermannDrive command callback that publishes Twist msgs
-      @return void
-      **/
-      void ackermannDriveCallback(
-        const ackermann_msgs::AckermannDriveConstPtr& msg);
+    /**
+    @brief Default Destructor
+    **/
+    ~Ackermann2Twist();
 
-      /**
-      @brief Twist command callback that publishes AckermannDrive msgs
-      @return void
-      **/
-      void twistCallback(const geometry_msgs::TwistConstPtr& msg);
+    /**
+    @brief AckermannDrive command callback that publishes Twist msgs
+    @return void
+    **/
+    void ackermannDriveCallback(
+      const ackermann_msgs::AckermannDriveConstPtr& msg);
 
-    private:
-      ros::NodeHandle nodeHandle_;  //!< ros node handle
+    /**
+    @brief Twist command callback that publishes AckermannDrive msgs
+    @return void
+    **/
+    void twistCallback(const geometry_msgs::TwistConstPtr& msg);
 
-      ros::Subscriber ackermannSub_;  //!< AckermannDrive subscriber
-      ros::Subscriber twistSub_;  //!< Twist subscriber
+  private:
+    ros::NodeHandle nodeHandle_;  //!< ros node handle
 
-      ros::Publisher ackermannPub_;  //!< AckermannDrive publisher
-      ros::Publisher twistPub_;  //!< Twist publisher
+    ros::Subscriber ackermannSub_;  //!< AckermannDrive subscriber
+    ros::Subscriber twistSub_;  //!< Twist subscriber
 
-      double wheelbase_;  //!< the wheel separation length of the robot
+    ros::Publisher ackermannPub_;  //!< AckermannDrive publisher
+    ros::Publisher twistPub_;  //!< Twist publisher
 
-  };  // class Ackermann2Twist
+    double wheelbase_;  //!< the wheel separation length of the robot
+};  // class Ackermann2Twist
+
 }  // namespace monstertruck_2dnav
 
 #endif  // PANDORA_MONSTERTRUCK_2DNAV_ACKERMANN_TO_TWIST_H
