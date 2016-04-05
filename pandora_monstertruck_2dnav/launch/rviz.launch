@@ -2,6 +2,6 @@
 
   <!-- Launch rviz with the specified configuration -->
   <node pkg="rviz" type="rviz" name="$(anon rviz)"
-    args="-d $(find pandora_monstertruck_2dnav)/stdr.rviz"/>
+    args="-d $(find pandora_monstertruck_2dnav)/config/config.rviz"/>
 
 </launch>
