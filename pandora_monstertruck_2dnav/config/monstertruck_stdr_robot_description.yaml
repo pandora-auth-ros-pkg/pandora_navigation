@@ -2,20 +2,20 @@ robot:
   robot_specifications:
     - footprint:
         footprint_specifications:
-          radius: 0.395
+          radius: 0.47
           points:
             - point:
-                x: 0.2000000029802322
-                y: 0.1500000059604645
+                x: 0.235
+                y: 0.170
             - point:
-                x: 0.2000000029802322
-                y: -0.1500000059604645
+                x: 0.235
+                y: -0.170
             - point:
-                x: -0.2000000029802322
-                y: -0.1500000059604645
+                x: -0.235
+                y: -0.170
             - point:
-                x: -0.2000000029802322
-                y: 0.1500000059604645
+                x: -0.235
+                y: 0.170
     - initial_pose:
         x: 0
         y: 0
