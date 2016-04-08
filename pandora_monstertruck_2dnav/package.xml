@@ -21,6 +21,7 @@
   <exec_depend>pandora_move_base</exec_depend>
   <exec_depend>pandora_costmap</exec_depend>
   <exec_depend>stdr_launchers</exec_depend>
+  <exec_depend>teb_local_planner</exec_depend>
 
   <export>
   </export>

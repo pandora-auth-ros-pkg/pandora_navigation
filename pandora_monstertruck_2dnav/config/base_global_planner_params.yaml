@@ -1,4 +1,9 @@
-base_global_planner: navfn/NavfnROS
-NavfnROS:
-    visualize_potential: false
-    allow_unknown: true
+base_global_planner: SBPLLatticePlanner
+
+SBPLLatticePlanner:
+  environment_type: XYThetaLattice
+  planner_type: ARAPlanner
+  allocated_time: 5.0
+  initial_epsilon: 3.0
+  forward_search: false
+

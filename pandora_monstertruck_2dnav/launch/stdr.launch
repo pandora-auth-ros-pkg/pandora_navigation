@@ -8,8 +8,8 @@
     output="screen"
     args="$(find stdr_resources)/maps/robocup.yaml" />
 
-  <include
-    file="$(find stdr_gui)/launch/stdr_gui.launch" />
+  <!-- <include -->
+    <!-- file="$(find stdr_gui)/launch/stdr_gui.launch" /> -->
 
   <include
     file="$(find stdr_robot)/launch/robot_manager.launch" />
