@@ -2,6 +2,10 @@
   <arg name="publish_ackermann" default="true" />
   <arg name="publish_twist" default="true" />
   <arg name="wheelbase" default="0.32" />
+  <arg name="twist_input_topic" default="/cmd_vel" />
+  <arg name="twist_output_topic" default="ackermann_to_twist/cmd_vel" />
+  <arg name="ackermann_input_topic" default="/ackermann_cmd" />
+  <arg name="ackermann_output_topic" default="twist_to_ackermann/ackermann_cmd" />
 
   <node
     name="ackermann_to_twist"
@@ -12,5 +16,9 @@
     <param name="publish_ackermann" type="bool" value="$(arg publish_ackermann)" />
     <param name="publish_twist" type="bool" value="$(arg publish_twist)" />
     <param name="wheelbase" type="double" value="$(arg wheelbase)" />
+    <param name="twist_input_topic" type="string" value="$(arg twist_input_topic)" />
+    <param name="twist_output_topic" type="string" value="$(arg twist_output_topic)" />
+    <param name="ackermann_input_topic" type="string" value="$(arg ackermann_input_topic)" />
+    <param name="ackermann_output_topic" type="string" value="$(arg ackermann_output_topic)" />
   </node>
 </launch>

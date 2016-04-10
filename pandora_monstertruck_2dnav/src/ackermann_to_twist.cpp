@@ -50,26 +50,48 @@ namespace monstertruck_2dnav
 
     if (publishTwist)
     {
+      std::string ackermannInputTopic, twistOutputTopic;
+
+      nodeHandle_.param<std::string>(
+        "ackermann_to_twist/ackermann_input_topic",
+        ackermannInputTopic,
+        "/ackermann_cmd");
+      nodeHandle_.param<std::string>(
+        "ackermann_to_twist/twist_output_topic",
+        twistOutputTopic,
+        "/cmd_vel");
+
       ackermannSub_ = nodeHandle_.subscribe(
-        "/ackermann_cmd",
+        ackermannInputTopic,
         10,
         &Ackermann2Twist::ackermannDriveCallback,
         this);
 
-      twistPub_ = nodeHandle_.advertise<geometry_msgs::Twist>(
-        "/ackermann_to_twist/cmd_vel", 10);
+      twistPub_ =
+        nodeHandle_.advertise<geometry_msgs::Twist>(twistOutputTopic, 10);
     }
 
     if (publishAckermann)
     {
+      std::string twistInputTopic, ackermannOutputTopic;
+
+      nodeHandle_.param<std::string>(
+        "ackermann_to_twist/twist_input_topic",
+        twistInputTopic,
+        "/cmd_vel");
+      nodeHandle_.param<std::string>(
+        "ackermann_to_twist/ackermann_output_topic",
+        ackermannOutputTopic,
+        "/ackermann_cmd");
+
       twistSub_ = nodeHandle_.subscribe(
-        "/cmd_vel",
+        twistInputTopic,
         10,
         &Ackermann2Twist::twistCallback,
         this);
 
       ackermannPub_ = nodeHandle_.advertise<ackermann_msgs::AckermannDrive>(
-        "/twist_to_ackermann/ackermann_cmd", 10);
+          ackermannOutputTopic, 10);
     }
   }
 
@@ -80,19 +102,9 @@ namespace monstertruck_2dnav
   void Ackermann2Twist::ackermannDriveCallback(
         const ackermann_msgs::AckermannDriveConstPtr& msg)
   {
-    ROS_INFO("Received msg");
     geometry_msgs::Twist twist;
-
     twist.linear.x = msg->speed;
-
-    if (fabs(msg->steering_angle) > 0.01)  // w=v/R
-      twist.angular.z =
-        twist.linear.x /
-        sqrt(pow(wheelbase_ / 2, 2) +
-             pow(wheelbase_, 2) / tan(msg->steering_angle));
-    else
-      twist.angular.z = 0;
-
+    twist.angular.z = msg->speed * tan(msg->steering_angle) / wheelbase_;
     twistPub_.publish(twist);
   }
 
@@ -103,10 +115,9 @@ namespace monstertruck_2dnav
 
     ackermannDrive.speed = msg->linear.x;
 
-    if (fabs(msg->angular.z) > 0.01)
+    if (fabs(msg->angular.z) > 0.01 && fabs(msg->linear.x) > 0.01)
       ackermannDrive.steering_angle =
-        (pow(msg->linear.x / msg->angular.z, 2) - pow(wheelbase_/2, 2)) /
-        pow(wheelbase_, 2);
+        atan(wheelbase_ * msg->angular.z / msg->linear.x);
     else
       ackermannDrive.steering_angle = 0;
 
