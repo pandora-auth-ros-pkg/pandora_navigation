@@ -9,6 +9,6 @@
     name="$(anon robot_spawn)"
     pkg="stdr_robot"
     type="robot_handler"
-    args="add $(find pandora_monstertruck_2dnav)/config/monstertruck_stdr_robot_description.yaml 5.5 10 1.57" />
+    args="add $(find pandora_monstertruck_2dnav)/config/monstertruck_stdr_robot_description.xml 5.5 10 1.57" />
 
 </launch>
