@@ -1,4 +1,5 @@
 <launch>
+  <arg name="local" default="teb" />
 
   <!-- Launch move base -->
   <node
@@ -20,16 +21,17 @@
       file="$(find pandora_monstertruck_2dnav)/config/base_global_planner_params.yaml"
       command="load" />
 
-    <!-- <rosparam -->
-      <!-- file="$(find pandora_monstertruck_2dnav)/config/teb_local_planner_params.yaml" -->
-      <!-- command="load" /> -->
-    <rosparam
-      file="$(find pandora_monstertruck_2dnav)/config/base_local_planner_params.yaml"
-      command="load" />
-
     <param
       name="SBPLLatticePlanner/primitive_filename"
       value="$(find pandora_monstertruck_2dnav)/config/four_wheel_steer.mprim" />
+
+    <rosparam
+      file="$(find pandora_monstertruck_2dnav)/config/$(arg local)_base_local_planner_params.yaml"
+      command="load" />
+
+    <rosparam
+      file="$(find pandora_monstertruck_2dnav)/config/costmap_converter_params.yaml"
+      command="load" />
 
   </node>
 

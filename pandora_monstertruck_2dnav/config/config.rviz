@@ -118,6 +118,8 @@ Visualization Manager:
           Value: true
         motors_power_distribution_board_link:
           Value: true
+        odom:
+          Value: true
         pc_box_link:
           Value: true
         pc_fan_40mm_link:
@@ -145,9 +147,9 @@ Visualization Manager:
         right_rear_wheel_steer_link:
           Value: true
         robot0:
-          Value: false
+          Value: true
         robot0_laser_0:
-          Value: false
+          Value: true
         world:
           Value: true
       Marker Scale: 1
@@ -158,10 +160,75 @@ Visualization Manager:
       Tree:
         world:
           map:
+            base_footprint:
+              base_stabilized:
+                base_link:
+                  epos_24_1_link:
+                    {}
+                  floor_board_link:
+                    electronics_box_link:
+                      battery_link:
+                        {}
+                      battery_power_distribution_board_link:
+                        {}
+                      compass_os4000_link:
+                        {}
+                      electronics_power_distribution_board_link:
+                        {}
+                      front_picam_link:
+                        front_picam_frame:
+                          front_picam_optical_frame:
+                            {}
+                      laser_roll_servo_link:
+                        laser_pitch_servo_link:
+                          laser_main_link:
+                            laser_link:
+                              {}
+                      m4_atx_psu_link:
+                        {}
+                      motors_power_distribution_board_link:
+                        {}
+                      pc_box_link:
+                        pc_fan_40mm_link:
+                          {}
+                        pc_fan_60mm_link:
+                          {}
+                  front_virtual_suspension_link:
+                    front_axle_link:
+                      left_front_wheel_steer_link:
+                        left_front_wheel_drive_link:
+                          left_front_wheel_link:
+                            {}
+                      right_front_wheel_steer_link:
+                        right_front_wheel_drive_link:
+                          right_front_wheel_link:
+                            {}
+                  left_front_suspension_link:
+                    {}
+                  left_rear_suspension_link:
+                    {}
+                  motor_and_transmission_link:
+                    {}
+                  rear_virtual_suspension_link:
+                    rear_axle_link:
+                      left_rear_wheel_steer_link:
+                        left_rear_wheel_drive_link:
+                          left_rear_wheel_link:
+                            {}
+                      right_rear_wheel_steer_link:
+                        right_rear_wheel_drive_link:
+                          right_rear_wheel_link:
+                            {}
+                  right_front_suspension_link:
+                    {}
+                  right_rear_suspension_link:
+                    {}
             map_static:
               robot0:
                 robot0_laser_0:
                   {}
+            odom:
+              {}
       Update Interval: 0
       Value: true
     - Alpha: 1
@@ -176,18 +243,18 @@ Visualization Manager:
       Class: rviz/Map
       Color Scheme: costmap
       Draw Behind: true
-      Enabled: false
+      Enabled: true
       Name: Global Costmap
       Topic: /move_base/global_costmap/costmap
-      Value: false
+      Value: true
     - Alpha: 0.5
       Class: rviz/Map
       Color Scheme: costmap
       Draw Behind: false
-      Enabled: false
+      Enabled: true
       Name: Local Costmap
       Topic: /move_base/local_costmap/costmap
-      Value: false
+      Value: true
     - Alpha: 0.7
       Class: rviz/Map
       Color Scheme: costmap
@@ -199,10 +266,10 @@ Visualization Manager:
     - Alpha: 1
       Class: rviz/Polygon
       Color: 25; 255; 0
-      Enabled: false
+      Enabled: true
       Name: Footprint
       Topic: /move_base/local_costmap/obstacle_layer_footprint/footprint_stamped
-      Value: false
+      Value: true
     - Alpha: 1
       Class: rviz/RobotModel
       Collision Enabled: false
@@ -423,7 +490,7 @@ Visualization Manager:
       Buffer Length: 1
       Class: rviz/Path
       Color: 25; 255; 0
-      Enabled: false
+      Enabled: true
       Line Style: Lines
       Line Width: 0.03
       Name: Global Plan
@@ -431,13 +498,13 @@ Visualization Manager:
         X: 0
         Y: 0
         Z: 0
-      Topic: /move_base/DWAPlannerROS/global_plan
-      Value: false
+      Topic: /move_base/SBPLLatticePlanner/plan
+      Value: true
     - Alpha: 1
       Buffer Length: 1
       Class: rviz/Path
-      Color: 25; 255; 0
-      Enabled: false
+      Color: 170; 0; 127
+      Enabled: true
       Line Style: Lines
       Line Width: 0.03
       Name: Local Plan
@@ -445,13 +512,13 @@ Visualization Manager:
         X: 0
         Y: 0
         Z: 0
-      Topic: /move_base/DWAPlannerROS/local_plan
-      Value: false
+      Topic: /move_base/TebLocalPlannerROS/local_plan
+      Value: true
     - Alpha: 1
       Buffer Length: 1
       Class: rviz/Path
       Color: 255; 0; 0
-      Enabled: false
+      Enabled: true
       Line Style: Lines
       Line Width: 0.03
       Name: Trajectory
@@ -460,7 +527,7 @@ Visualization Manager:
         Y: 0
         Z: 0
       Topic: /robot_trajectory
-      Value: false
+      Value: true
   Enabled: true
   Global Options:
     Background Color: 48; 48; 48

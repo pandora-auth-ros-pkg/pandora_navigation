@@ -1,4 +1,6 @@
 <launch>
+  <!-- argument to switch between teb and dwa local planners -->
+  <arg name="local" default="teb" />
 
   <!-- launch stdr simulator and robot -->
   <include file="$(find pandora_monstertruck_2dnav)/launch/stdr.launch" />
@@ -14,7 +16,9 @@
   <include file="$(find pandora_pose_estimation)/launch/pose_estimation_5_dof.launch" />
 
   <!-- launch navigation nodes -->
-  <include file="$(find pandora_monstertruck_2dnav)/launch/move_base.launch" />
+  <include file="$(find pandora_monstertruck_2dnav)/launch/move_base.launch">
+    <arg name="local" value="$(arg local)" />
+  </include>
   <!-- <include file="$(find pandora_monstertruck_2dnav)/launch/ackermann_to_twist.launch" /> -->
 
   <!-- launch rviz -->
