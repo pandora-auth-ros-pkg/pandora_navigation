@@ -10,27 +10,37 @@
     output="screen">
 
     <rosparam
-      file="$(find pandora_monstertruck_2dnav)/config/local_costmap_params.yaml"
+      file="$(find pandora_monstertruck_2dnav)/config/costmaps/costmap_common_params.yaml"
+      command="load"
+      ns="global_costmap" />
+
+    <rosparam
+      file="$(find pandora_monstertruck_2dnav)/config/costmaps/costmap_common_params.yaml"
+      command="load"
+      ns="local_costmap" />
+
+    <rosparam
+      file="$(find pandora_monstertruck_2dnav)/config/costmaps/local_costmap_params.yaml"
       command="load" />
 
     <rosparam
-      file="$(find pandora_monstertruck_2dnav)/config/global_costmap_params.yaml"
+      file="$(find pandora_monstertruck_2dnav)/config/costmaps/global_costmap_params.yaml"
       command="load" />
 
     <rosparam
-      file="$(find pandora_monstertruck_2dnav)/config/base_global_planner_params.yaml"
+      file="$(find pandora_monstertruck_2dnav)/config/planners/base_global_planner_params.yaml"
       command="load" />
 
     <param
       name="SBPLLatticePlanner/primitive_filename"
-      value="$(find pandora_monstertruck_2dnav)/config/four_wheel_steer.mprim" />
+      value="$(find pandora_monstertruck_2dnav)/motion_primitives/four_wheel_steer.mprim" />
 
     <rosparam
-      file="$(find pandora_monstertruck_2dnav)/config/$(arg local)_base_local_planner_params.yaml"
+      file="$(find pandora_monstertruck_2dnav)/config/planners/$(arg local)_base_local_planner_params.yaml"
       command="load" />
 
     <rosparam
-      file="$(find pandora_monstertruck_2dnav)/config/costmap_converter_params.yaml"
+      file="$(find pandora_monstertruck_2dnav)/config/costmaps/costmap_converter_params.yaml"
       command="load" />
 
   </node>

@@ -7,6 +7,8 @@ Panels:
         - /Global Options1
         - /TF1/Frames1
         - /TF1/Tree1
+        - /RobotModel1
+        - /RobotModel1/Status1
       Splitter Ratio: 0.5
     Tree Height: 856
   - Class: rviz/Selection
@@ -57,8 +59,6 @@ Visualization Manager:
         base_footprint:
           Value: true
         base_link:
-          Value: true
-        base_stabilized:
           Value: true
         battery_link:
           Value: true
@@ -112,13 +112,9 @@ Visualization Manager:
           Value: true
         map:
           Value: true
-        map_static:
-          Value: true
         motor_and_transmission_link:
           Value: true
         motors_power_distribution_board_link:
-          Value: true
-        odom:
           Value: true
         pc_box_link:
           Value: true
@@ -146,10 +142,6 @@ Visualization Manager:
           Value: true
         right_rear_wheel_steer_link:
           Value: true
-        robot0:
-          Value: true
-        robot0_laser_0:
-          Value: true
         world:
           Value: true
       Marker Scale: 1
@@ -161,73 +153,6 @@ Visualization Manager:
         world:
           map:
             base_footprint:
-              base_stabilized:
-                base_link:
-                  epos_24_1_link:
-                    {}
-                  floor_board_link:
-                    electronics_box_link:
-                      battery_link:
-                        {}
-                      battery_power_distribution_board_link:
-                        {}
-                      compass_os4000_link:
-                        {}
-                      electronics_power_distribution_board_link:
-                        {}
-                      front_picam_link:
-                        front_picam_frame:
-                          front_picam_optical_frame:
-                            {}
-                      laser_roll_servo_link:
-                        laser_pitch_servo_link:
-                          laser_main_link:
-                            laser_link:
-                              {}
-                      m4_atx_psu_link:
-                        {}
-                      motors_power_distribution_board_link:
-                        {}
-                      pc_box_link:
-                        pc_fan_40mm_link:
-                          {}
-                        pc_fan_60mm_link:
-                          {}
-                  front_virtual_suspension_link:
-                    front_axle_link:
-                      left_front_wheel_steer_link:
-                        left_front_wheel_drive_link:
-                          left_front_wheel_link:
-                            {}
-                      right_front_wheel_steer_link:
-                        right_front_wheel_drive_link:
-                          right_front_wheel_link:
-                            {}
-                  left_front_suspension_link:
-                    {}
-                  left_rear_suspension_link:
-                    {}
-                  motor_and_transmission_link:
-                    {}
-                  rear_virtual_suspension_link:
-                    rear_axle_link:
-                      left_rear_wheel_steer_link:
-                        left_rear_wheel_drive_link:
-                          left_rear_wheel_link:
-                            {}
-                      right_rear_wheel_steer_link:
-                        right_rear_wheel_drive_link:
-                          right_rear_wheel_link:
-                            {}
-                  right_front_suspension_link:
-                    {}
-                  right_rear_suspension_link:
-                    {}
-            map_static:
-              robot0:
-                robot0_laser_0:
-                  {}
-            odom:
               {}
       Update Interval: 0
       Value: true
@@ -243,18 +168,18 @@ Visualization Manager:
       Class: rviz/Map
       Color Scheme: costmap
       Draw Behind: true
-      Enabled: true
+      Enabled: false
       Name: Global Costmap
       Topic: /move_base/global_costmap/costmap
-      Value: true
+      Value: false
     - Alpha: 0.5
       Class: rviz/Map
       Color Scheme: costmap
       Draw Behind: false
-      Enabled: true
+      Enabled: false
       Name: Local Costmap
       Topic: /move_base/local_costmap/costmap
-      Value: true
+      Value: false
     - Alpha: 0.7
       Class: rviz/Map
       Color Scheme: costmap
@@ -552,22 +477,22 @@ Visualization Manager:
   Views:
     Current:
       Class: rviz/Orbit
-      Distance: 14.2939
+      Distance: 6.63815
       Enable Stereo Rendering:
         Stereo Eye Separation: 0.06
         Stereo Focal Distance: 1
         Swap Stereo Eyes: false
         Value: false
       Focal Point:
-        X: 3.09469
-        Y: 0.156715
-        Z: -1.15352
+        X: 1.67854
+        Y: 0.961043
+        Z: -1.80634
       Name: Current View
       Near Clip Distance: 0.01
-      Pitch: 1.0186
+      Pitch: 1.1436
       Target Frame: <Fixed Frame>
       Value: Orbit (rviz)
-      Yaw: 3.59197
+      Yaw: 3.55197
     Saved: ~
 Window Geometry:
   Displays:

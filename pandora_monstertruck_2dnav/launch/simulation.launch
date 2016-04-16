@@ -9,16 +9,20 @@
   <!-- launch state manager node -->
   <include file="$(find state_manager)/launch/stateManager.launch" />
 
-  <!-- launch slam and pose_estimations nodes -->
+  <!-- launch slam node -->
   <include file="$(find pandora_slam_2d)/launch/pandora_slam_2d.launch">
     <arg name="robot" value="monstertruck" />
   </include>
+
+  <!-- launch pose estimation node -->
   <include file="$(find pandora_pose_estimation)/launch/pose_estimation_5_dof.launch" />
 
-  <!-- launch navigation nodes -->
+  <!-- launch move base-->
   <include file="$(find pandora_monstertruck_2dnav)/launch/move_base.launch">
     <arg name="local" value="$(arg local)" />
   </include>
+
+  <!-- launch ackermann_to_twist converter node -->
   <!-- <include file="$(find pandora_monstertruck_2dnav)/launch/ackermann_to_twist.launch" /> -->
 
   <!-- launch rviz -->
