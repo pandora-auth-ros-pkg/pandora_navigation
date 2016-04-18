@@ -33,7 +33,7 @@
 
     <param
       name="SBPLLatticePlanner/primitive_filename"
-      value="$(find pandora_monstertruck_2dnav)/motion_primitives/four_wheel_steer.mprim" />
+      value="$(find pandora_monstertruck_2dnav)/config/motion_primitives/four_wheel_steer.mprim" />
 
     <rosparam
       file="$(find pandora_monstertruck_2dnav)/config/planners/$(arg local)_base_local_planner_params.yaml"
