@@ -10,6 +10,7 @@
     <rosparam file="$(find pandora_move_base)/config/global_costmap_params.yaml" command="load" />
     <rosparam file="$(find pandora_move_base)/config/base_local_planner_params.yaml" command="load" />
     <rosparam file="$(find pandora_move_base)/config/base_global_planner_params.yaml" command="load" />
+    <remap from="cmd_vel" to="navigation/cmd_vel" />
   </node>
 
   <include if="$(arg map_patch)" file="$(find pandora_costmap)/launch/map_patch.launch" />
