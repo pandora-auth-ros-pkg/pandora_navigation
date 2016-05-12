@@ -17,10 +17,13 @@
   <!-- launch pose estimation node -->
   <include file="$(find pandora_pose_estimation)/launch/pose_estimation_5_dof.launch" />
 
-  <!-- launch move base-->
+  <!-- launch move base node -->
   <include file="$(find pandora_monstertruck_2dnav)/launch/move_base.launch">
     <arg name="local" value="$(arg local)" />
   </include>
+
+  <!-- launch frontier exploration node -->
+  <include file="$(find frontier_exploration)/launch/no_global_map.launch" />
 
   <!-- launch ackermann_to_twist converter node -->
   <!-- <include file="$(find pandora_monstertruck_2dnav)/launch/ackermann_to_twist.launch" /> -->

@@ -22,6 +22,7 @@
   <exec_depend>pandora_costmap</exec_depend>
   <exec_depend>teb_local_planner</exec_depend>
   <exec_depend>sbpl_lattice_planner</exec_depend>
+  <exec_depend>frontier_exploration</exec_depend>
 
   <export>
   </export>
