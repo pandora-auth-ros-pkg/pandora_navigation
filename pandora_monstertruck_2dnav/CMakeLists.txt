@@ -5,6 +5,8 @@ find_package(catkin REQUIRED COMPONENTS
   roscpp
   geometry_msgs
   ackermann_msgs
+  actionlib
+  move_base_msgs
   roslint
 )
 
@@ -13,6 +15,8 @@ catkin_package(
     roscpp
     geometry_msgs
     ackermann_msgs
+    actionlib
+    move_base_msgs
 )
 
 include_directories(
@@ -34,6 +38,15 @@ add_executable(ackermann_to_twist_node
 target_link_libraries(
   ackermann_to_twist_node
   ackermann_to_twist
+  ${catkin_LIBRARIES}
+)
+
+add_executable(navigation_goals_loop_node
+  src/navigation_goals_loop_node.cpp
+)
+target_link_libraries(
+  navigation_goals_loop_node
+  ${catkin_LIBRARIES}
 )
 
 # To check lint : catkin_make roslint_pandora_monstertruck_2dnav
