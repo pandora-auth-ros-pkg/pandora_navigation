@@ -49,7 +49,7 @@ class ScanFrameRemapper:
         rospy.spin()
 
     def scan_cb(self, data):
-        data.header.frame_id = "/laser_scan"
+        data.header.frame_id = "/laser_link"
         self.scan_pub.publish(data)
 
 
