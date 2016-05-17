@@ -335,7 +335,7 @@ Visualization Manager:
         X: 0
         Y: 0
         Z: 0
-      Topic: /move_base/SBPLLatticePlanner/plan
+      Topic: /move_base/TebLocalPlannerROS/global_plan
       Unreliable: false
       Value: true
     - Alpha: 1
@@ -357,7 +357,7 @@ Visualization Manager:
       Buffer Length: 1
       Class: rviz/Path
       Color: 255; 0; 0
-      Enabled: true
+      Enabled: false
       Line Style: Lines
       Line Width: 0.03
       Name: Trajectory
@@ -367,7 +367,7 @@ Visualization Manager:
         Z: 0
       Topic: /robot_trajectory
       Unreliable: false
-      Value: true
+      Value: false
     - Class: rviz/Marker
       Enabled: true
       Marker Topic: /exploration_polygon_marker
@@ -415,22 +415,22 @@ Visualization Manager:
   Views:
     Current:
       Class: rviz/Orbit
-      Distance: 10.7059
+      Distance: 10.1024
       Enable Stereo Rendering:
         Stereo Eye Separation: 0.06
         Stereo Focal Distance: 1
         Swap Stereo Eyes: false
         Value: false
       Focal Point:
-        X: 1.55099
-        Y: -0.78847
-        Z: -1.96348
+        X: 0.963221
+        Y: -0.854983
+        Z: -2.20366
       Name: Current View
       Near Clip Distance: 0.01
-      Pitch: 1.1486
+      Pitch: 1.1836
       Target Frame: <Fixed Frame>
       Value: Orbit (rviz)
-      Yaw: 3.33697
+      Yaw: 3.16197
     Saved: ~
 Window Geometry:
   Displays:

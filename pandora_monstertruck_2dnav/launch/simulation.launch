@@ -1,9 +1,21 @@
 <launch>
-  <!-- argument to switch between teb and dwa local planners -->
-  <arg name="local" default="teb" />
+
+  <!--############################ Arguments ################################-->
+
+  <arg name="gui" default="false" />
+  <arg name="exploration" default="false" />
+  <arg name="tune" default="false" />
+
+  <arg name="global" default="navfn" /> <!-- navfn | sbpl-->
+  <arg name="local" default="teb" /> <!-- ten | dwa -->
+
+
+  <!--######################### Node Launchers ##############################-->
 
   <!-- launch stdr simulator and robot -->
-  <include file="$(find pandora_monstertruck_2dnav)/launch/stdr.launch" />
+  <include file="$(find pandora_monstertruck_2dnav)/launch/stdr.launch">
+    <arg name="gui" value="$(arg gui)" />
+  </include>
   <include file="$(find pandora_monstertruck_2dnav)/launch/robot.launch" />
 
   <!-- launch state manager node -->
@@ -15,18 +27,24 @@
   </include>
 
   <!-- launch pose estimation node -->
-  <include file="$(find pandora_pose_estimation)/launch/pose_estimation_5_dof.launch" />
+  <!-- <include file="$(find pandora_pose_estimation)/launch/pose_estimation_5_dof.launch" /> -->
+  <node name="footprint2link" pkg="tf" type="static_transform_publisher" args="0 0 0.145 0 0 0 base_footprint base_link 100" />
 
   <!-- launch move base node -->
   <include file="$(find pandora_monstertruck_2dnav)/launch/move_base.launch">
     <arg name="local" value="$(arg local)" />
+    <arg name="global" value="$(arg global)" />
   </include>
 
   <!-- launch frontier exploration node -->
-  <include file="$(find frontier_exploration)/launch/no_global_map.launch" />
+  <group if="$(arg exploration)">
+    <include file="$(find pandora_monstertruck_2dnav)/launch/exploration.launch" />
+  </group>
 
-  <!-- launch ackermann_to_twist converter node -->
-  <!-- <include file="$(find pandora_monstertruck_2dnav)/launch/ackermann_to_twist.launch" /> -->
+  <!-- launch navigation goals loop node for tuning purposes -->
+  <group if="$(arg tune)">
+    <include file="$(find pandora_monstertruck_2dnav)/launch/navigation_goals_loop.launch" />
+  </group>
 
   <!-- launch rviz -->
   <include file="$(find pandora_monstertruck_2dnav)/launch/rviz.launch" />

@@ -1,6 +1,8 @@
 <launch>
 
-  <!-- Launch stdr simulator with map and gui -->
+  <arg name="gui" default="false" />
+
+  <!-- Launch stdr simulator with map (and gui) -->
   <node
     name="stdr_server"
     type="stdr_server_node"
@@ -8,8 +10,10 @@
     output="screen"
     args="$(find stdr_resources)/maps/robocup.yaml" />
 
-  <!-- <include -->
-    <!-- file="$(find stdr_gui)/launch/stdr_gui.launch" /> -->
+  <group if="$(arg gui)">
+    <include
+      file="$(find stdr_gui)/launch/stdr_gui.launch" />
+  </group>
 
   <include
     file="$(find stdr_robot)/launch/robot_manager.launch" />

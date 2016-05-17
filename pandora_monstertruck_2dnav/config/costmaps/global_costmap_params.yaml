@@ -3,9 +3,11 @@ global_costmap:
   robot_base_frame: /base_footprint
   update_frequency: 1.0
   publish_frequency: 1.0
+  width: 100.0
+  height: 100.0
   static_map: true
-  transform_tolerance: 0.5
-  track_unknown_space: false
+  transform_tolerance: 1.0
+  track_unknown_space: true
 
   # Static Layer receives the map from SLAM, updateWithTrueOverwrite
   plugins:
@@ -18,9 +20,9 @@ global_costmap:
     map_topic: /slam/map
     unknown_cost_value: 51
     lethal_cost_threshold: 61
-    subscribe_to_updates: false
+    subscribe_to_updates: true
     trinary_costmap: true
 
   inflation_layer:
-    inflation_radius: 0.5
+    inflation_radius: 0.235
     cost_scaling_factor: 7.0

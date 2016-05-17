@@ -24,4 +24,4 @@ local_costmap:
     raytrace_range: 3.0
 
   inflation_layer:
-    inflation_radius: 0.3
+    inflation_radius: 0.235

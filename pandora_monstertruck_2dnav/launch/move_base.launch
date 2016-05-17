@@ -1,5 +1,7 @@
 <launch>
-  <arg name="local" default="teb" />
+
+  <arg name="global" default="navfn" />  <!-- navfn or sbpl-->
+  <arg name="local" default="teb" />  <!--teb or dwa -->
 
   <!-- Launch move base -->
   <node
@@ -28,7 +30,7 @@
       command="load" />
 
     <rosparam
-      file="$(find pandora_monstertruck_2dnav)/config/planners/base_global_planner_params.yaml"
+      file="$(find pandora_monstertruck_2dnav)/config/planners/$(arg global)/base_global_planner_params.yaml"
       command="load" />
 
     <param
@@ -36,7 +38,7 @@
       value="$(find pandora_monstertruck_2dnav)/config/motion_primitives/four_wheel_steer.mprim" />
 
     <rosparam
-      file="$(find pandora_monstertruck_2dnav)/config/planners/$(arg local)_base_local_planner_params.yaml"
+      file="$(find pandora_monstertruck_2dnav)/config/planners/$(arg local)/base_local_planner_params.yaml"
       command="load" />
 
     <rosparam
