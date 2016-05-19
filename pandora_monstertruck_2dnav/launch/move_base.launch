@@ -6,10 +6,15 @@
   <!-- Launch move base -->
   <node
     name="move_base"
-    pkg="pandora_move_base"
-    type="pandora_move_base_node"
+    pkg="move_base"
+    type="move_base"
     respawn="false"
     output="screen">
+
+    <rosparam>
+      recovery_behavior_enabled: False
+      clearing_rotation_allowed: False
+    </rosparam>
 
     <rosparam
       file="$(find pandora_monstertruck_2dnav)/config/costmaps/costmap_common_params.yaml"

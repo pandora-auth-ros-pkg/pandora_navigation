@@ -94,17 +94,17 @@ Visualization Manager:
       Class: rviz/Map
       Color Scheme: costmap
       Draw Behind: false
-      Enabled: false
+      Enabled: true
       Name: Exploration Costmap
       Topic: /explore_server/explore_costmap/costmap
       Unreliable: false
-      Value: false
+      Value: true
     - Alpha: 1
       Class: rviz/Polygon
       Color: 25; 255; 0
       Enabled: true
       Name: Footprint
-      Topic: /move_base/local_costmap/obstacle_layer_footprint/footprint_stamped
+      Topic: /move_base/local_costmap/footprint
       Unreliable: false
       Value: true
     - Alpha: 1
@@ -335,7 +335,7 @@ Visualization Manager:
         X: 0
         Y: 0
         Z: 0
-      Topic: /move_base/TebLocalPlannerROS/global_plan
+      Topic: /move_base/NavfnROS/plan
       Unreliable: false
       Value: true
     - Alpha: 1
@@ -384,7 +384,7 @@ Visualization Manager:
       Enabled: true
       Head Length: 0.3
       Head Radius: 0.1
-      Name: Pose
+      Name: Goal Pose
       Shaft Length: 1
       Shaft Radius: 0.05
       Shape: Arrow
@@ -415,16 +415,16 @@ Visualization Manager:
   Views:
     Current:
       Class: rviz/Orbit
-      Distance: 10.1024
+      Distance: 11.4704
       Enable Stereo Rendering:
         Stereo Eye Separation: 0.06
         Stereo Focal Distance: 1
         Swap Stereo Eyes: false
         Value: false
       Focal Point:
-        X: 0.963221
-        Y: -0.854983
-        Z: -2.20366
+        X: 0.479043
+        Y: -0.143769
+        Z: -2.39515
       Name: Current View
       Near Clip Distance: 0.01
       Pitch: 1.1836

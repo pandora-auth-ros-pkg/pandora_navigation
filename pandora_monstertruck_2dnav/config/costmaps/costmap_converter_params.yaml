@@ -2,7 +2,7 @@ TebLocalPlannerROS:
 
   costmap_converter_plugin: "costmap_converter::CostmapToPolygonsDBSMCCH"
   costmap_converter_spin_thread: True
-  costmap_converter_rate: 4
+  costmap_converter_rate: 2
 
   costmap_converter/CostmapToPolygonsDBSMCCH:
     cluster_max_distance: 0.4

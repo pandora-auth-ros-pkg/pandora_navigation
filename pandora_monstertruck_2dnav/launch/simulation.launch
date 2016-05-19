@@ -27,8 +27,8 @@
   </include>
 
   <!-- launch pose estimation node -->
-  <!-- <include file="$(find pandora_pose_estimation)/launch/pose_estimation_5_dof.launch" /> -->
-  <node name="footprint2link" pkg="tf" type="static_transform_publisher" args="0 0 0.145 0 0 0 base_footprint base_link 100" />
+  <include file="$(find pandora_pose_estimation)/launch/pose_estimation_5_dof.launch" />
+  <!-- <node name="footprint2link" pkg="tf" type="static_transform_publisher" args="0 0 0.145 0 0 0 base_footprint base_link 100" /> -->
 
   <!-- launch move base node -->
   <include file="$(find pandora_monstertruck_2dnav)/launch/move_base.launch">
@@ -48,5 +48,7 @@
 
   <!-- launch rviz -->
   <include file="$(find pandora_monstertruck_2dnav)/launch/rviz.launch" />
+
+  <node name="state_changer" pkg="state_manager" type="state_changer" args="1" />
 
 </launch>
