@@ -4,6 +4,7 @@ global_costmap:
   update_frequency: 2.0
   publish_frequency: 1.0
   static_map: true
+  resolution: 0.04
   transform_tolerance: 1.0
   track_unknown_space: false
 
@@ -22,5 +23,5 @@ global_costmap:
     trinary_costmap: true
 
   inflation_layer:
-    inflation_radius: 0.5
-    cost_scaling_factor: 7.0
+    cost_scaling_factor: 10.0
+    inflation_radius: 0.3

@@ -15,18 +15,18 @@ TebLocalPlannerROS:
   global_plan_viapoint_sep: -0.1
   force_reinit_new_global_dist: 1.0
   max_global_lookahead_dist: 4.0
-  feasibility_check_no_poses: 10
+  feasibility_check_no_poses: 8
   shrink_horizon_backup: False
   publish_feedback: False
 
   # Robot
 
   max_vel_x: 0.2
-  max_vel_x_backwards: 0.2
+  max_vel_x_backwards: 0.15
   max_vel_theta: 0.5
   acc_lim_x: 0.5
   acc_lim_theta: 0.5
-  min_turning_radius: 0.35
+  min_turning_radius: 0.5
   wheelbase: 0.32
   cmd_angle_instead_rotvel: False
   footprint_model:
@@ -46,16 +46,16 @@ TebLocalPlannerROS:
 
   # GoalTolerance
 
-  xy_goal_tolerance: 0.2
-  yaw_goal_tolerance: 0.1
+  xy_goal_tolerance: 0.3
+  yaw_goal_tolerance: 0.2
   free_goal_vel: False
 
   # Obstacles
 
-  min_obstacle_dist: 0.3
+  min_obstacle_dist: 0.15
   include_costmap_obstacles: True
-  costmap_obstacles_behind_robot_dist: 0.5
-  obstacle_poses_affected: 30
+  costmap_obstacles_behind_robot_dist: 0.3
+  obstacle_poses_affected: 20
 
   # Optimization
 
@@ -63,7 +63,7 @@ TebLocalPlannerROS:
   no_outer_iterations: 4
   optimization_activate: True
   optimization_verbose: False
-  penalty_epsilon: 0.05
+  penalty_epsilon: 0.1
   weight_max_vel_x: 2
   weight_max_vel_theta: 1
   weight_acc_lim_x: 0
@@ -79,7 +79,7 @@ TebLocalPlannerROS:
 
   enable_homotopy_class_planning: True
   enable_multithreading: True
-  max_number_classes: 6
+  max_number_classes: 4
   selection_cost_hysteresis: 0.5
   h_signature_prescaler: 1.0 # 0.5
   h_signature_threshold: 0.1

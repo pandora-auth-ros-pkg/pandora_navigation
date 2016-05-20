@@ -1,17 +1,11 @@
 track_unknown_space: true
 global_frame: map
 rolling_window: false
-
 robot_base_frame: base_footprint
-
 update_frequency: 2.0
 publish_frequency: 1.0
 transform_tolerance: 1.0
-
 resolution: 0.04
-
-obstacle_range: 2.5
-raytrace_range: 3.0
 
 plugins:
 - {name: explore_boundary, type: "frontier_exploration::BoundedExploreLayer"}
@@ -20,7 +14,7 @@ plugins:
 
 explore_boundary:
   resize_to_boundary: true
-  frontier_travel_point: middle
+  frontier_travel_point: centroid #middle | closest | centroid
 
 sensor:
   observation_sources: laser
@@ -29,5 +23,4 @@ sensor:
 
 inflation_layer:
   inflation_radius: 0.3
-  cost_scaling_factor: 10
-  robot_radius: 0.235
+  cost_scaling_factor: 10.0
