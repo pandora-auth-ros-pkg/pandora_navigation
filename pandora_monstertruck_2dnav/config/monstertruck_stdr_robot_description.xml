@@ -29,7 +29,7 @@
         </footprint>
         <kinematic>
             <kinematic_specifications>
-                <kinematic_model>ackermann</kinematic_model>
+                <kinematic_model>omni</kinematic_model>
                 <kinematic_parameters>
                     <a_ux_ux>0</a_ux_ux>
                     <a_ux_uy>0</a_ux_uy>
@@ -48,8 +48,8 @@
         </kinematic>
         <laser>
             <laser_specifications>
-                <max_angle>2.35619</max_angle>
-                <min_angle>-2.35619</min_angle>
+                <max_angle>2.093</max_angle>
+                <min_angle>-2.093</min_angle>
                 <max_range>4</max_range>
                 <min_range>0</min_range>
                 <num_rays>270</num_rays>
