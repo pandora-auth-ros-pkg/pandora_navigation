@@ -1,6 +1,7 @@
 <launch>
 
   <arg name="gui" default="false" />
+  <arg name="cmd_vel_filter" default="true" />
 
   <!-- Launch stdr simulator with map (and gui) -->
   <node
@@ -24,11 +25,21 @@
     name="odom_relay_node"
     args="/robot0/odom /odom" />
 
-  <node
-    pkg="topic_tools"
-    type="relay"
-    name="cmd_vel_relay_node"
-    args="/cmd_vel /robot0/cmd_vel" />
+  <group if="$(arg cmd_vel_filter)">
+    <node
+      pkg="pandora_monstertruck_2dnav"
+      type="fws_cmd_vel_filter.py"
+      name="fws_cmd_vel_filter"
+      output="screen" />
+  </group>
+
+  <group unless="$(arg cmd_vel_filter)">
+    <node
+      pkg="topic_tools"
+      type="relay"
+      name="cmd_vel_relay_node"
+      args="/cmd_vel /robot0/cmd_vel" />
+  </group>
 
   <node
     name="scan_frame_remapper"
