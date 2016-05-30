@@ -29,11 +29,13 @@
 
     <rosparam
       file="$(find pandora_monstertruck_2dnav)/config/costmaps/local_costmap_params.yaml"
-      command="load" />
+      command="load"
+      ns="local_costmap" />
 
     <rosparam
       file="$(find pandora_monstertruck_2dnav)/config/costmaps/global_costmap_params.yaml"
-      command="load" />
+      command="load"
+      ns="global_costmap" />
 
     <rosparam
       file="$(find pandora_monstertruck_2dnav)/config/planners/$(arg global)/base_global_planner_params.yaml"

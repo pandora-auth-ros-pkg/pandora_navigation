@@ -27,7 +27,7 @@ Panels:
     Experimental: false
     Name: Time
     SyncMode: 0
-    SyncSource: Image
+    SyncSource: PointCloud2
 Visualization Manager:
   Class: ""
   Displays:
@@ -162,19 +162,6 @@ Visualization Manager:
           Show Axes: false
           Show Trail: false
           Value: true
-        front_picam_frame:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-        front_picam_link:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-          Value: true
-        front_picam_optical_frame:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
         front_virtual_suspension_link:
           Alpha: 1
           Show Axes: false
@@ -335,7 +322,7 @@ Visualization Manager:
         X: 0
         Y: 0
         Z: 0
-      Topic: /move_base/NavfnROS/plan
+      Topic: /move_base/SBPLLatticePlanner/plan
       Unreliable: false
       Value: true
     - Alpha: 1
@@ -350,7 +337,7 @@ Visualization Manager:
         X: 0
         Y: 0
         Z: 0
-      Topic: /move_base/TebLocalPlannerROS/local_plan
+      Topic: /move_base/DWAPlannerROS/local_plan
       Unreliable: false
       Value: true
     - Alpha: 1
@@ -373,7 +360,7 @@ Visualization Manager:
       Marker Topic: /exploration_polygon_marker
       Name: exploration_polygon_marker
       Namespaces:
-        explore_points: true
+        {}
       Queue Size: 100
       Value: true
     - Alpha: 1
@@ -403,6 +390,36 @@ Visualization Manager:
       Transport Hint: raw
       Unreliable: false
       Value: true
+    - Alpha: 1
+      Autocompute Intensity Bounds: true
+      Autocompute Value Bounds:
+        Max Value: 0
+        Min Value: 0
+        Value: true
+      Axis: Z
+      Channel Name: intensity
+      Class: rviz/PointCloud2
+      Color: 255; 255; 255
+      Color Transformer: AxisColor
+      Decay Time: 0
+      Enabled: true
+      Invert Rainbow: false
+      Max Color: 255; 255; 255
+      Max Intensity: 4096
+      Min Color: 0; 0; 0
+      Min Intensity: 0
+      Name: PointCloud2
+      Position Transformer: XYZ
+      Queue Size: 10
+      Selectable: true
+      Size (Pixels): 3
+      Size (m): 0.01
+      Style: Flat Squares
+      Topic: /move_base/DWAPlannerROS/trajectory_cloud
+      Unreliable: false
+      Use Fixed Frame: true
+      Use rainbow: true
+      Value: true
   Enabled: true
   Global Options:
     Background Color: 48; 48; 48
@@ -427,16 +444,16 @@ Visualization Manager:
   Views:
     Current:
       Class: rviz/Orbit
-      Distance: 21.312
+      Distance: 8.70969
       Enable Stereo Rendering:
         Stereo Eye Separation: 0.06
         Stereo Focal Distance: 1
         Swap Stereo Eyes: false
         Value: false
       Focal Point:
-        X: 0.184222
-        Y: -1.05383
-        Z: -2.10205
+        X: -1.67995
+        Y: -1.08532
+        Z: -2.80414
       Name: Current View
       Near Clip Distance: 0.01
       Pitch: 1.1786

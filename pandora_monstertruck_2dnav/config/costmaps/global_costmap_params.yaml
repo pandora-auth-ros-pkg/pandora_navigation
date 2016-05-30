@@ -1,27 +1,9 @@
-global_costmap:
-  global_frame: map
-  robot_base_frame: /base_footprint
-  update_frequency: 2.0
-  publish_frequency: 1.0
-  static_map: true
-  resolution: 0.04
-  transform_tolerance: 1.0
-  track_unknown_space: false
+global_frame: map
+static_map: true
 
-  # Static Layer receives the map from SLAM, updateWithTrueOverwrite
-  plugins:
-    - name: static_layer
-      type: costmap_2d::StaticLayer
-    - name: inflation_layer
-      type: costmap_2d::InflationLayer
-
-  static_layer:
-    map_topic: /slam/map
-    unknown_cost_value: 51
-    lethal_cost_threshold: 61
-    subscribe_to_updates: false
-    trinary_costmap: true
-
-  inflation_layer:
-    cost_scaling_factor: 10.0
-    inflation_radius: 0.3
+# Static Layer receives the map from SLAM, updateWithTrueOverwrite
+plugins:
+  - name: static_layer
+    type: costmap_2d::StaticLayer
+  - name: inflation_layer
+    type: costmap_2d::InflationLayer

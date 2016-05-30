@@ -1,26 +1,13 @@
-track_unknown_space: true
 global_frame: map
 rolling_window: false
-robot_base_frame: base_footprint
-update_frequency: 2.0
-publish_frequency: 1.0
-transform_tolerance: 1.0
-resolution: 0.04
 
 plugins:
+- {name: static, type: "costmap_2d::StaticLayer"}
 - {name: explore_boundary, type: "frontier_exploration::BoundedExploreLayer"}
-- {name: sensor, type: "costmap_2d::ObstacleLayer"}
+- {name: obstacle_layer, type: "costmap_2d::ObstacleLayer"}
 - {name: inflation_layer, type: "costmap_2d::InflationLayer"}
 
 explore_boundary:
   resize_to_boundary: true
   frontier_travel_point: centroid #middle | closest | centroid
-
-sensor:
-  observation_sources: laser
-  laser: {data_type: LaserScan, marking: true, clearing: true, topic: /laser/scan, inf_is_valid: false, raytrace_range: 3.0, framed_id: laser_link, obstacle_range: 2.5}
-
-
-inflation_layer:
-  inflation_radius: 0.3
-  cost_scaling_factor: 10.0
+  explore_clear_space: true

@@ -6,9 +6,9 @@
 
     <node pkg="frontier_exploration" type="explore_server" name="explore_server" output="screen">
 
-      <param name="frequency" value="1.0"/>
+      <param name="frequency" value="0.5"/>
 
-      <param name="goal_aliasing" value="4.0"/>
+      <param name="goal_aliasing" value="1.5" />
 
       <rosparam
         file="$(find pandora_monstertruck_2dnav)/config/costmaps/exploration_costmap_params.yaml"
