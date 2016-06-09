@@ -14,7 +14,7 @@
     <rosparam>
       recovery_behavior_enabled: False
       clearing_rotation_allowed: False
-      planner_frequency: 1.0
+      planner_frequency: 0.0
     </rosparam>
 
     <rosparam
@@ -52,6 +52,24 @@
     <rosparam
       file="$(find pandora_monstertruck_2dnav)/config/costmaps/costmap_converter_params.yaml"
       command="load" />
+
+    <!-- remap planner topics for rviz -->
+    <remap
+      from="move_base/TebLocalPlannerROS/local_plan"
+      to="move_base/local_plan" />
+
+    <remap
+      from="move_base/DWAPlannerROS/local_plan"
+      to="move_base/local_plan" />
+
+
+    <remap
+      from="move_base/NavfnROS/plan"
+      to="move_base/global_plan" />
+
+    <remap
+      from="move_base/SBPLLatticePlanner/plan"
+      to="move_base/global_plan" />
 
   </node>
 
