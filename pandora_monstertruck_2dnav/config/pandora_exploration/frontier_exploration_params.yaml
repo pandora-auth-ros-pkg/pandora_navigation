@@ -1,0 +1,19 @@
+explore:
+  # call move base service
+  plan_service_name: move_base/NavfnROS/make_plan
+
+  # used if a standalone planner is instantiated
+  global_planner: navfn/NavfnROS
+
+  # give that much time to planner to find paths
+  planner_timeout_duration: 1.0
+
+  # valid types: initial, middle, centroid
+  frontier_representation: midpoint
+  visualize_paths: true
+
+  cost_functions:
+    size_scale: 0.15
+    dist_scale: 0.45
+    alignment_scale: 0.5
+    visited_scale: 0.3

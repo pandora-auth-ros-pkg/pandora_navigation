@@ -11,7 +11,7 @@
       <param name="goal_aliasing" value="1.5" />
 
       <rosparam
-        file="$(find pandora_monstertruck_2dnav)/config/costmaps/exploration_costmap_params.yaml"
+        file="$(find pandora_monstertruck_2dnav)/config/costmaps/frontier_exploration_costmap_params.yaml"
         command="load"
         ns="explore_costmap" />
 

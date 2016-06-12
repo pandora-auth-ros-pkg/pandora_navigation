@@ -2,44 +2,65 @@
 
   <!--############################ Arguments ################################-->
 
+  <arg name="stdr" default="true" />
   <arg name="gui" default="false" />
-  <arg name="exploration" default="false" />
+  <arg name="state_manager" default="true" />
+  <arg name="slam" default="true" />
+  <arg name="move_base" default="true" />
+  <arg name="frontier_exploration" default="false" />
+  <arg name="pandora_exploration" default="false" />
   <arg name="tune" default="false" />
   <arg name="cmd_vel_filter" default="true" />
+  <arg name="rviz" default="true" />
 
   <arg name="global" default="navfn" /> <!-- navfn | sbpl-->
-  <arg name="local" default="teb" /> <!-- ten | dwa -->
+  <arg name="local" default="teb" /> <!-- teb | dwa -->
+
+  <arg name="state" default="0" />
 
 
   <!--######################### Node Launchers ##############################-->
 
   <!-- launch stdr simulator and robot -->
-  <include file="$(find pandora_monstertruck_2dnav)/launch/stdr.launch">
-    <arg name="gui" value="$(arg gui)" />
-    <arg name="cmd_vel_filter" value="$(arg cmd_vel_filter)" />
-  </include>
-  <include file="$(find pandora_monstertruck_2dnav)/launch/robot.launch" />
+  <group if="$(arg stdr)">
+    <include file="$(find pandora_monstertruck_2dnav)/launch/stdr.launch">
+      <arg name="gui" value="$(arg gui)" />
+      <arg name="cmd_vel_filter" value="$(arg cmd_vel_filter)" />
+    </include>
+    <include file="$(find pandora_monstertruck_2dnav)/launch/robot.launch" />
+  </group>
 
   <!-- launch state manager node -->
-  <include file="$(find state_manager)/launch/stateManager.launch" />
+  <group if="$(arg state_manager)">
+    <include file="$(find state_manager)/launch/stateManager.launch" />
+  </group>
 
-  <!-- launch slam node -->
-  <include file="$(find pandora_slam_2d)/launch/pandora_slam_2d.launch">
-    <arg name="robot" value="monstertruck" />
-  </include>
+  <!-- launch slam and pose estimation nodes -->
+  <group if="$(arg slam)">
+    <!-- launch slam node -->
+    <include file="$(find pandora_slam_2d)/launch/pandora_slam_2d.launch">
+      <arg name="robot" value="monstertruck" />
+    </include>
 
-  <!-- launch pose estimation node -->
-  <include file="$(find pandora_pose_estimation)/launch/pose_estimation_5_dof.launch" />
+    <!-- launch pose estimation node -->
+    <include file="$(find pandora_pose_estimation)/launch/pose_estimation_5_dof.launch" />
+  </group>
 
   <!-- launch move base node -->
-  <include file="$(find pandora_monstertruck_2dnav)/launch/move_base.launch">
-    <arg name="local" value="$(arg local)" />
-    <arg name="global" value="$(arg global)" />
-  </include>
+  <group if="$(arg move_base)">
+    <include file="$(find pandora_monstertruck_2dnav)/launch/move_base.launch">
+      <arg name="local" value="$(arg local)" />
+      <arg name="global" value="$(arg global)" />
+    </include>
+  </group>
 
   <!-- launch frontier exploration node -->
-  <group if="$(arg exploration)">
-    <include file="$(find pandora_monstertruck_2dnav)/launch/exploration.launch" />
+  <group if="$(arg frontier_exploration)">
+    <include file="$(find pandora_monstertruck_2dnav)/launch/frontier_exploration.launch" />
+  </group>
+  <!-- launch pandora_exploration node -->
+  <group if="$(arg pandora_exploration)">
+    <include file="$(find pandora_monstertruck_2dnav)/launch/pandora_exploration.launch" />
   </group>
 
   <!-- launch navigation goals loop node for tuning purposes -->
@@ -48,8 +69,10 @@
   </group>
 
   <!-- launch rviz -->
-  <include file="$(find pandora_monstertruck_2dnav)/launch/rviz.launch" />
+  <group if="$(arg rviz)">
+    <include file="$(find pandora_monstertruck_2dnav)/launch/rviz.launch" />
+  </group>
 
-  <node name="state_changer" pkg="state_manager" type="state_changer" args="1" />
+  <node name="state_changer" pkg="state_manager" type="state_changer" args="$(arg state)" />
 
 </launch>
