@@ -51,7 +51,15 @@
     <include file="$(find pandora_monstertruck_2dnav)/launch/move_base.launch">
       <arg name="local" value="$(arg local)" />
       <arg name="global" value="$(arg global)" />
+      <arg name="slam" value="$(arg slam)" />
     </include>
+  </group>
+
+  <group unless="$(arg slam)">
+    <node
+      name="odom2base"
+      pkg="pandora_monstertruck_2dnav"
+      type="odom_to_base_tf_publisher.py" />
   </group>
 
   <!-- launch frontier exploration node -->
@@ -70,7 +78,9 @@
 
   <!-- launch rviz -->
   <group if="$(arg rviz)">
-    <include file="$(find pandora_monstertruck_2dnav)/launch/rviz.launch" />
+    <include file="$(find pandora_monstertruck_2dnav)/launch/rviz.launch">
+      <arg name="slam" value="$(arg slam)" />
+    </include>
   </group>
 
   <node name="state_changer" pkg="state_manager" type="state_changer" args="$(arg state)" />

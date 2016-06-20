@@ -3,6 +3,8 @@
   <arg name="global" default="navfn" />  <!-- navfn or sbpl-->
   <arg name="local" default="teb" />  <!--teb or dwa -->
 
+  <arg name="slam" default="true" />
+
   <!-- Launch move base -->
   <node
     name="move_base"
@@ -62,7 +64,6 @@
       from="move_base/DWAPlannerROS/local_plan"
       to="move_base/local_plan" />
 
-
     <remap
       from="move_base/NavfnROS/plan"
       to="move_base/global_plan" />
@@ -72,6 +73,12 @@
       to="move_base/global_plan" />
 
   </node>
+
+  <group unless="$(arg slam)">
+    <param name="move_base/local_costmap/global_frame" value="odom" />
+    <param name="move_base/global_costmap/static_layer/map_topic" value="map" />
+    <param name="move_base/exploration_costmap/static_layer/map_topic" value="map" />
+  </group>
 
   <node pkg="tf" type="static_transform_publisher" name="map2odom" args="0 0 0 0 0 0 map odom 100" />
 
