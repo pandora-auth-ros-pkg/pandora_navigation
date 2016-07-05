@@ -2,6 +2,7 @@
 
   <arg name="gui" default="false" />
   <arg name="cmd_vel_filter" default="true" />
+  <arg name="map" default="robocup" />
 
   <!-- Launch stdr simulator with map (and gui) -->
   <node
@@ -9,7 +10,7 @@
     type="stdr_server_node"
     pkg="stdr_server"
     output="screen"
-    args="$(find stdr_resources)/maps/robocup.yaml" />
+    args="$(find stdr_resources)/maps/$(arg map).yaml" />
 
   <group if="$(arg gui)">
     <include

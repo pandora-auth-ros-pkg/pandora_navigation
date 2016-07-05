@@ -3,6 +3,7 @@
   <!--############################ Arguments ################################-->
 
   <arg name="stdr" default="true" />
+  <arg name="map" default="robocup" />
   <arg name="gui" default="false" />
   <arg name="state_manager" default="true" />
   <arg name="slam" default="true" />
@@ -13,6 +14,7 @@
   <arg name="cmd_vel_filter" default="true" />
   <arg name="rviz" default="true" />
 
+  <arg name="cmd_topic" default="cmd_vel" />
   <arg name="global" default="navfn" /> <!-- navfn | sbpl-->
   <arg name="local" default="teb" /> <!-- teb | dwa -->
 
@@ -26,6 +28,7 @@
     <include file="$(find pandora_monstertruck_2dnav)/launch/stdr.launch">
       <arg name="gui" value="$(arg gui)" />
       <arg name="cmd_vel_filter" value="$(arg cmd_vel_filter)" />
+      <arg name="map" value="$(arg map)" />
     </include>
     <include file="$(find pandora_monstertruck_2dnav)/launch/robot.launch" />
   </group>
@@ -49,6 +52,7 @@
   <!-- launch move base node -->
   <group if="$(arg move_base)">
     <include file="$(find pandora_monstertruck_2dnav)/launch/move_base.launch">
+      <arg name="cmd_topic" value="$(arg cmd_topic)" />
       <arg name="local" value="$(arg local)" />
       <arg name="global" value="$(arg global)" />
       <arg name="slam" value="$(arg slam)" />
