@@ -1,5 +1,7 @@
 <launch>
 
+  <arg name="cmd_topic" default="cmd_vel" />
+
   <arg name="global" default="navfn" />  <!-- navfn or sbpl-->
   <arg name="local" default="teb" />  <!--teb or dwa -->
 
@@ -65,12 +67,20 @@
       to="move_base/local_plan" />
 
     <remap
+      from="move_base/EBandPlannerROS/global_plan"
+      to="move_base/local_plan" />
+
+    <remap
       from="move_base/NavfnROS/plan"
       to="move_base/global_plan" />
 
     <remap
       from="move_base/SBPLLatticePlanner/plan"
       to="move_base/global_plan" />
+
+    <remap
+      from="/cmd_vel"
+      to="$(arg cmd_topic)" />
 
   </node>
 
