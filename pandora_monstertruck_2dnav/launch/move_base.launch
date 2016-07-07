@@ -71,6 +71,10 @@
       to="move_base/local_plan" />
 
     <remap
+      from="move_base/AckermannPlannerROS/local_plan"
+      to="move_base/local_plan" />
+
+    <remap
       from="move_base/NavfnROS/plan"
       to="move_base/global_plan" />
 

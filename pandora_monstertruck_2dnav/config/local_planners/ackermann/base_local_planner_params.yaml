@@ -1,0 +1,15 @@
+controller_frequency: 5.0
+
+base_local_planner: ackermann_local_planner/AckermannPlannerROS
+
+AckermannPlannerROS:
+  max_vel: 0.2
+  min_vel: 0.01
+  min_radius: 0.5
+  acc_lim: 1.0
+  lookahead_factor: 2.5
+  radius_samples: 20
+  xy_goal_tolerance: 0.1
+  yaw_goal_tolerance: 0.1
+  move: True
+

@@ -430,6 +430,22 @@ Visualization Manager:
       Use Fixed Frame: true
       Use rainbow: true
       Value: false
+    - Class: rviz/Marker
+      Enabled: true
+      Marker Topic: /fws_path_tracking_controller_node/fuzzy_controller/sub_goal
+      Name: Fuzzy PTC Sub Goal
+      Namespaces:
+        {}
+      Queue Size: 100
+      Value: true
+    - Class: rviz/Marker
+      Enabled: true
+      Marker Topic: /move_base/EBandPlannerROS/eband_visualization
+      Name: EBand Bubbles
+      Namespaces:
+        {}
+      Queue Size: 100
+      Value: true
   Enabled: true
   Global Options:
     Background Color: 48; 48; 48
@@ -454,22 +470,22 @@ Visualization Manager:
   Views:
     Current:
       Class: rviz/Orbit
-      Distance: 4.0617
+      Distance: 8.95657
       Enable Stereo Rendering:
         Stereo Eye Separation: 0.06
         Stereo Focal Distance: 1
         Swap Stereo Eyes: false
         Value: false
       Focal Point:
-        X: 5.41701
-        Y: 9.7091
-        Z: 1.16286
+        X: 8.21398
+        Y: 10.1898
+        Z: -0.23829
       Name: Current View
       Near Clip Distance: 0.01
-      Pitch: 1.1348
+      Pitch: 1.5698
       Target Frame: <Fixed Frame>
       Value: Orbit (rviz)
-      Yaw: 4.72197
+      Yaw: 4.70697
     Saved: ~
 Window Geometry:
   Displays:
