@@ -42,15 +42,15 @@
       ns="global_costmap" />
 
     <rosparam
-      file="$(find pandora_monstertruck_2dnav)/config/planners/$(arg global)/base_global_planner_params.yaml"
+      file="$(find pandora_monstertruck_2dnav)/config/global_planners/$(arg global)/base_global_planner_params.yaml"
       command="load" />
 
     <param
       name="SBPLLatticePlanner/primitive_filename"
-      value="$(find pandora_monstertruck_2dnav)/config/motion_primitives/four_wheel_steer.mprim" />
+      value="$(find pandora_monstertruck_2dnav)/config/global_planners/sbpl/motion_primitives/four_wheel_steer.mprim" />
 
     <rosparam
-      file="$(find pandora_monstertruck_2dnav)/config/planners/$(arg local)/base_local_planner_params.yaml"
+      file="$(find pandora_monstertruck_2dnav)/config/local_planners/$(arg local)/base_local_planner_params.yaml"
       command="load" />
 
     <rosparam

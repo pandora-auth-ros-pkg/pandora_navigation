@@ -6,7 +6,7 @@ EBandPlannerROS:
   Ctrl_Rate: 5.0
   differential_drive: True
   max_acceleration: 0.5
-  max_lin_vel: 0.2
+  max_vel_lin: 0.2
   max_vel_th: 0.4
   min_vel_lin: 0.01
   min_vel_theta: 0.0
