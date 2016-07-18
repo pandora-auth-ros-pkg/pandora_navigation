@@ -67,7 +67,7 @@
       to="move_base/local_plan" />
 
     <remap
-      from="move_base/EBandPlannerROS/global_plan"
+      from="move_base/EBandPlannerROS/local_plan"
       to="move_base/local_plan" />
 
     <remap
