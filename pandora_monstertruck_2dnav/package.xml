@@ -24,8 +24,8 @@
   <exec_depend>pandora_costmap</exec_depend>
   <exec_depend>frontier_exploration</exec_depend>
   <exec_depend>pandora_explorer</exec_depend>
-  <exec_depend>dwa_local_planner</exec_depend>
   <exec_depend>teb_local_planner</exec_depend>
+  <exec_depend>nh_dwa_local_planner</exec_depend>
   <exec_depend>eband_local_planner</exec_depend>
   <exec_depend>navfn</exec_depend>
   <exec_depend>sbpl_lattice_planner</exec_depend>
