@@ -16,7 +16,8 @@
     output="screen">
 
     <rosparam>
-      recovery_behavior_enabled: False
+      recovery_behavior_enabled: True
+      clear_costmap_recovery_allowed: True
       clearing_rotation_allowed: False
       planner_frequency: 0.0
     </rosparam>
@@ -67,7 +68,7 @@
       to="move_base/local_plan" />
 
     <remap
-      from="move_base/EBandPlannerROS/local_plan"
+      from="move_base/RSBandPlannerROS/local_plan"
       to="move_base/local_plan" />
 
     <remap

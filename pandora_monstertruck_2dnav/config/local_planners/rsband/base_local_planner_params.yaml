@@ -1,0 +1,28 @@
+controller_frequency: 5.0
+
+base_local_planner: rsband_local_planner/RSBandPlannerROS
+
+RSBandPlannerROS:
+  rear_steering_modes: [&none 0, &counter 1, &crab 2, &hybrid 3]
+  rear_steering_mode: *counter
+  max_speed: 0.2
+  max_steering_angle: 0.4
+  wheelbase: 0.32
+  merge_plans: True
+
+  # reeds shepp planner params
+  eband_to_rs_strategies: [&start_to_end 0, &point_to_point 1, &skip_failures 2, &start_to_receding_end 3]
+  eband_to_rs_strategy: *point_to_point
+  max_planning_duration: 0.05
+  valid_state_max_cost: 252
+  interpolation_num_poses: 20
+  allow_unknown: False
+  display_planner_output: False
+
+  # car like fuzzy path tracking controller params
+  xy_goal_tolerance: 0.1
+  yaw_goal_tolerance: 0.1
+  goal_dist_threshold: 0.2
+  lateral_deviation_tolerance: 0.1
+  update_subgoal_dist_threshold: 0.3
+  display_controller_io: False
