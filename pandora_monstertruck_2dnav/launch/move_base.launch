@@ -15,12 +15,10 @@
     respawn="false"
     output="screen">
 
-    <rosparam>
-      recovery_behavior_enabled: True
-      clear_costmap_recovery_allowed: True
-      clearing_rotation_allowed: False
-      planner_frequency: 0.0
-    </rosparam>
+    <rosparam
+      file="$(find pandora_monstertruck_2dnav)/config/move_base.yaml"
+      command="load"
+      ns="" />
 
     <rosparam
       file="$(find pandora_monstertruck_2dnav)/config/costmaps/costmap_common_params.yaml"
