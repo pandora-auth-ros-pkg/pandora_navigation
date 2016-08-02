@@ -72,7 +72,9 @@
   </group>
   <!-- launch pandora_exploration node -->
   <group if="$(arg pandora_exploration)">
-    <include file="$(find pandora_monstertruck_2dnav)/launch/pandora_exploration.launch" />
+    <include file="$(find pandora_monstertruck_2dnav)/launch/pandora_exploration.launch">
+      <arg name="slam" value="$(arg slam)" />
+    </include>
   </group>
 
   <!-- launch navigation goals loop node for tuning purposes -->

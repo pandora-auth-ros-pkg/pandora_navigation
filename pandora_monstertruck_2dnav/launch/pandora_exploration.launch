@@ -1,5 +1,7 @@
 <launch>
 
+  <arg name="slam" default="true" />
+
   <node
     pkg="pandora_explorer"
     type="exploration_controller"
@@ -26,5 +28,11 @@
       command="load" />
 
   </node>
+
+  <group unless="$(arg slam)">
+    <param
+      name="/explorer/explore_costmap/static_layer/map_topic"
+      value="/map" />
+  </group>
 
 </launch>
