@@ -9,9 +9,10 @@ RSBandPlannerROS:
   max_steering_angle: 0.4
   wheelbase: 0.32
   merge_plans: True
+  emergency_planning: True
 
   # reeds shepp planner params
-  eband_to_rs_strategies: [&start_to_end 0, &point_to_point 1, &skip_failures 2, &start_to_receding_end 3]
+  eband_to_rs_strategies: [&start_to_end 0, &start_to_next 1, &point_to_point 2, &skip_failures 3, &start_to_receding_end 4]
   eband_to_rs_strategy: *point_to_point
   max_planning_duration: 0.05
   valid_state_max_cost: 252
