@@ -23,4 +23,4 @@ obstacle_layer:
 
 inflation_layer:
   cost_scaling_factor: 10.0
-  inflation_radius: 0.3
+  inflation_radius: 0.2
