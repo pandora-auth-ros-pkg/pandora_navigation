@@ -3,7 +3,7 @@ max_goal_searches: 12
 
 max_abortions: 5
 # robot has that many seconds to reach a goal
-goal_timeout: 10.0
+goal_timeout: 30.0
 
 # how far from a goal the robot has to be
 # to considered visited (in meters)
