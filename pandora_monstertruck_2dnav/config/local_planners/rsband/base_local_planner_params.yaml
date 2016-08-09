@@ -4,16 +4,16 @@ base_local_planner: rsband_local_planner/RSBandPlannerROS
 
 RSBandPlannerROS:
   rear_steering_modes: [&none 0, &counter 1, &crab 2, &hybrid 3]
-  rear_steering_mode: *counter
+  rear_steering_mode: *hybrid
   max_speed: 0.2
   max_steering_angle: 0.4
   wheelbase: 0.32
-  merge_plans: True
+  merge_plans: False
   emergency_planning: True
 
   # reeds shepp planner params
   eband_to_rs_strategies: [&start_to_end 0, &start_to_next 1, &point_to_point 2, &skip_failures 3, &start_to_receding_end 4]
-  eband_to_rs_strategy: *point_to_point
+  eband_to_rs_strategy: *start_to_next
   max_planning_duration: 0.05
   valid_state_max_cost: 252
   interpolation_num_poses: 20
