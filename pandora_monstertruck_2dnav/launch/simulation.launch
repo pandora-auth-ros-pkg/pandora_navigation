@@ -12,6 +12,7 @@
   <arg name="pandora_exploration" default="false" />
   <arg name="tune" default="false" />
   <arg name="cmd_vel_filter" default="true" />
+  <arg name="cmd_vel_mux" default="true" />
   <arg name="rviz" default="true" />
 
   <arg name="cmd_topic" default="cmd_vel" />
@@ -49,14 +50,31 @@
     <include file="$(find pandora_pose_estimation)/launch/pose_estimation_5_dof.launch" />
   </group>
 
-  <!-- launch move base node -->
-  <group if="$(arg move_base)">
-    <include file="$(find pandora_monstertruck_2dnav)/launch/move_base.launch">
-      <arg name="cmd_topic" value="$(arg cmd_topic)" />
-      <arg name="local" value="$(arg local)" />
-      <arg name="global" value="$(arg global)" />
-      <arg name="slam" value="$(arg slam)" />
-    </include>
+  <!-- launch move base with cmd_vel multiplexer -->
+  <group if="$(arg cmd_vel_mux)">
+    <!-- launch cmd_vel multiplexer -->
+    <include file="$(find pandora_cmd_vel_mux)/launch/cmd_vel_mux.launch" />
+    <!-- launch move_base -->
+    <group if="$(arg move_base)">
+      <include file="$(find pandora_monstertruck_2dnav)/launch/move_base.launch">
+        <arg name="cmd_topic" value="navigation/cmd_vel" />
+        <arg name="local" value="$(arg local)" />
+        <arg name="global" value="$(arg global)" />
+        <arg name="slam" value="$(arg slam)" />
+      </include>
+    </group>
+  </group>
+
+  <!-- launch move base node without cmd_vel multiplexer-->
+  <group unless="$(arg cmd_vel_mux)">
+    <group if="$(arg move_base)">
+      <include file="$(find pandora_monstertruck_2dnav)/launch/move_base.launch">
+        <arg name="cmd_topic" value="$(arg cmd_topic)" />
+        <arg name="local" value="$(arg local)" />
+        <arg name="global" value="$(arg global)" />
+        <arg name="slam" value="$(arg slam)" />
+      </include>
+    </group>
   </group>
 
   <group unless="$(arg slam)">
