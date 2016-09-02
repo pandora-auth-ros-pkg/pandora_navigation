@@ -27,3 +27,15 @@ RSBandPlannerROS:
   lateral_deviation_tolerance: 0.1
   update_subgoal_dist_threshold: 0.3
   display_controller_io: False
+
+  # eband params
+  eband_min_relative_bubble_overlap_: 0.3
+  eband_tiny_bubble_distance: 0.01
+  eband_tiny_bubble_expansion: 0.01
+  eband_internal_force_gain: 1.0
+  eband_external_force_gain: 2.0
+  num_iterations_eband_optimization: 5
+  eband_equilibrium_approx_max_recursion_depth: 5
+  eband_equlibrium_relative_overshoot: 0.75
+  eband_significant_force_lower_bound: 0.10
+  costmap_weight: 20.0
