@@ -91,8 +91,13 @@
     <param name="move_base/local_costmap/global_frame" value="odom" />
     <param name="move_base/global_costmap/static_layer/map_topic" value="map" />
     <param name="move_base/exploration_costmap/static_layer/map_topic" value="map" />
+
+    <node pkg="tf" type="static_transform_publisher" name="map2odom" args="0 0 0 0 0 0 map odom 100" />
   </group>
 
-  <node pkg="tf" type="static_transform_publisher" name="map2odom" args="0 0 0 0 0 0 map odom 100" />
+  <group if="$(arg slam)">
+    <!-- apply offset between laser_link and base_footprint center -->
+    <node pkg="tf" type="static_transform_publisher" name="map2odom" args="-0.1252 -0.03 0 0 0 0 map odom 100" />
+  </group>
 
 </launch>
