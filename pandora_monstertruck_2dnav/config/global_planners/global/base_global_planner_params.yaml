@@ -7,3 +7,8 @@ GlobalPlanner:
   use_quadratic: False
   use_grid_path: True
   old_navfn_behavior: False
+
+  lethal_cost: 200
+  neutral_cost: 50
+  cost_factor: 3.0
+  orientation_mode: 2 # orientation interpolate mode

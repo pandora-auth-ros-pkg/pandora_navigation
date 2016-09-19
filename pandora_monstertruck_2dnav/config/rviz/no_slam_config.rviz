@@ -76,11 +76,11 @@ Visualization Manager:
       Class: rviz/Map
       Color Scheme: costmap
       Draw Behind: true
-      Enabled: true
+      Enabled: false
       Name: Global Costmap
       Topic: /move_base/global_costmap/costmap
       Unreliable: false
-      Value: true
+      Value: false
     - Alpha: 0.5
       Class: rviz/Map
       Color Scheme: costmap
@@ -135,7 +135,7 @@ Visualization Manager:
         X: 0
         Y: 0
         Z: 0
-      Topic: /move_base/global_plan
+      Topic: /move_base/GlobalPlanner/plan
       Unreliable: false
       Value: true
     - Alpha: 1
@@ -151,6 +151,15 @@ Visualization Manager:
         Y: 0
         Z: 0
       Topic: /move_base/local_plan
+      Unreliable: false
+      Value: true
+    - Alpha: 0.7
+      Class: rviz/Map
+      Color Scheme: costmap
+      Draw Behind: false
+      Enabled: true
+      Name: Global Planner Potential Field
+      Topic: /move_base/GlobalPlanner/potential
       Unreliable: false
       Value: true
     - Alpha: 1
@@ -333,15 +342,15 @@ Visualization Manager:
   Views:
     Current:
       Class: rviz/ThirdPersonFollower
-      Distance: 11.8445
+      Distance: 7.61671
       Enable Stereo Rendering:
         Stereo Eye Separation: 0.06
         Stereo Focal Distance: 1
         Swap Stereo Eyes: false
         Value: false
       Focal Point:
-        X: 5.4757
-        Y: 9.58062
+        X: 5.6304
+        Y: 7.84494
         Z: 1.97633e-05
       Name: Current View
       Near Clip Distance: 0.01
@@ -368,5 +377,5 @@ Window Geometry:
   Views:
     collapsed: false
   Width: 960
-  X: 950
+  X: 910
   Y: 14

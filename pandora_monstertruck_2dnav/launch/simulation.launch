@@ -7,6 +7,7 @@
   <arg name="gui" default="false" />
   <arg name="state_manager" default="true" />
   <arg name="slam" default="true" />
+  <arg name="gmapping" default="false" />
   <arg name="move_base" default="true" />
   <arg name="frontier_exploration" default="false" />
   <arg name="pandora_exploration" default="false" />
@@ -16,10 +17,10 @@
   <arg name="rviz" default="true" />
 
   <arg name="cmd_topic" default="cmd_vel" />
-  <arg name="global" default="navfn" /> <!-- navfn | sbpl-->
-  <arg name="local" default="teb" /> <!-- teb | dwa -->
+  <arg name="global" default="global" /> <!-- navfn | sbpl-->
+  <arg name="local" default="rsband" /> <!-- teb | dwa -->
 
-  <arg name="state" default="0" />
+  <arg name="state" default="1" />
 
 
   <!--######################### Node Launchers ##############################-->
@@ -42,9 +43,14 @@
   <!-- launch slam and pose estimation nodes -->
   <group if="$(arg slam)">
     <!-- launch slam node -->
-    <include file="$(find pandora_slam_2d)/launch/pandora_slam_2d.launch">
-      <arg name="robot" value="monstertruck" />
-    </include>
+    <group unless="$(arg gmapping)">
+      <include file="$(find pandora_slam_2d)/launch/pandora_slam_2d.launch">
+        <arg name="robot" value="monstertruck" />
+      </include>
+    </group>
+    <group if="$(arg gmapping)">
+      <include file="$(find pandora_monstertruck_2dnav)/launch/gmapping.launch" />
+    </group>
 
     <!-- launch pose estimation node -->
     <include file="$(find pandora_pose_estimation)/launch/pose_estimation_5_dof.launch" />
