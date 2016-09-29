@@ -41,8 +41,8 @@
     <param name="lasamplestep" value="0.005"/>
 
     <remap from="scan" to="$(arg scan_topic)"/>
-    <remap from="map" to="slam/map"/>
-
+    <remap from="map" to="/slam/map"/>
+    <remap from="odom" to="/robot_pose_ekf/odom_combined"/>
   </node>
 
   <node

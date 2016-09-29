@@ -10,14 +10,14 @@
   <arg name="gmapping" default="false" />
   <arg name="move_base" default="true" />
   <arg name="frontier_exploration" default="false" />
-  <arg name="pandora_exploration" default="false" />
+  <arg name="pandora_exploration" default="true" />
   <arg name="tune" default="false" />
   <arg name="cmd_vel_filter" default="true" />
   <arg name="cmd_vel_mux" default="true" />
   <arg name="rviz" default="true" />
 
   <arg name="cmd_topic" default="cmd_vel" />
-  <arg name="global" default="global" /> <!-- navfn | sbpl-->
+  <arg name="global" default="navfn" /> <!-- navfn | sbpl-->
   <arg name="local" default="rsband" /> <!-- teb | dwa -->
 
   <arg name="state" default="1" />
@@ -67,6 +67,7 @@
         <arg name="local" value="$(arg local)" />
         <arg name="global" value="$(arg global)" />
         <arg name="slam" value="$(arg slam)" />
+        <arg name="gmapping" value="$(arg gmapping)" />
       </include>
     </group>
   </group>

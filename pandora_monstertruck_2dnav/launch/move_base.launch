@@ -6,6 +6,7 @@
   <arg name="local" default="teb" />  <!--teb or dwa -->
 
   <arg name="slam" default="true" />
+  <arg name="gmapping" default="false" />
 
   <!-- Launch move base -->
   <node
@@ -82,6 +83,10 @@
       to="move_base/global_plan" />
 
     <remap
+      from="move_base/GlobalPlanner/plan"
+      to="move_base/global_plan" />
+
+    <remap
       from="/cmd_vel"
       to="$(arg cmd_topic)" />
 
@@ -97,7 +102,12 @@
 
   <group if="$(arg slam)">
     <!-- apply offset between laser_link and base_footprint center -->
-    <node pkg="tf" type="static_transform_publisher" name="map2odom" args="-0.1252 -0.03 0 0 0 0 map odom 100" />
+    <group unless="$(arg gmapping)">
+      <node pkg="tf" type="static_transform_publisher" name="map2odom" args="-0.13 0.0 0 0 0 0 map odom 100" />
+    </group>
+    <group if="$(arg gmapping)">
+      <node pkg="tf" type="static_transform_publisher" ngme="map2odom" args="0.0 0.0 0 0 0 0 map odom 100" />
+    </group>
   </group>
 
 </launch>
