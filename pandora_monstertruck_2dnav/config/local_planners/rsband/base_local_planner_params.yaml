@@ -24,8 +24,8 @@ RSBandPlannerROS:
   xy_goal_tolerance: 0.1
   yaw_goal_tolerance: 0.1
   goal_dist_threshold: 0.2
-  lateral_deviation_tolerance: 0.1
-  update_subgoal_dist_threshold: 0.3
+  lateral_deviation_tolerance: 0.2
+  update_subgoal_dist_threshold: 0.5
   display_controller_io: False
 
   # eband params

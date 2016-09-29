@@ -1,10 +1,10 @@
 base_global_planner: global_planner/GlobalPlanner
 GlobalPlanner:
   allow_unknown: True
-  default_tolerance: 0.5
+  default_tolerance: 1.0
   visualize_potential: True
   use_dijkstra: False
-  use_quadratic: False
+  use_quadratic: True
   use_grid_path: True
   old_navfn_behavior: False
 
