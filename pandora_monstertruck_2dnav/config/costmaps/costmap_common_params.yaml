@@ -1,6 +1,6 @@
 robot_base_frame: /base_footprint
 footprint: [[-0.235, -0.17], [-0.235, 0.17], [0.235, 0.17], [0.235, -0.17]]
-robot_radius: 0.235
+robot_radius: 0.29
 footprint_padding: 0.01
 
 update_frequency: 2.0
@@ -11,8 +11,6 @@ track_unknown_space: true
 
 static_layer:
   map_topic: /slam/map
-  unknown_cost_value: 51
-  lethal_cost_threshold: 61
   subscribe_to_updates: true
 
 obstacle_layer:
