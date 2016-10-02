@@ -44,16 +44,21 @@
   <group if="$(arg slam)">
     <!-- launch slam node -->
     <group unless="$(arg gmapping)">
+      <!-- launch crsm slam -->
       <include file="$(find pandora_slam_2d)/launch/pandora_slam_2d.launch">
         <arg name="robot" value="monstertruck" />
       </include>
+      <!-- launch pose estimation node -->
+      <include file="$(find pandora_pose_estimation)/launch/pose_estimation_5_dof.launch" />
     </group>
     <group if="$(arg gmapping)">
+      <!-- launch gmapping -->
       <include file="$(find pandora_monstertruck_2dnav)/launch/gmapping.launch" />
+      <!-- launch base footprint to base link transform publisher -->
+      <node pkg="tf" type="static_transform_publisher" name="footprint2base" args="0 0 0.11 0 0 0 base_footprint base_link 100" />
     </group>
 
-    <!-- launch pose estimation node -->
-    <include file="$(find pandora_pose_estimation)/launch/pose_estimation_5_dof.launch" />
+
   </group>
 
   <!-- launch move base with cmd_vel multiplexer -->
