@@ -80,5 +80,4 @@ class FWSCmdVelFilter:
 
 if __name__ == '__main__':
     rospy.init_node('fws_cmd_vel_filter')
-    rospy.loginfo('Node fws_cmd_vel_filter initialized!')
     filter = FWSCmdVelFilter()
