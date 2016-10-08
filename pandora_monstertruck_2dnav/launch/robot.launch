@@ -1,5 +1,10 @@
 <launch>
 
+  <arg name="x" default="0" />
+  <arg name="y" default="0" />
+  <arg name="yaw" default="0" />
+
+
   <!-- launch monstertruck urdf model -->
   <include
     file="$(find pandora_robots_description)/monstertruck/launch/monstertruck_description.launch" />
@@ -9,6 +14,6 @@
     name="$(anon robot_spawn)"
     pkg="stdr_robot"
     type="robot_handler"
-    args="add $(find pandora_monstertruck_2dnav)/config/monstertruck_stdr_robot_description.xml 5.5 10 1.57" />
+    args="add $(find pandora_monstertruck_2dnav)/config/monstertruck_stdr_robot_description.xml $(arg x) $(arg y) $(arg yaw)" />
 
 </launch>

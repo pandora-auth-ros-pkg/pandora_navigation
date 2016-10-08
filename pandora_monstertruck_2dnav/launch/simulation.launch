@@ -22,6 +22,10 @@
 
   <arg name="state" default="1" />
 
+  <arg name="x" default="5.5" />
+  <arg name="y" default="10" />
+  <arg name="yaw" default="1.57" />
+
 
   <!--######################### Node Launchers ##############################-->
 
@@ -32,7 +36,11 @@
       <arg name="cmd_vel_filter" value="$(arg cmd_vel_filter)" />
       <arg name="map" value="$(arg map)" />
     </include>
-    <include file="$(find pandora_monstertruck_2dnav)/launch/robot.launch" />
+    <include file="$(find pandora_monstertruck_2dnav)/launch/robot.launch">
+      <arg name="x" value="$(arg x)" />
+      <arg name="y" value="$(arg y)" />
+      <arg name="yaw" value="$(arg yaw)" />
+    </include>
   </group>
 
   <!-- launch state manager node -->
