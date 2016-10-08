@@ -46,7 +46,7 @@ class Odom2BaseTfPublisher:
 
     def __init__(self):
         self.scan_sub = rospy.Subscriber('/odom', Odometry, self.odom_cb)
-        self.trajectory_pub = rospy.Publisher('robot_trajectory', Path, queue_size=1);
+        self.trajectory_pub = rospy.Publisher('robot_trajectory', Path, queue_size=1)
         self.trajectory = Path()
         self.trajectory.header.frame_id = 'odom'
 
