@@ -3,6 +3,6 @@ base_global_planner: SBPLLatticePlanner
 SBPLLatticePlanner:
   environment_type: XYThetaLattice
   planner_type: ARAPlanner #ADPlanner
-  allocated_time: 5.0
+  allocated_time: 0.05
   initial_epsilon: 3.0
   forward_search: false # false for ADPlanner, irrelevant for ARAPlanner

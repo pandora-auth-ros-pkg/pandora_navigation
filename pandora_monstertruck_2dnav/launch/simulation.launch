@@ -20,6 +20,8 @@
   <arg name="global" default="navfn" /> <!-- navfn | sbpl-->
   <arg name="local" default="rsband" /> <!-- teb | dwa -->
 
+  <arg name="sbpl_resolution" default="0.04" />
+
   <arg name="state" default="1" />
 
   <arg name="x" default="5.5" />
@@ -84,6 +86,7 @@
         <arg name="global" value="$(arg global)" />
         <arg name="slam" value="$(arg slam)" />
         <arg name="gmapping" value="$(arg gmapping)" />
+        <arg name="sbpl_resolution" value="$(arg sbpl_resolution)" />
       </include>
     </group>
   </group>

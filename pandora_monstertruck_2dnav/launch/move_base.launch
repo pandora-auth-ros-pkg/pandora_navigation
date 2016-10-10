@@ -8,6 +8,8 @@
   <arg name="slam" default="true" />
   <arg name="gmapping" default="false" />
 
+  <arg name="sbpl_resolution" default="0.04" />
+
   <!-- Launch move base -->
   <node
     name="move_base"
@@ -47,7 +49,7 @@
 
     <param
       name="SBPLLatticePlanner/primitive_filename"
-      value="$(find pandora_monstertruck_2dnav)/config/global_planners/sbpl/motion_primitives/four_wheel_steer.mprim" />
+      value="$(find pandora_monstertruck_2dnav)/config/global_planners/sbpl/motion_primitives/four_wheel_steer_$(arg sbpl_resolution).mprim" />
 
     <rosparam
       file="$(find pandora_monstertruck_2dnav)/config/local_planners/$(arg local)/base_local_planner_params.yaml"
