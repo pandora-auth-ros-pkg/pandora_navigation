@@ -17,8 +17,8 @@
   <arg name="rviz" default="true" />
 
   <arg name="cmd_topic" default="cmd_vel" />
-  <arg name="global" default="navfn" /> <!-- navfn | sbpl-->
-  <arg name="local" default="rsband" /> <!-- teb | dwa -->
+  <arg name="global" default="global" /> <!-- navfn | sbpl | global -->
+  <arg name="local" default="rsband" /> <!-- teb | dwa | rsband -->
 
   <arg name="sbpl_resolution" default="0.04" />
 
@@ -99,6 +99,8 @@
         <arg name="local" value="$(arg local)" />
         <arg name="global" value="$(arg global)" />
         <arg name="slam" value="$(arg slam)" />
+        <arg name="gmapping" value="$(arg gmapping)" />
+        <arg name="sbpl_resolution" value="$(arg sbpl_resolution)" />
       </include>
     </group>
   </group>
