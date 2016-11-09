@@ -1,0 +1,13 @@
+global_frame: map
+rolling_window: false
+
+plugins:
+- {name: static, type: "costmap_2d::StaticLayer"}
+- {name: explore_boundary, type: "frontier_exploration::BoundedExploreLayer"}
+- {name: obstacle_layer, type: "costmap_2d::ObstacleLayer"}
+- {name: inflation_layer, type: "costmap_2d::InflationLayer"}
+
+explore_boundary:
+  resize_to_boundary: true
+  frontier_travel_point: centroid #middle | closest | centroid
+  explore_clear_space: true

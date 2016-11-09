@@ -1,0 +1,50 @@
+<launch>
+
+  <arg name="gui" default="false" />
+  <arg name="cmd_vel_filter" default="true" />
+  <arg name="map" default="robocup" />
+
+  <!-- Launch stdr simulator with map (and gui) -->
+  <node
+    name="stdr_server"
+    type="stdr_server_node"
+    pkg="stdr_server"
+    output="screen"
+    args="$(find stdr_resources)/maps/$(arg map).yaml" />
+
+  <group if="$(arg gui)">
+    <include
+      file="$(find stdr_gui)/launch/stdr_gui.launch" />
+  </group>
+
+  <include
+    file="$(find stdr_robot)/launch/robot_manager.launch" />
+
+  <node
+    pkg="topic_tools"
+    type="relay"
+    name="odom_relay_node"
+    args="/robot0/odom /odom" />
+
+  <group if="$(arg cmd_vel_filter)">
+    <node
+      pkg="pandora_monstertruck_2dnav"
+      type="fws_cmd_vel_filter.py"
+      name="fws_cmd_vel_filter"
+      output="screen" />
+  </group>
+
+  <group unless="$(arg cmd_vel_filter)">
+    <node
+      pkg="topic_tools"
+      type="relay"
+      name="cmd_vel_relay_node"
+      args="/cmd_vel /robot0/cmd_vel" />
+  </group>
+
+  <node
+    name="scan_frame_remapper"
+    pkg="pandora_monstertruck_2dnav"
+    type="scan_frame_remapper.py" />
+
+</launch>

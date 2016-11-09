@@ -1,0 +1,9 @@
+global_frame: /map
+static_map: true
+
+plugins:
+  - {name: static_layer, type: "costmap_2d::StaticLayer"}
+  - {name: inflation_layer, type: "costmap_2d::InflationLayer"}
+
+# static:
+  # subscribe_to_updates: false

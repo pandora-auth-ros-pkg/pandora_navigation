@@ -1,0 +1,21 @@
+recovery_behavior_enabled: True
+clear_costmap_recovery_allowed: True
+clearing_rotation_allowed: False
+planner_patience: 5.0
+controller_patience: 3.0
+planner_frequency: 0.0
+
+recovery_behaviors:
+  - name: car_maneuver_recovery
+    type: car_maneuver_recovery/CarManeuverRecovery
+
+car_maneuver_recovery:
+  four_wheel_steering: True
+  crab_steering: True
+  recovery_speed: 0.1
+  recovery_steering_angle: 0.4
+  wheelbase: 0.32
+  extra_footprint_padding: 0.0
+  escape_cost_threshold: 128
+  timeout: 10.0
+  display_costs: True

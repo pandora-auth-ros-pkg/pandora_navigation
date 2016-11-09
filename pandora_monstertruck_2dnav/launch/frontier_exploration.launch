@@ -1,0 +1,25 @@
+<launch>
+
+    <arg name="sensor_range" default="4.0"/>
+
+    <node pkg="frontier_exploration" type="explore_client" name="explore_client" output="screen"/>
+
+    <node pkg="frontier_exploration" type="explore_server" name="explore_server" output="screen">
+
+      <param name="frequency" value="0.5"/>
+
+      <param name="goal_aliasing" value="1.5" />
+
+      <rosparam
+        file="$(find pandora_monstertruck_2dnav)/config/costmaps/frontier_exploration_costmap_params.yaml"
+        command="load"
+        ns="explore_costmap" />
+
+      <rosparam
+        file="$(find pandora_monstertruck_2dnav)/config/costmaps/costmap_common_params.yaml"
+        command="load"
+        ns="explore_costmap" />
+
+    </node>
+
+</launch>

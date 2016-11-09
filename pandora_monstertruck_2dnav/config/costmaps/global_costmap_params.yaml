@@ -1,0 +1,9 @@
+global_frame: map
+static_map: true
+
+# Static Layer receives the map from SLAM, updateWithTrueOverwrite
+plugins:
+  - name: static_layer
+    type: costmap_2d::StaticLayer
+  - name: inflation_layer
+    type: costmap_2d::InflationLayer

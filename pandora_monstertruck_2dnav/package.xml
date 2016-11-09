@@ -1,0 +1,34 @@
+<?xml version="1.0"?>
+<package format="2">
+  <name>pandora_monstertruck_2dnav</name>
+  <version>0.0.0</version>
+  <description>The pandora_monstertruck_2dnav package</description>
+
+  <maintainer email="gkourosg@yahoo.gr">George Kouros</maintainer>
+
+  <license>BSD</license>
+
+  <author email="gkourosg@yahoo.gr">George Kouros</author>
+
+  <buildtool_depend>catkin</buildtool_depend>
+
+  <depend>roscpp</depend>
+  <depend>ackermann_msgs</depend>
+  <depend>geometry_msgs</depend>
+  <depend>actionlib</depend>
+  <depend>move_base_msgs</depend>
+  <depend>roslint</depend>
+
+  <exec_depend>pandora_robots_description</exec_depend>
+  <exec_depend>frontier_exploration</exec_depend>
+  <exec_depend>pandora_explorer</exec_depend>
+  <exec_depend>rsband_local_planner</exec_depend>
+  <exec_depend>teb_local_planner</exec_depend>
+  <exec_depend>navfn</exec_depend>
+  <exec_depend>global_planner</exec_depend>
+  <exec_depend>sbpl_lattice_planner</exec_depend>
+  <exec_depend>car_maneuver_recovery</exec_depend>
+
+  <export>
+  </export>
+</package>

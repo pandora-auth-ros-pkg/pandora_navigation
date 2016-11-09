@@ -1,0 +1,112 @@
+<launch>
+
+  <arg name="cmd_topic" default="cmd_vel" />
+
+  <arg name="global" default="navfn" />  <!-- navfn or sbpl-->
+  <arg name="local" default="teb" />  <!--teb or dwa -->
+
+  <arg name="slam" default="true" />
+  <arg name="gmapping" default="false" />
+
+  <arg name="sbpl_resolution" default="0.04" />
+
+  <!-- Launch move base -->
+  <node
+    name="move_base"
+    pkg="move_base"
+    type="move_base"
+    respawn="false"
+    output="screen">
+
+    <rosparam
+      file="$(find pandora_monstertruck_2dnav)/config/move_base.yaml"
+      command="load"
+      ns="" />
+
+    <rosparam
+      file="$(find pandora_monstertruck_2dnav)/config/costmaps/costmap_common_params.yaml"
+      command="load"
+      ns="global_costmap" />
+
+    <rosparam
+      file="$(find pandora_monstertruck_2dnav)/config/costmaps/costmap_common_params.yaml"
+      command="load"
+      ns="local_costmap" />
+
+    <rosparam
+      file="$(find pandora_monstertruck_2dnav)/config/costmaps/local_costmap_params.yaml"
+      command="load"
+      ns="local_costmap" />
+
+    <rosparam
+      file="$(find pandora_monstertruck_2dnav)/config/costmaps/global_costmap_params.yaml"
+      command="load"
+      ns="global_costmap" />
+
+    <rosparam
+      file="$(find pandora_monstertruck_2dnav)/config/global_planners/$(arg global)/base_global_planner_params.yaml"
+      command="load" />
+
+    <param
+      name="SBPLLatticePlanner/primitive_filename"
+      value="$(find pandora_monstertruck_2dnav)/config/global_planners/sbpl/motion_primitives/four_wheel_steer_$(arg sbpl_resolution).mprim" />
+
+    <rosparam
+      file="$(find pandora_monstertruck_2dnav)/config/local_planners/$(arg local)/base_local_planner_params.yaml"
+      command="load" />
+
+    <rosparam
+      file="$(find pandora_monstertruck_2dnav)/config/costmaps/costmap_converter_params.yaml"
+      command="load" />
+
+    <!-- remap planner topics for rviz -->
+    <remap
+      from="move_base/TebLocalPlannerROS/local_plan"
+      to="move_base/local_plan" />
+
+    <remap
+      from="move_base/DWAPlannerROS/local_plan"
+      to="move_base/local_plan" />
+
+    <remap
+      from="move_base/RSBandPlannerROS/local_plan"
+      to="move_base/local_plan" />
+
+    <remap
+      from="move_base/AckermannPlannerROS/local_plan"
+      to="move_base/local_plan" />
+
+    <remap
+      from="move_base/NavfnROS/plan"
+      to="move_base/global_plan" />
+
+    <remap
+      from="move_base/SBPLLatticePlanner/plan"
+      to="move_base/global_plan" />
+
+    <remap
+      from="move_base/GlobalPlanner/plan"
+      to="move_base/global_plan" />
+
+    <remap
+      from="/cmd_vel"
+      to="$(arg cmd_topic)" />
+
+  </node>
+
+  <group unless="$(arg slam)">
+    <param name="move_base/local_costmap/global_frame" value="odom" />
+    <param name="move_base/global_costmap/static_layer/map_topic" value="map" />
+    <param name="move_base/exploration_costmap/static_layer/map_topic" value="map" />
+
+    <node pkg="tf" type="static_transform_publisher" name="map2odom" args="0 0 0 0 0 0 map odom 100" />
+  </group>
+
+  <group if="$(arg slam)">
+    <!-- apply offset between laser_link and base_footprint center -->
+    <group unless="$(arg gmapping)">
+      <node pkg="tf" type="static_transform_publisher" name="map2odom" args="-0.13 0.0 0 0 0 0 map odom 100" />
+    </group>
+  </group>
+
+</launch>

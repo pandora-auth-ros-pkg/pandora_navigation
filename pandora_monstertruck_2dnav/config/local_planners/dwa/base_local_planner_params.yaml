@@ -1,0 +1,53 @@
+controller_frequency: 5.0
+
+base_local_planner: nh_dwa_local_planner/DWAPlannerROS
+
+DWAPlannerROS:
+
+  # velocities
+  max_trans_vel: 0.2
+  min_trans_vel: 0.05
+
+  max_vel_x: 0.2
+  min_vel_x: -0.2
+
+  max_vel_y: 0.08
+  min_vel_y: -0.08
+
+  max_rot_vel: 0.4
+  min_rot_vel: 0.0
+
+  # accel
+  acc_lim_x: 1.0
+  acc_lim_y: 1.0
+  acc_lim_theta: 1.0
+  acc_limit_trans: 1.0
+
+  min_turning_radius: 0.5
+  max_diagonal_motion_angle: 0.4
+
+  xy_goal_tolerance: 0.2
+  yaw_goal_tolerance: 0.2
+  latch_xy_goal_tolerance: true
+  #DWA cfg
+  vx_samples: 20
+  vy_samples: 20
+  vth_samples: 20
+
+  sim_time: 1.0
+  sim_granularity: 0.025
+  angular_sim_granularity: 0.1
+
+  path_distance_bias: 32.0
+  goal_distance_bias: 30.0
+  occdist_scale: 0.8
+  scaling_speed: 0.5
+
+  # goal_orientation_cost_function params
+  distance_scale: 10.0
+  orientation_scale: 30.0
+  activation_factor: 10.0
+
+  publish_cost_grid_pc: false
+  publish_traj_pc: true
+  cheat_factor: 1

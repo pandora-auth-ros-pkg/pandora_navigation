@@ -486,7 +486,7 @@ namespace move_base {
         }
 
         {
-         boost::unique_lock< boost::shared_mutex > lock(*(controller_costmap_ros_->getCostmap()->getLock()));
+         boost::unique_lock< costmap_2d::Costmap2D::mutex_t > lock(*(controller_costmap_ros_->getCostmap()->getMutex()));
 
         if(tc_->computeVelocityCommands(cmd_vel)){
           ROS_DEBUG_NAMED( "move_base", "Got a valid command from the local planner: %.3lf, %.3lf, %.3lf",
@@ -722,7 +722,7 @@ namespace move_base {
 
 
   bool MoveBase::makePlan(const geometry_msgs::PoseStamped& goal, std::vector<geometry_msgs::PoseStamped>& plan){
-    boost::unique_lock< boost::shared_mutex > lock(*(planner_costmap_ros_->getCostmap()->getLock()));
+    boost::unique_lock<costmap_2d::Costmap2D::mutex_t> lock(*(planner_costmap_ros_->getCostmap()->getMutex()));
 
     //make sure to set the plan to be empty initially
     plan.clear();
@@ -1217,7 +1217,7 @@ namespace move_base {
 
   void MoveBase::findValidGoalApproximate(geometry_msgs::PoseStamped* goal)
   {
-    boost::unique_lock< boost::shared_mutex > lock(*(planner_costmap_ros_->getCostmap()->getLock()));
+    boost::unique_lock< costmap_2d::Costmap2D::mutex_t > lock(*(planner_costmap_ros_->getCostmap()->getMutex()));
 
     costmap_2d::Costmap2D* costmap = planner_costmap_ros_->getCostmap();
 

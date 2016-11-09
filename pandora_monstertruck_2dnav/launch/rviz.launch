@@ -1,0 +1,16 @@
+<launch>
+
+  <arg name="slam" default="true" />
+
+  <!-- Launch rviz with the specified configuration -->
+  <group if="$(arg slam)">
+    <node pkg="rviz" type="rviz" name="$(anon rviz)"
+      args="-d $(find pandora_monstertruck_2dnav)/config/rviz/slam_config.rviz"/>
+  </group>
+
+  <group unless="$(arg slam)">
+    <node pkg="rviz" type="rviz" name="$(anon rviz)"
+      args="-d $(find pandora_monstertruck_2dnav)/config/rviz/no_slam_config.rviz"/>
+  </group>
+
+</launch>

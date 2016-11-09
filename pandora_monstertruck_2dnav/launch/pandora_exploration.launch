@@ -1,0 +1,38 @@
+<launch>
+
+  <arg name="slam" default="true" />
+
+  <node
+    pkg="pandora_explorer"
+    type="exploration_controller"
+    name="explorer"
+    output="screen"
+    respawn="true" >
+
+    <rosparam
+      file="$(find pandora_monstertruck_2dnav)/config/costmaps/costmap_common_params.yaml"
+      command="load"
+      ns="explore_costmap" />
+
+    <rosparam
+      file="$(find pandora_monstertruck_2dnav)/config/costmaps/pandora_exploration_costmap_params.yaml"
+      command="load"
+      ns="explore_costmap" />
+
+    <rosparam
+      file="$(find pandora_monstertruck_2dnav)/config/pandora_exploration/frontier_exploration_params.yaml"
+      command="load" />
+
+    <rosparam
+      file="$(find pandora_monstertruck_2dnav)/config/pandora_exploration/exploration_controller_params.yaml"
+      command="load" />
+
+  </node>
+
+  <group unless="$(arg slam)">
+    <param
+      name="/explorer/explore_costmap/static_layer/map_topic"
+      value="/map" />
+  </group>
+
+</launch>

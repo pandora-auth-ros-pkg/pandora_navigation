@@ -1,0 +1,12 @@
+base_global_planner: SBPLLatticePlanner
+
+SBPLLatticePlanner:
+  environment_type: XYThetaLattice
+  planner_type: ARAPlanner #ADPLanner
+  allocated_time: 3.0
+  initial_epsilon: 2.0
+  forward_search: False # false for ADPlanner, irrelevant for ARAPlanner
+  lethal_obstacle: 10
+  nominalvel_mpersecs: 0.2
+# timetoturn45degsinplace_sec: ???
+  force_scratch_limit: 500 # number of changed cells that cause AD* to replan from scratch

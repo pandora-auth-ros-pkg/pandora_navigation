@@ -1,0 +1,18 @@
+<launch>
+
+  <node
+    name="navigation_goals_loop_node"
+    pkg="pandora_monstertruck_2dnav"
+    type="navigation_goals_loop_node"
+    output="screen">
+
+    <rosparam>
+      goals:
+      <!-- [position.x, position.y, orientation.z, orientation.w] -->
+        - [0.05, 1.5, 0.99, 0.06]
+        - [0.35, 0.0, 0.10, 0.99]
+    </rosparam>
+
+  </node>
+
+</launch>

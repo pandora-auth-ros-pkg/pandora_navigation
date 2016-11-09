@@ -1,0 +1,140 @@
+<launch>
+
+  <!--############################ Arguments ################################-->
+
+  <arg name="stdr" default="true" />
+  <arg name="map" default="robocup" />
+  <arg name="gui" default="false" />
+  <arg name="state_manager" default="true" />
+  <arg name="slam" default="true" />
+  <arg name="gmapping" default="false" />
+  <arg name="move_base" default="true" />
+  <arg name="frontier_exploration" default="false" />
+  <arg name="pandora_exploration" default="true" />
+  <arg name="tune" default="false" />
+  <arg name="cmd_vel_filter" default="true" />
+  <arg name="cmd_vel_mux" default="true" />
+  <arg name="rviz" default="true" />
+
+  <arg name="cmd_topic" default="cmd_vel" />
+  <arg name="global" default="global" /> <!-- navfn | sbpl | global -->
+  <arg name="local" default="rsband" /> <!-- teb | dwa | rsband -->
+
+  <arg name="sbpl_resolution" default="0.04" />
+
+  <arg name="state" default="1" />
+
+  <arg name="x" default="5.5" />
+  <arg name="y" default="10" />
+  <arg name="yaw" default="1.57" />
+
+
+  <!--######################### Node Launchers ##############################-->
+
+  <!-- launch stdr simulator and robot -->
+  <group if="$(arg stdr)">
+    <include file="$(find pandora_monstertruck_2dnav)/launch/stdr.launch">
+      <arg name="gui" value="$(arg gui)" />
+      <arg name="cmd_vel_filter" value="$(arg cmd_vel_filter)" />
+      <arg name="map" value="$(arg map)" />
+    </include>
+    <include file="$(find pandora_monstertruck_2dnav)/launch/robot.launch">
+      <arg name="x" value="$(arg x)" />
+      <arg name="y" value="$(arg y)" />
+      <arg name="yaw" value="$(arg yaw)" />
+    </include>
+  </group>
+
+  <!-- launch state manager node -->
+  <group if="$(arg state_manager)">
+    <include file="$(find state_manager)/launch/stateManager.launch" />
+  </group>
+
+  <!-- launch slam and pose estimation nodes -->
+  <group if="$(arg slam)">
+    <!-- launch slam node -->
+    <group unless="$(arg gmapping)">
+      <!-- launch crsm slam -->
+      <include file="$(find pandora_slam_2d)/launch/pandora_slam_2d.launch">
+        <arg name="robot" value="monstertruck" />
+      </include>
+      <!-- launch pose estimation node -->
+      <include file="$(find pandora_pose_estimation)/launch/pose_estimation_5_dof.launch" />
+    </group>
+    <group if="$(arg gmapping)">
+      <!-- launch gmapping -->
+      <include file="$(find pandora_monstertruck_2dnav)/launch/gmapping.launch">
+        <arg name="robot_pose_ekf" value="false" />
+      </include>
+      <!-- launch odom to base tf publisher -->
+      <node
+        name="odom2base"
+        pkg="pandora_monstertruck_2dnav"
+        type="odom_to_base_tf_publisher.py" />
+    </group>
+  </group>
+
+  <!-- launch move base with cmd_vel multiplexer -->
+  <group if="$(arg cmd_vel_mux)">
+    <!-- launch cmd_vel multiplexer -->
+    <include file="$(find pandora_cmd_vel_mux)/launch/cmd_vel_mux.launch" />
+    <!-- launch move_base -->
+    <group if="$(arg move_base)">
+      <include file="$(find pandora_monstertruck_2dnav)/launch/move_base.launch">
+        <arg name="cmd_topic" value="navigation/cmd_vel" />
+        <arg name="local" value="$(arg local)" />
+        <arg name="global" value="$(arg global)" />
+        <arg name="slam" value="$(arg slam)" />
+        <arg name="gmapping" value="$(arg gmapping)" />
+        <arg name="sbpl_resolution" value="$(arg sbpl_resolution)" />
+      </include>
+    </group>
+  </group>
+
+  <!-- launch move base node without cmd_vel multiplexer-->
+  <group unless="$(arg cmd_vel_mux)">
+    <group if="$(arg move_base)">
+      <include file="$(find pandora_monstertruck_2dnav)/launch/move_base.launch">
+        <arg name="cmd_topic" value="$(arg cmd_topic)" />
+        <arg name="local" value="$(arg local)" />
+        <arg name="global" value="$(arg global)" />
+        <arg name="slam" value="$(arg slam)" />
+        <arg name="gmapping" value="$(arg gmapping)" />
+        <arg name="sbpl_resolution" value="$(arg sbpl_resolution)" />
+      </include>
+    </group>
+  </group>
+
+  <group unless="$(arg slam)">
+    <node
+      name="odom2base"
+      pkg="pandora_monstertruck_2dnav"
+      type="odom_to_base_tf_publisher.py" />
+  </group>
+
+  <!-- launch frontier exploration node -->
+  <group if="$(arg frontier_exploration)">
+    <include file="$(find pandora_monstertruck_2dnav)/launch/frontier_exploration.launch" />
+  </group>
+  <!-- launch pandora_exploration node -->
+  <group if="$(arg pandora_exploration)">
+    <include file="$(find pandora_monstertruck_2dnav)/launch/pandora_exploration.launch">
+      <arg name="slam" value="$(arg slam)" />
+    </include>
+  </group>
+
+  <!-- launch navigation goals loop node for tuning purposes -->
+  <group if="$(arg tune)">
+    <include file="$(find pandora_monstertruck_2dnav)/launch/navigation_goals_loop.launch" />
+  </group>
+
+  <!-- launch rviz -->
+  <group if="$(arg rviz)">
+    <include file="$(find pandora_monstertruck_2dnav)/launch/rviz.launch">
+      <arg name="slam" value="$(arg slam)" />
+    </include>
+  </group>
+
+  <node name="state_changer" pkg="state_manager" type="state_changer" args="$(arg state)" />
+
+</launch>
